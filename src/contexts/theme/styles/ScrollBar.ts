@@ -1,0 +1,19 @@
+import { css } from 'styled-components'
+
+const ScrollBarStyles = css`
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.textSubtle};
+    border-radius: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px ${({ theme }) => theme.colors.input};
+    border-radius: 10px;
+  }
+`
+
+export default ScrollBarStyles

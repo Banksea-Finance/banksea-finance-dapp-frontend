@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { AppContainer } from '@/App.style'
+import Navbar from '@/components/navbar'
+import StakingPage from '@/pages/staking'
+import Redirect from '@/pages/redirect'
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <AppContainer>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path={'/'} element={<Redirect to={'/staking'} />} />
+          <Route path={'/staking'} element={<StakingPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AppContainer>
+  )
 }
 
-export default App;
+export default App
