@@ -1,5 +1,6 @@
 import { ButtonMenuTheme } from './types'
 import { DefaultTheme } from 'styled-components'
+import { themes } from '@/contexts/theme'
 
 const base = {
   width: '197px'
@@ -8,7 +9,7 @@ const base = {
 const dark: ButtonMenuTheme = {
   ...base,
   borderColor: 'transparent',
-  backgroundColor: 'rgb(7,32,54)',
+  backgroundColor: themes.dark.colors.primaryContrary,
   activeBackground: 'rgb(28,182,235)'
 }
 

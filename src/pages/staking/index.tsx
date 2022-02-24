@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
 import { StakingPageContainer } from '@/pages/staking/index.styles'
-import { ButtonMenu } from '@/contexts/theme/components'
 import TokenStakingModule from '@/pages/staking/modules/token-staking'
+import NFTStakingModule from '@/pages/staking/modules/nft-staking'
+import Tabs from '@/contexts/theme/components/Tabs/Tabs'
 
 const StakingPage: React.FC = () => {
   const [key, setKey] = useState('token')
 
   return (
     <StakingPageContainer>
-      <ButtonMenu activeKey={key} onItemClick={({ key }) => setKey(key!)} mb={'32px'}>
-        <ButtonMenu.Item key={'token'}>Token</ButtonMenu.Item>
-        <ButtonMenu.Item key={'nft'}>NFT</ButtonMenu.Item>
-      </ButtonMenu>
-
-      {
-        key === 'token' ? <TokenStakingModule /> : (<div />)
-      }
+      <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>
+        <Tabs.Pane title={'Token'} tabKey={'token'}>
+          <TokenStakingModule />
+        </Tabs.Pane>
+        <Tabs.Pane title={'NFT'} tabKey={'nft'}>
+          <NFTStakingModule />
+        </Tabs.Pane>
+      </Tabs>
     </StakingPageContainer>
   )
 }

@@ -12,7 +12,8 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path={'/'} element={<Redirect to={'/staking'} />} />
-          <Route path={'/staking'} element={<StakingPage />} />
+          <Route path={'staking'} element={<StakingPage />} />
+          <Route path={'airdrop'} element={<div>????</div>} />
         </Routes>
       </BrowserRouter>
     </AppContainer>

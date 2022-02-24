@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Link } from 'react-scroll'
+import { Link } from 'react-router-dom'
 import { Button } from '@/contexts/theme/components'
 
 export const NavbarContainer = styled.div`
@@ -29,8 +29,8 @@ export const NavItemsContainer = styled.div`
   }
 `
 
-export const NavItem = styled(Link)`
-  color: ${({ theme }) => theme.colors.text};
+export const NavLink = styled(Link)<{ $active?: boolean }>`
+  color: ${({ theme, $active }) => $active ? theme.colors.primary : theme.colors.text};
   font-size: 18px;
   font-weight: bold;
   position: relative;

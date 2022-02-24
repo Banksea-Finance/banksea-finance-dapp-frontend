@@ -25,12 +25,12 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = ({ currencies }) 
         {
           currencies.map((c, index) => {
             return index === currencies.length - 1 ? (
-              <CurrencyIconImage src={c.icon} key={c.name} />
+              <CurrencyIconImage src={c.icon} key={index} />
             ) : (
-              <>
-                <CurrencyIconImage src={c.icon} key={c.name} />
+              <Flex key={index} alignItemsCenter>
+                <CurrencyIconImage src={c.icon} />
                 <Text m={'0 4px'} fontSize={'32px'}>/</Text>
-              </>
+              </Flex>
             )
           })
         }

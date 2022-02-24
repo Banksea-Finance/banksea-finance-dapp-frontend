@@ -8,8 +8,8 @@ type StyledButtonMenuProps = {
   theme: DefaultTheme
 }
 
-const getBackgroundColor = ({ theme }: StyledButtonMenuProps) => {
-  return theme.isDark ? '#072036' : ''
+const getBackgroundColor = (props: StyledButtonMenuProps) => {
+  return getButtonMenuTheme(props).backgroundColor
 }
 
 const StyledButtonMenu = styled.div<{ variant: Variant }>`

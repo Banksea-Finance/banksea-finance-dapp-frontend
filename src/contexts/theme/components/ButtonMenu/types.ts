@@ -4,7 +4,7 @@ import { SpaceProps } from 'styled-system'
 
 export interface ButtonMenuItemProps extends BaseButtonProps {
   isActive?: boolean
-  key?: string
+  itemKey?: string
 }
 
 export interface ButtonMenuProps extends HTMLAttributes<HTMLDivElement>, SpaceProps {

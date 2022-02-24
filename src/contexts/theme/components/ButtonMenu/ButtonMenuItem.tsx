@@ -15,29 +15,26 @@ const MenuItemButton = styled(Button)`
     padding-left: 20px;
     padding-right: 20px;
   }
+  
+  &.active {
+    background-color: ${p => getButtonMenuTheme(p).activeBackground};
+    color: ${({ theme }) => theme.colors.text};
+    transition: all ease-out 0.58s;
+  }
+  
+  &.inactive {
+    background-color: transparent;
+    color: ${({ theme }) => theme.colors.textSubtle};
+    transition: all 0s;
+    box-shadow: none;
+
+    &:hover:not(:disabled):not(:active) {
+      background-color: transparent;
+    }
+  }
 
   ${layout}
   ${space}
-`
-
-const InactiveButton = styled(MenuItemButton)`
-  background-color: transparent;
-  color: ${({ theme }) => theme.colors.textDisabled};
-  transition: background-color 0s;
-
-  &:hover:not(:disabled):not(:active) {
-    background-color: transparent;
-  }
-
-  ${({ theme }) => theme.mediaQueries.xl} {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-`
-
-const ActiveButton = styled(MenuItemButton)`
-  background-color: ${p => getButtonMenuTheme(p).activeBackground};
-  color: ${({ theme }) => theme.colors.text};
 `
 
 const ButtonMenuItem: PolymorphicComponent<ButtonMenuItemProps> = ({
@@ -46,11 +43,7 @@ const ButtonMenuItem: PolymorphicComponent<ButtonMenuItemProps> = ({
   as,
   ...props
 }: ButtonMenuItemProps) => {
-  if (!isActive) {
-    return <InactiveButton forwardedAs={as} variant="tertiary" {...props} />
-  }
-
-  return <ActiveButton forwardedAs={as} variant={variant} {...props} />
+  return <MenuItemButton className={isActive ? 'active' : 'inactive'} forwardedAs={as} variant={variant} {...props} />
 }
 
 export default ButtonMenuItem
