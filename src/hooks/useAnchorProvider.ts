@@ -1,10 +1,10 @@
-import { useConnectionConfig } from '@/contexts/solana-connection-config'
+import { useSolanaConnectionConfig } from '@/contexts/solana-connection-config'
 import { useSolanaWeb3 } from '@/contexts/solana-web3'
 import { Provider } from '@project-serum/anchor'
 import { useMemo } from 'react'
 
 const useAnchorProvider = () => {
-  const { connection } = useConnectionConfig()
+  const { connection } = useSolanaConnectionConfig()
   const { adapter, connected } = useSolanaWeb3()
 
   return useMemo(() => {

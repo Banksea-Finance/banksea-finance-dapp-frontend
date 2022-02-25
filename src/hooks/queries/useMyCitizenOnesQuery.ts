@@ -1,4 +1,4 @@
-import { useConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
 import { ParsedAccountData, PublicKey, TokenAmount } from '@solana/web3.js'
 import {
   loadMetadata,
@@ -17,7 +17,7 @@ const belongsToCollection = (data: MetadataResult, collectionConfig: BankseaNftC
 }
 
 export const useCitizenOnesWithoutRaritiesQuery = (collectionConfig: BankseaNftCollection): UseQueryResult<MetadataResult[]> => {
-  const { connection } = useConnectionConfig()
+  const { connection } = useSolanaConnectionConfig()
   const { account } = useSolanaWeb3()
 
   return useQuery(

@@ -53,22 +53,10 @@ const NftStakingPoolCard: React.FC<BankseaNftCollection> = props => {
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>
           <Tabs.Pane title={'My Deposit'} tabKey={'deposit'}>
-            {!deposits?.length ? (
-              <Text bold fontSize={'24px'} textAlign={'center'}>
-                You have NOT deposit anyone {name}
-              </Text>
-            ) : (
-              <NFTsGridView list={deposits} />
-            )}
+            <NFTsGridView list={deposits} type={'deposit'} />
           </Tabs.Pane>
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
-            {!holds?.length ? (
-              <Text bold fontSize={'24px'} textAlign={'center'}>
-                You have NOT held anyone {name}
-              </Text>
-            ) : (
-              <NFTsGridView list={holds} />
-            )}
+            <NFTsGridView list={holds} type={'hold'} />
           </Tabs.Pane>
         </Tabs>
       </Flex>

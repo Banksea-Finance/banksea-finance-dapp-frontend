@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   webpack: {
@@ -7,6 +8,7 @@ module.exports = {
     },
     configure: config => {
       const resolve = config.resolve
+      const plugins = config.plugins
       const fallback = resolve.fallback
 
       return {
@@ -15,9 +17,25 @@ module.exports = {
           ...resolve,
           fallback: {
             ...fallback,
-            assert: false
+            assert: false,
+            fs: false,
+            os: false,
+            process: false,
+            util: false,
+            path: false,
+            'stream': require.resolve('stream-browserify'),
+            'buffer': require.resolve('buffer')
           }
-        }
+        },
+        plugins: [
+          ...plugins,
+          new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+          }),
+          new webpack.ProvidePlugin({
+            process: 'process/browser',
+          }),
+        ]
       }
     }
   }

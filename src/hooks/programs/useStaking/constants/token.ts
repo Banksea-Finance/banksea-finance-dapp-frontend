@@ -1,5 +1,5 @@
 import { Currency, TokenStakingPoolConfig } from '@/pages/staking/components/TokenStakingPoolCard'
-import { Keypair } from '@solana/web3.js'
+import { Keypair, PublicKey } from '@solana/web3.js'
 
 const CURRENCY_KSE: Currency = {
   name: 'KSE',
@@ -19,16 +19,19 @@ const CURRENCY_USDC: Currency = {
 const TOKEN_STAKING_POOLS: TokenStakingPoolConfig[] = [
   {
     currencies: [CURRENCY_KSE],
-    poolPublicKey: Keypair.generate().publicKey
+    poolAddress: new PublicKey('3VK3BJFtW2wgRes6vEo7WtCMJfy1p9GPrEkFGVe9gGEF'),
+    whitelists: [
+      new PublicKey('5foiujQa4maxv5qUeUNgDG1JaCwqBD2t55evhuEXvuFt')
+    ]
   },
-  {
-    currencies: [CURRENCY_KSE, CURRENCY_ETH],
-    poolPublicKey: Keypair.generate().publicKey
-  },
-  {
-    currencies: [CURRENCY_KSE, CURRENCY_USDC],
-    poolPublicKey: Keypair.generate().publicKey
-  }
+  // {
+  //   currencies: [CURRENCY_KSE, CURRENCY_ETH],
+  //   poolPublicKey: Keypair.generate().publicKey
+  // },
+  // {
+  //   currencies: [CURRENCY_KSE, CURRENCY_USDC],
+  //   poolPublicKey: Keypair.generate().publicKey
+  // }
 ]
 
 export {

@@ -10,7 +10,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { useConnectionConfig } from '@/contexts/solana-connection-config'
+import { useSolanaConnectionConfig } from '@/contexts/solana-connection-config'
 import { shortenAddress } from '@/utils'
 import useEagerConnect from '@/hooks/useEagerConnect'
 import useLocalStorage, {
@@ -95,34 +95,32 @@ const WalletSelectDialog: React.FC = ({ children }) => {
 }
 
 export const SolanaWeb3Provider: React.FC = ({ children }) => {
-  const { endpointUrl } = useConnectionConfig()
+  const { endpointUrl } = useSolanaConnectionConfig()
 
   const [, setLocalStoredWallet] = useLocalStorage<SupportWalletNames>(
     LOCAL_STORAGE_WALLET_KEY
   )
+
   const [wallet, setWallet] = useState<SolanaWallet>()
   const [connected, setConnected] = useState(false)
 
   const { openModal, closeModal } = useModal()
 
-  const select = useCallback(
-    () =>
-      openModal(
-        <WalletSelectDialog>
-          {Object.values(SUPPORT_WALLETS).map(wallet => (
-            <WalletItem
-              wallet={wallet}
-              key={wallet.name}
-              onClick={(key: SupportWalletNames) => {
-                setWallet(SUPPORT_WALLETS[key])
-                closeModal()
-              }}
-            />
-          ))}
-        </WalletSelectDialog>
-      ),
-    []
-  )
+  const select = useCallback(() =>
+    openModal(
+      <WalletSelectDialog>
+        {Object.values(SUPPORT_WALLETS).map(wallet => (
+          <WalletItem
+            wallet={wallet}
+            key={wallet.name}
+            onClick={(key: SupportWalletNames) => {
+              setWallet(SUPPORT_WALLETS[key])
+              closeModal()
+            }}
+          />
+        ))}
+      </WalletSelectDialog>
+    ), [])
 
   const { eagerConnected } = useEagerConnect()
 

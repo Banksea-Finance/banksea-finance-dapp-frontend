@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Text, Button } from '../'
 import { useModal } from '@/contexts/modal'
 import { shortenAddress } from '@/utils'
-import { DEFAULT_CLUSTER } from '@/contexts'
+import { SOLANA_CLUSTER } from '@/contexts'
 
 export const WalletModalContent: React.FC<{ account: string; disconnect: VoidFunction }> = ({
   account,
@@ -22,7 +22,7 @@ export const WalletModalContent: React.FC<{ account: string; disconnect: VoidFun
       </Text>
       <Text marginBottom={'30px'}>You are now connected to {shortenAddress(account)}</Text>
 
-      <Text marginBottom={'30px'}>Network: {DEFAULT_CLUSTER}</Text>
+      <Text marginBottom={'30px'}>Network: {SOLANA_CLUSTER}</Text>
       <Button onClick={handleDisconnect}>Disconnect</Button>
     </Card>
   )

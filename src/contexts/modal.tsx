@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { cloneElement, useContext, useState } from 'react'
 import ReactModal from 'react-modal'
 import { useResponsive } from '@/contexts/theme/hooks'
 
@@ -13,6 +13,7 @@ export type ModalConfig = {
   content?: JSX.Element | string
   closeable?: boolean
   contentStyle?: React.CSSProperties
+  contentWrapper?: JSX.Element
 }
 
 const responsiveDefaultContentStyle = (isDesktop: boolean) => {
@@ -50,8 +51,9 @@ const ModalContext = React.createContext<ModalContextValue>({
   update: () => {}
 })
 
-const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boolean }> = ({
+const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boolean, contentWrapper?: JSX.Element }> = ({
   contentStyle,
+  contentWrapper,
   isOpen,
   children
 }) => {
@@ -74,7 +76,7 @@ const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boole
         content: { ...responsiveDefaultContentStyle(isDesktop), ...contentStyle }
       }}
     >
-      {children}
+      {contentWrapper ? cloneElement(contentWrapper, { children }) : children}
     </ReactModal>
   )
 }
@@ -131,7 +133,7 @@ const ModalProvider: React.FC = ({ children }) => {
 
   return (
     <ModalContext.Provider value={{ open, update, close, configModal }}>
-      <ModalWrapper isOpen={visible} contentStyle={config.contentStyle}>
+      <ModalWrapper isOpen={visible} contentStyle={config.contentStyle} contentWrapper={config.contentWrapper}>
         <CloseButton show={config.closeable} onClose={close} />
         {content}
       </ModalWrapper>

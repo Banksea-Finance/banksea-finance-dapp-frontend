@@ -1,8 +1,8 @@
-import { useConnectionConfig } from '@/contexts'
+import { useSolanaConnectionConfig } from '@/contexts'
 import { useCallback } from 'react'
 
 const useWaitTransaction = () => {
-  const { connection } = useConnectionConfig()
+  const { connection } = useSolanaConnectionConfig()
 
   return useCallback((signature?: string) => {
     return new Promise<void>((resolve, reject) => {
