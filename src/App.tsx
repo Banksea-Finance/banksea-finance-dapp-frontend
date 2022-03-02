@@ -7,7 +7,7 @@ import Redirect from '@/pages/redirect'
 
 const App: React.FC = () => {
   return (
-    <AppContainer>
+    <AppContainer id={'app'}>
       <BrowserRouter>
         <Navbar />
         <Routes>

@@ -26,11 +26,6 @@ export type Staking = {
           'isSigner': false
         },
         {
-          'name': 'stakingSigner',
-          'isMut': false,
-          'isSigner': false
-        },
-        {
           'name': 'authority',
           'isMut': false,
           'isSigner': true
@@ -62,10 +57,6 @@ export type Staking = {
         },
         {
           'name': 'rewardSignerBump',
-          'type': 'u8'
-        },
-        {
-          'name': 'stakingSignerBump',
           'type': 'u8'
         }
       ]
@@ -235,6 +226,11 @@ export type Staking = {
           'isSigner': false
         },
         {
+          'name': 'stakingSigner',
+          'isMut': false,
+          'isSigner': false
+        },
+        {
           'name': 'user',
           'isMut': false,
           'isSigner': true
@@ -252,7 +248,11 @@ export type Staking = {
       ],
       'args': [
         {
-          'name': 'bump',
+          'name': 'assetBump',
+          'type': 'u8'
+        },
+        {
+          'name': 'stakingSignerBump',
           'type': 'u8'
         }
       ]
@@ -467,22 +467,14 @@ export type Staking = {
             'type': 'u64'
           },
           {
-            'name': 'stakingSigner',
-            'type': 'publicKey'
-          },
-          {
             'name': 'rewardSignerBump',
-            'type': 'u8'
-          },
-          {
-            'name': 'stakingSignerBump',
             'type': 'u8'
           }
         ]
       }
     },
     {
-      'name': 'whiteList',
+      'name': 'whitelist',
       'type': {
         'kind': 'struct',
         'fields': [
@@ -535,7 +527,15 @@ export type Staking = {
             'type': 'u64'
           },
           {
-            'name': 'bump',
+            'name': 'stakingSigner',
+            'type': 'publicKey'
+          },
+          {
+            'name': 'assetBump',
+            'type': 'u8'
+          },
+          {
+            'name': 'stakingSignerBump',
             'type': 'u8'
           }
         ]
@@ -559,10 +559,6 @@ export type Staking = {
             'type': 'u64'
           },
           {
-            'name': 'bump',
-            'type': 'u8'
-          },
-          {
             'name': 'lastAccRewardFactor',
             'type': 'u128'
           },
@@ -573,6 +569,10 @@ export type Staking = {
           {
             'name': 'claimedAmount',
             'type': 'u64'
+          },
+          {
+            'name': 'bump',
+            'type': 'u8'
           }
         ]
       }
@@ -580,7 +580,7 @@ export type Staking = {
   ],
   'types': [
     {
-      'name': 'WhiteListFormat',
+      'name': 'WhitelistFormat',
       'type': {
         'kind': 'enum',
         'variants': [
@@ -607,11 +607,16 @@ export type Staking = {
     },
     {
       'code': 302,
+      'name': 'InvalidWhitelistWeight',
+      'msg': 'invalid whitelist weight'
+    },
+    {
+      'code': 303,
       'name': 'InvalidEndSlot',
       'msg': 'invalid end slot'
     },
     {
-      'code': 303,
+      'code': 304,
       'name': 'StakingHasEnded',
       'msg': 'staking has ended'
     }
@@ -646,11 +651,6 @@ export const IDL: Staking = {
           'isSigner': false
         },
         {
-          'name': 'stakingSigner',
-          'isMut': false,
-          'isSigner': false
-        },
-        {
           'name': 'authority',
           'isMut': false,
           'isSigner': true
@@ -682,10 +682,6 @@ export const IDL: Staking = {
         },
         {
           'name': 'rewardSignerBump',
-          'type': 'u8'
-        },
-        {
-          'name': 'stakingSignerBump',
           'type': 'u8'
         }
       ]
@@ -855,6 +851,11 @@ export const IDL: Staking = {
           'isSigner': false
         },
         {
+          'name': 'stakingSigner',
+          'isMut': false,
+          'isSigner': false
+        },
+        {
           'name': 'user',
           'isMut': false,
           'isSigner': true
@@ -872,7 +873,11 @@ export const IDL: Staking = {
       ],
       'args': [
         {
-          'name': 'bump',
+          'name': 'assetBump',
+          'type': 'u8'
+        },
+        {
+          'name': 'stakingSignerBump',
           'type': 'u8'
         }
       ]
@@ -1087,22 +1092,14 @@ export const IDL: Staking = {
             'type': 'u64'
           },
           {
-            'name': 'stakingSigner',
-            'type': 'publicKey'
-          },
-          {
             'name': 'rewardSignerBump',
-            'type': 'u8'
-          },
-          {
-            'name': 'stakingSignerBump',
             'type': 'u8'
           }
         ]
       }
     },
     {
-      'name': 'whiteList',
+      'name': 'whitelist',
       'type': {
         'kind': 'struct',
         'fields': [
@@ -1155,7 +1152,15 @@ export const IDL: Staking = {
             'type': 'u64'
           },
           {
-            'name': 'bump',
+            'name': 'stakingSigner',
+            'type': 'publicKey'
+          },
+          {
+            'name': 'assetBump',
+            'type': 'u8'
+          },
+          {
+            'name': 'stakingSignerBump',
             'type': 'u8'
           }
         ]
@@ -1179,10 +1184,6 @@ export const IDL: Staking = {
             'type': 'u64'
           },
           {
-            'name': 'bump',
-            'type': 'u8'
-          },
-          {
             'name': 'lastAccRewardFactor',
             'type': 'u128'
           },
@@ -1193,6 +1194,10 @@ export const IDL: Staking = {
           {
             'name': 'claimedAmount',
             'type': 'u64'
+          },
+          {
+            'name': 'bump',
+            'type': 'u8'
           }
         ]
       }
@@ -1200,7 +1205,7 @@ export const IDL: Staking = {
   ],
   'types': [
     {
-      'name': 'WhiteListFormat',
+      'name': 'WhitelistFormat',
       'type': {
         'kind': 'enum',
         'variants': [
@@ -1227,11 +1232,16 @@ export const IDL: Staking = {
     },
     {
       'code': 302,
+      'name': 'InvalidWhitelistWeight',
+      'msg': 'invalid whitelist weight'
+    },
+    {
+      'code': 303,
       'name': 'InvalidEndSlot',
       'msg': 'invalid end slot'
     },
     {
-      'code': 303,
+      'code': 304,
       'name': 'StakingHasEnded',
       'msg': 'staking has ended'
     }

@@ -1,1 +1,1 @@
-export { default as useStaking } from './useStaking'
+export { useTokenStaking } from './useTokenStaking'

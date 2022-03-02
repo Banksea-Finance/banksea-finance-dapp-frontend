@@ -5,12 +5,13 @@ import FontFaces from '@/contexts/theme/styles/FontFaces'
 import ScrollBarStyles from '@/contexts/theme/styles/ScrollBar'
 
 export const GlobalStyles = createGlobalStyle`
-  body {
-    background: ${({ theme }) => theme.colors.background};
-  }
-  
   ${ResetDefaultStyles}
   ${NotificationStyleMixin}
   ${FontFaces}
   ${ScrollBarStyles}
+
+  body {
+    background: ${({ theme }) => theme.colors.background};
+    font-family: 'gilroy';
+  }
 `

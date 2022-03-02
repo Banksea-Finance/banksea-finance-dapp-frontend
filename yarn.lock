@@ -1586,11 +1586,6 @@
     snake-case "^3.0.4"
     toml "^3.0.0"
 
-"@project-serum/associated-token@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@project-serum/associated-token/-/associated-token-0.1.1.tgz#9acf745e84dad21e2ea26e06694704b9d698e532"
-  integrity sha512-Zc1wdqragbDiyBVagzIbIsMe37P7fgkArWZPIj+jJjDIoznlmYMK6ASU5mtdDZrPJ7sNABF/lzZ3+jvCCcU+oA==
-
 "@project-serum/borsh@^0.2.2", "@project-serum/borsh@^0.2.5":
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/@project-serum/borsh/-/borsh-0.2.5.tgz#6059287aa624ecebbfc0edd35e4c28ff987d8663"
@@ -7929,6 +7924,15 @@ raw-body@2.4.3:
     http-errors "1.8.1"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+rc-input@^0.0.1-alpha.2:
+  version "0.0.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/rc-input/-/rc-input-0.0.1-alpha.2.tgz#617053ea85a7bd3afe9129807395a000748a6426"
+  integrity sha512-3HoYZ2ejkcvz2ez9khSZcUWg1cT969CPB9SFXKb2O6lwDW59Nm6Z4MuD2oENlFYgw6FDPV75MY0i+23oGrU26w==
+  dependencies:
+    "@babel/runtime" "^7.11.1"
+    classnames "^2.2.1"
+    rc-util "^5.18.1"
 
 rc-motion@^2.2.0:
   version "2.4.5"

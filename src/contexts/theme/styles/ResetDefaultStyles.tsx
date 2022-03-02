@@ -75,7 +75,6 @@ const ResetDefaultStyles = css`
   }
 
   * {
-    font-family: 'Kanit', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
