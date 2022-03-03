@@ -44,8 +44,15 @@ export class TokenStaker {
     this.whitelist = whitelist
   }
 
-  async deposit(depositAmount: BN, metadata?: PublicKey, callback?: EventCallback): Promise<void> {
+  /**
+   * @param amount original number, not lamport
+   * @param callback
+   */
+  async deposit(amount: BigNumber, callback?: EventCallback): Promise<void> {
     callback?.['onBuilding']?.()
+
+    const decimals = await this.depositTokenDecimals()
+    const depositAmount: BN = new BN(amount.shiftedBy(decimals).toString())
 
     const tokenMint = await this.getDepositTokenMint()
     const depositAccount = await this.findBalanceEnoughDepositAccount(depositAmount)
@@ -90,17 +97,6 @@ export class TokenStaker {
         stakingSigner
       )
 
-      const remainingAccounts =
-        metadata !== undefined
-          ? [
-            {
-              pubkey: metadata,
-              isWritable: false,
-              isSigner: false
-            }
-          ]
-          : []
-
       const addAssetInstruction = await this.program.instruction.addAsset(assetBump, stakingSignerBump, {
         accounts: {
           pool: this.pool,
@@ -112,8 +108,7 @@ export class TokenStaker {
           user: this.user,
           payer: this.program.provider.wallet.publicKey,
           systemProgram: SystemProgram.programId
-        },
-        remainingAccounts
+        }
       })
 
       tx.add(...createTokenAccountInstructions).add(addAssetInstruction)
@@ -141,8 +136,15 @@ export class TokenStaker {
     callback?.['onConfirm']?.()
   }
 
-  async withdraw(withdrawAmount: BN, callback?: EventCallback): Promise<void> {
+  /**
+   * @param amount original number, not lamport
+   * @param callback
+   */
+  async withdraw(amount: BigNumber, callback?: EventCallback): Promise<void> {
     callback?.['onBuilding']?.()
+
+    const decimals = await this.depositTokenDecimals()
+    const withdrawAmount: BN = new BN(amount.shiftedBy(decimals).toString())
 
     const { address: passbook } = await getPassbook({
       pool: this.pool,
@@ -184,6 +186,7 @@ export class TokenStaker {
   async claim(callback?: EventCallback): Promise<void> {
     callback?.['onBuilding']?.()
 
+    const decimals = await this.getRewardTokenDecimals()
     const availableRewards = await this.getAvailableRewards()
 
     const poolAccount = await this.getPoolAccount(true)
@@ -203,7 +206,7 @@ export class TokenStaker {
       await this.program.provider.connection.getTokenAccountsByOwner(this.user, { mint: poolAccount.rewardMint })
     ).value[0].pubkey
 
-    const signature = await this.program.rpc.claim(new BN(availableRewards.toString()), {
+    const signature = await this.program.rpc.claim(new BN(availableRewards.shiftedBy(decimals).toString()), {
       accounts: {
         passbook: passbook.address,
         pool: this.pool,
@@ -259,7 +262,9 @@ export class TokenStaker {
 
     const IncRewardAmount = factor.mul(passbook.account.stakingAmount).div(multiple)
 
-    return new BigNumber(passbook.account.rewardAmount.add(IncRewardAmount).toString())
+    const decimals = await this.getRewardTokenDecimals()
+
+    return new BigNumber(passbook.account.rewardAmount.add(IncRewardAmount).toString()).shiftedBy(-decimals)
   }
 
   async getClaimedRewards(): Promise<BigNumber> {
@@ -275,7 +280,9 @@ export class TokenStaker {
       throw new Error('Passbook account not found, maybe you have not deposit yet?')
     }
 
-    return new BigNumber(passbook.account.claimedAmount.toString())
+    const decimals = await this.getRewardTokenDecimals()
+
+    return new BigNumber(passbook.account.claimedAmount.toString()).shiftedBy(-decimals)
   }
 
   async getAvailableRewards(): Promise<BigNumber> {
@@ -283,9 +290,7 @@ export class TokenStaker {
 
     const claimedReward = await this.getClaimedRewards()
 
-    const decimals = await this.getRewardTokenDecimals()
-
-    return new BigNumber(historyTotalReward.minus(claimedReward).toString()).shiftedBy(-decimals)
+    return new BigNumber(historyTotalReward.minus(claimedReward).toString())
   }
 
   depositTokenDecimals(): Promise<number> {

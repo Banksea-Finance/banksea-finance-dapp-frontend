@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useModal } from '@/contexts'
+import { useModal, useRefreshController } from '@/contexts'
 import { Dialog, Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
-import { BN } from '@project-serum/anchor'
 import { useQuery } from 'react-query'
 
 export type UseTokenDepositProps = {
@@ -15,6 +14,7 @@ export type UseTokenDepositProps = {
 
 const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const { closeModal } = useModal()
+  const { forceRefresh } = useRefreshController()
 
   const [value, setValue] = useState('')
 
@@ -51,19 +51,10 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
   }, [poolBalance])
 
-  const handleConfirm = useCallback(
-    async () => {
-      if ( !staker) return
-
-      await staker.deposit(new BN(new BigNumber(value).multipliedBy(1e9).toString()))
-    },
-    [staker, value]
-  )
-
   return (
     <Dialog
       title={`Deposit ${staker.poolName}`}
-      onConfirm={handleConfirm}
+      onConfirm={() => staker?.deposit(new BigNumber(value), { onSent: closeModal, onConfirm: forceRefresh })}
       onCancel={closeModal}
       confirmButtonProps={{ disabled: !!inputInvalidError }}
     >

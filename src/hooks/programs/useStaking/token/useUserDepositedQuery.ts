@@ -1,15 +1,18 @@
 import { useQuery } from 'react-query'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
+import { useRefreshController } from '@/contexts'
 
 const useUserDepositedQuery = (staker?: TokenStaker) => {
+  const { intermediateRefreshFlag } = useRefreshController()
+
   return useQuery(
-    ['TOKEN_UserDeposits', staker?.pool, staker?.user],
+    ['TOKEN_UserDeposits', staker?.pool, staker?.user, intermediateRefreshFlag],
     () => {
       if (!staker) return undefined
 
       return staker.getUserDeposited()
     },
-    { refetchInterval: 5000, refetchOnWindowFocus: false, keepPreviousData: true }
+    { refetchInterval: false, refetchOnWindowFocus: false, keepPreviousData: true }
   )
 }
 

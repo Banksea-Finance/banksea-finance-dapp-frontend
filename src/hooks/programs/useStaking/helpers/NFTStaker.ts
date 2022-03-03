@@ -201,7 +201,7 @@ export class NFTStaker {
       await this.program.provider.connection.getTokenAccountsByOwner(this.user, { mint: poolAccount.rewardMint })
     ).value[0].pubkey
 
-    const signature = await this.program.rpc.claim(new BN(availableRewards.shiftedBy(decimals).toString()), {
+    const signature = await this.program.rpc.claim(new BN(availableRewards.shiftedBy(decimals).toFixed(0)), {
       accounts: {
         passbook: passbook.address,
         pool: this.pool,

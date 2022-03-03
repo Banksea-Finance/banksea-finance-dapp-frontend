@@ -4,6 +4,11 @@ import { AppContainer } from '@/App.style'
 import Navbar from '@/components/navbar'
 import StakingPage from '@/pages/staking'
 import Redirect from '@/pages/redirect'
+import BigNumber from 'bignumber.js'
+
+BigNumber.config({
+  EXPONENTIAL_AT: 64
+})
 
 const App: React.FC = () => {
   return (

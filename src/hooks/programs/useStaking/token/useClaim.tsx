@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 import React, { useCallback } from 'react'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { Dialog, Text } from '@/contexts/theme/components'
-import { useModal } from '@/contexts'
+import { useModal, useRefreshController } from '@/contexts'
 import useAvailableRewardsQuery from '@/hooks/programs/useStaking/token/useAvailableRewardsQuery'
 
 export type UseTokenDepositProps = {
@@ -12,13 +12,13 @@ export type UseTokenDepositProps = {
 
 const ClaimDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const { closeModal } = useModal()
-
+  const { forceRefresh } = useRefreshController()
   const { data: availableRewards } = useAvailableRewardsQuery(staker)
 
   return (
     <Dialog
       title={`Harvest ${staker.poolName}`}
-      onConfirm={() => staker?.claim()}
+      onConfirm={() => staker?.claim({ onSent: closeModal, onConfirm: forceRefresh })}
       onCancel={closeModal}
       confirmButtonProps={{ disabled: false, children: 'Harvest it now!' }}
     >

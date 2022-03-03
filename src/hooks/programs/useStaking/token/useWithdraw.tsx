@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useModal } from '@/contexts'
+import { useModal, useRefreshController } from '@/contexts'
 import { Dialog, Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
-import { BN } from '@project-serum/anchor'
 import useUserDepositedQuery from './useUserDepositedQuery'
 
 export type UseTokenDepositProps = {
@@ -15,6 +14,8 @@ export type UseTokenDepositProps = {
 
 const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = ({ staker, onClose }) => {
   const [value, setValue] = useState('')
+  const { closeModal } = useModal()
+  const { forceRefresh } = useRefreshController()
 
   const { data: userDeposits } = useUserDepositedQuery(staker)
 
@@ -50,24 +51,10 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = (
     [userDeposits]
   )
 
-  const handleConfirm = useCallback(async () => {
-    if (!staker) return
-
-    const decimals = await staker.depositTokenDecimals()
-
-    await staker.withdraw(
-      new BN(
-        new BigNumber(value)
-          .multipliedBy(new BigNumber(10).pow(decimals))
-          .toString()
-      )
-    )
-  }, [staker, value])
-
   return (
     <Dialog
       title={`Withdraw ${staker.poolName}`}
-      onConfirm={handleConfirm}
+      onConfirm={() => staker?.withdraw(new BigNumber(value), { onSent: closeModal, onConfirm: forceRefresh })}
       onCancel={onClose}
       confirmButtonProps={{ disabled: !!inputInvalidError }}
     >
