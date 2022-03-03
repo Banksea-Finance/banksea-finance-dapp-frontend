@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { Connection, SignatureResult } from '@solana/web3.js'
 
 export const shortenAddress = (address?: string, length = 6) => {
   return address ? `${address.substring(0, length)}...${address.slice(-length)}` : '-'
@@ -137,4 +138,16 @@ export function Uint8ArrayToString(data: Array<number>) {
 
 export async function sleep(milliseconds: number) {
   return await new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+export function waitTransactionConfirm(connection: Connection, signature: string) {
+  return new Promise<void>((resolve, reject) => {
+    connection.onSignature(signature, (signatureResult: SignatureResult) => {
+      if (signatureResult.err) {
+        return reject(signatureResult.err)
+      } else {
+        return resolve()
+      }
+    })
+  })
 }

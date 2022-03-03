@@ -3,11 +3,11 @@ import useStakingProgram from '@/hooks/programs/useStaking/useStakingProgram'
 import { PublicKey } from '@solana/web3.js'
 import BigNumber from 'bignumber.js'
 
-const useTokenStakingAPYQuery = (pool?: PublicKey): UseQueryResult<BigNumber> => {
+const useAPRQuery = (pool?: PublicKey): UseQueryResult<BigNumber> => {
   const { program } = useStakingProgram()
 
   return useQuery(
-    ['TOKEN_APY', program?.programId, pool],
+    ['TOKEN_APR', program?.programId, pool],
     async (): Promise<BigNumber | undefined> => {
       if (!program || !pool) return undefined
 
@@ -49,4 +49,4 @@ const useTokenStakingAPYQuery = (pool?: PublicKey): UseQueryResult<BigNumber> =>
   )
 }
 
-export default useTokenStakingAPYQuery
+export default useAPRQuery

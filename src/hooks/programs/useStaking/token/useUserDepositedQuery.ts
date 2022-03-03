@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 
-const useUserDepositedTokenQuery = (staker?: TokenStaker) => {
+const useUserDepositedQuery = (staker?: TokenStaker) => {
   return useQuery(
-    ['UserDeposits', staker?.pool],
+    ['TOKEN_UserDeposits', staker?.pool, staker?.user],
     () => {
       if (!staker) return undefined
 
@@ -13,4 +13,4 @@ const useUserDepositedTokenQuery = (staker?: TokenStaker) => {
   )
 }
 
-export default useUserDepositedTokenQuery
+export default useUserDepositedQuery

@@ -103,14 +103,14 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   )
 }
 
-const useTokenDeposit = (staker?: TokenStaker) => {
+const useDeposit = (staker?: TokenStaker) => {
   const { openModal } = useModal()
 
   return useCallback(async () => {
     if (!staker) return
 
-    openModal(<DepositDialog staker={staker} />)
+    openModal(<DepositDialog staker={staker} />, false)
   }, [staker])
 }
 
-export default useTokenDeposit
+export default useDeposit

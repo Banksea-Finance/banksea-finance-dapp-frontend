@@ -1,5 +1,5 @@
 import { Connection, PublicKey } from '@solana/web3.js'
-import { getMetadataAddress } from '@/hooks/programs/useCandyMachine/helpers/accounts'
+import { getMetadataAddress } from '@/utils/metaplex/accounts'
 
 import { programs } from '@metaplex/js'
 import axios from 'axios'
@@ -52,6 +52,7 @@ export interface Info {
 
 export type MetadataResult = {
   mint: PublicKey
+  address: PublicKey
   creators: programs.metadata.Creator[] | null
   data: MetaplexMetadataAccountDataCore | null
 }
@@ -75,6 +76,7 @@ export const loadMetadata = async (connection: Connection, mintPublicKey: Public
   const data = await axios.get<MetaplexMetadataAccountDataCore>(uri).then(r => r.data).catch(() => null)
 
   return {
+    address: metadataAddress,
     mint: mintPublicKey,
     creators,
     data

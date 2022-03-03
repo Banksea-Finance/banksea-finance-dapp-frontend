@@ -13,10 +13,7 @@ import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/to
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies } = props
 
-  const { deposit, userDeposited, totalDeposited, totalRewards, APY, withdraw, harvest } = useTokenStaking({
-    type: 'token',
-    ...props
-  })
+  const { deposit, userDeposited, totalDeposited, totalRewards, APR, withdraw, harvest } = useTokenStaking(props)
 
   return (
     <StyledTokenStakingPoolCard>
@@ -40,7 +37,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
       <InfoGrid>
         <Text>Total Deposits: {totalDeposited?.toString() || '-'}</Text>
 
-        <Text>APY: {APY ? `${APY?.multipliedBy(100)?.toFixed(2)}%` : '-'}</Text>
+        <Text>APR: {APR ? `${APR?.multipliedBy(100)?.toFixed(2)}%` : '-'}</Text>
 
         <Text>Your Deposits: {userDeposited?.toString() || '-'}</Text>
 

@@ -4,7 +4,7 @@ import {
   CANDY_MACHINE_PROGRAM_ID,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
+  TOKEN_PROGRAM_ID
 } from './constant'
 
 import { Buffer } from 'buffer'
@@ -13,7 +13,7 @@ export const getTokenWallet = async function (wallet: PublicKey, mint: PublicKey
   return (
     await PublicKey.findProgramAddress(
       [wallet.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+      SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
     )
   )[0]
 }
@@ -25,25 +25,6 @@ export const getMetadataAddress = async (mint: PublicKey): Promise<PublicKey> =>
       TOKEN_METADATA_PROGRAM_ID,
     )
   )[0]
-}
-
-export const getMasterEdition = async (mint: PublicKey): Promise<PublicKey> => {
-  return (
-    await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition')],
-      TOKEN_METADATA_PROGRAM_ID,
-    )
-  )[0]
-}
-
-export const getAtaForMint = async (
-  mint: anchor.web3.PublicKey,
-  buyer: anchor.web3.PublicKey,
-): Promise<[anchor.web3.PublicKey, number]> => {
-  return await anchor.web3.PublicKey.findProgramAddress(
-    [buyer.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mint.toBuffer()],
-    SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-  )
 }
 
 export const getCandyMachineCreator = async (

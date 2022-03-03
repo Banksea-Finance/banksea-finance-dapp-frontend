@@ -3,8 +3,9 @@ import { Button, Card, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import { ReactComponent as CloseIcon } from '@/assets/images/close.svg'
 import { ButtonProps } from '@/contexts/theme/components/Button'
+import { CardProps } from '@/contexts/theme/components/Card'
 
-export type DialogProps = {
+export type DialogProps = CardProps & {
   title: string | JSX.Element
   footer?: string | JSX.Element
   cancelButtonProps?: ButtonProps
@@ -19,16 +20,17 @@ const Dialog: React.FC<DialogProps> = ({
   confirmButtonProps,
   onCancel,
   onConfirm,
-  children
+  children,
+  ...rest
 }) => {
   return (
-    <Card p={'24px'} style={{ minWidth: '350px', width: 'fit-content' }}>
+    <Card p={'24px'} minWidth={'350px'} {...rest} isActive>
       <Flex
         justifySpaceBetween
         alignItemsCenter
         style={{ borderBottom: '1px solid #909090', paddingBottom: '8px', marginBottom: '16px' }}
       >
-        <Text bold fontSize={'20px'}>
+        <Text bold fontSize={'24px'}>
           {title}
         </Text>
         <Text onClick={onCancel}>

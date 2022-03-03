@@ -6,7 +6,7 @@ import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { BN } from '@project-serum/anchor'
-import useUserDepositedTokenQuery from './useUserDepositedTokenQuery'
+import useUserDepositedQuery from './useUserDepositedQuery'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -16,7 +16,7 @@ export type UseTokenDepositProps = {
 const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = ({ staker, onClose }) => {
   const [value, setValue] = useState('')
 
-  const { data: userDeposits } = useUserDepositedTokenQuery(staker)
+  const { data: userDeposits } = useUserDepositedQuery(staker)
 
   const inputInvalidError = useMemo(() => {
     if (!value) {
@@ -111,14 +111,14 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = (
   )
 }
 
-const useTokenWithdraw = (staker?: TokenStaker) => {
+const useWithdraw = (staker?: TokenStaker) => {
   const { openModal, closeModal } = useModal()
 
   return useCallback(async () => {
     if (!staker) return
 
-    openModal(<WithdrawDialog staker={staker} onClose={closeModal} />)
+    openModal(<WithdrawDialog staker={staker} onClose={closeModal} />, false)
   }, [staker])
 }
 
-export default useTokenWithdraw
+export default useWithdraw

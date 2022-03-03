@@ -3,22 +3,10 @@ import { useSolanaWeb3 } from '@/contexts'
 import { useMemo } from 'react'
 import { useQuery } from 'react-query'
 import useStakingProgram from './useStakingProgram'
-import {
-  useTokenDeposit,
-  useTokenHarvest,
-  useTokenStakingAPYQuery,
-  useTokenWithdraw,
-  useTotalDepositedTokenQuery,
-  useUserDepositedTokenQuery
-} from './token'
+import { useAPRQuery, useClaim, useDeposit, useTotalDepositedQuery, useUserDepositedQuery, useWithdraw } from './token'
 import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
 
-export type UseStakingProps = TokenStakingPoolConfig & {
-  type: 'token' | 'nft'
-}
-
-const useTokenStaking = (props: UseStakingProps) => {
-  const { type } = props
+const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const { program } = useStakingProgram()
   const { account } = useSolanaWeb3()
 
@@ -29,20 +17,19 @@ const useTokenStaking = (props: UseStakingProps) => {
       ...props,
       poolName: props.currencies.map(c => c.name).join('/'),
       program,
-      user: account,
-      rewardWallet: account
+      user: account
     })
   }, [program, props])
 
-  const deposit = type === 'token' ? useTokenDeposit(staker) : () => {}
-  const withdraw = type === 'token' ? useTokenWithdraw(staker) : () => {}
-  const harvest = type === 'token' ? useTokenHarvest(staker) : () => {}
+  const deposit = useDeposit(staker)
+  const withdraw = useWithdraw(staker)
+  const harvest = useClaim(staker)
 
-  const { data: APY } = useTokenStakingAPYQuery(staker?.pool)
-  const { data: userDeposited } = useUserDepositedTokenQuery(staker)
-  const { data: totalDeposited } = useTotalDepositedTokenQuery(staker)
+  const { data: APR } = useAPRQuery(staker?.pool)
+  const { data: userDeposited } = useUserDepositedQuery(staker)
+  const { data: totalDeposited } = useTotalDepositedQuery(staker)
 
-  const { data: totalRewards } = useQuery(['totalRewards', staker?.pool], async () => {
+  const { data: totalRewards } = useQuery(['tokenTotalRewards', staker?.pool], async () => {
     if (!staker) return undefined
 
     const rewards = await staker.getHistoryTotalRewards()
@@ -56,7 +43,7 @@ const useTokenStaking = (props: UseStakingProps) => {
     deposit,
     withdraw,
     harvest,
-    APY,
+    APR,
     totalRewards,
     userDeposited,
     totalDeposited,

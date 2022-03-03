@@ -1,23 +1,25 @@
 import React from 'react'
 import styled from 'styled-components'
-import { MetadataResult } from '@/hooks/programs/useCandyMachine/helpers/metadata'
+import { MetadataResult } from '@/utils/metaplex/metadata'
 import NftCard from '@/pages/staking/components/NftCard'
 import { useSolanaWeb3 } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
+import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
+import { NFTStatus } from '@/pages/staking/components/NftStakingPoolCard'
 
 const Grid = styled.div`
   display: grid;
   justify-content: center;
-  grid-template-columns: repeat(auto-fill, 345px);
-  gap: 10px 20px;
+  grid-template-columns: repeat(auto-fit, 258px);
+  gap: 10px 48px;
 `
 
-export type NFTsGridViewProps = {
+export type NFTsGridViewProps = NFTStakingPoolConfig & {
   list?: MetadataResult[]
-  type: 'deposit' | 'hold'
+  type: NFTStatus
 }
 
-const NFTsGridView: React.FC<NFTsGridViewProps> = ({ list, type }) => {
+const NFTsGridView: React.FC<NFTsGridViewProps> = ({ list, type, ...rest }) => {
   const { account } = useSolanaWeb3()
 
   if (!account) {
@@ -36,11 +38,10 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ list, type }) => {
     )
   }
 
-
   return (
     <Grid>
       {list?.map(o => (
-        <NftCard {...o} key={o.mint.toBase58()} />
+        <NftCard type={type} {...rest} {...o} key={o.mint.toBase58()} />
       ))}
     </Grid>
   )

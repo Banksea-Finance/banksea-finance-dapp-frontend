@@ -1,5 +1,5 @@
 import styled, { DefaultTheme } from 'styled-components'
-import { display, flexbox, space, width } from 'styled-system'
+import { display, flexbox, layout, space } from 'styled-system'
 import { CardProps } from './types'
 import { getCardTheme } from './theme'
 
@@ -38,7 +38,7 @@ const StyledCard = styled.div<StyledCardProps>`
   position: relative;
 
   ${space}
-  ${width}
+  ${layout}
   ${flexbox}
   ${display}
 `

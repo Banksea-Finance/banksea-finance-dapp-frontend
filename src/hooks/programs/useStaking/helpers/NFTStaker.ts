@@ -9,24 +9,24 @@ import {
   Transaction
 } from '@solana/web3.js'
 import { StakingProgramIdlType } from '@/hooks/programs/useStaking/constants'
-import { BN, Program } from '@project-serum/anchor'
+import { BN, Program, ProgramAccount } from '@project-serum/anchor'
 import { getAsset, getPassbook, Passbook } from '@/hooks/programs/useStaking/helpers/accounts'
 import { createTokenAccountInstrs } from '@project-serum/common'
 import BigNumber from 'bignumber.js'
 import { AccountFromIDL } from '@/utils/types'
-import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 import { waitTransactionConfirm } from '@/utils'
+import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 
-export class TokenStaker {
+export class NFTStaker {
   poolName: string
   user: PublicKey
   program: Program<StakingProgramIdlType>
   pool: PublicKey
   whitelist: PublicKey
+  rewardTokenName: string
 
-  _depositTokenMint?: PublicKey
-  _tokenAccounts?: Array<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }>
   _poolAccount?: AccountFromIDL<StakingProgramIdlType, 'pool'>
+  _rewardTokenDecimals?: number
 
   constructor(props: {
     program: Program<StakingProgramIdlType>
@@ -34,21 +34,22 @@ export class TokenStaker {
     poolAddress: PublicKey
     user: PublicKey
     whitelist: PublicKey
+    rewardTokenName: string
   }) {
-    const { poolAddress, program, whitelist, user, poolName } = props
+    const { poolAddress, program, whitelist, user, poolName, rewardTokenName } = props
 
     this.poolName = poolName
     this.user = user
     this.program = program
     this.pool = poolAddress
     this.whitelist = whitelist
+    this.rewardTokenName = rewardTokenName
   }
 
-  async deposit(depositAmount: BN, metadata?: PublicKey, callback?: EventCallback): Promise<void> {
+  async deposit(tokenMint: PublicKey, metadata: PublicKey, callback?: EventCallback): Promise<void> {
     callback?.['onBuilding']?.()
 
-    const tokenMint = await this.getDepositTokenMint()
-    const depositAccount = await this.findBalanceEnoughDepositAccount(depositAmount)
+    const depositAccount = await this.getTokenAccount(tokenMint)
 
     const newStakingAccount = Keypair.generate()
     const tx = new Transaction()
@@ -90,16 +91,13 @@ export class TokenStaker {
         stakingSigner
       )
 
-      const remainingAccounts =
-        metadata !== undefined
-          ? [
-            {
-              pubkey: metadata,
-              isWritable: false,
-              isSigner: false
-            }
-          ]
-          : []
+      const remainingAccounts = [
+        {
+          pubkey: metadata,
+          isWritable: false,
+          isSigner: false
+        }
+      ]
 
       const addAssetInstruction = await this.program.instruction.addAsset(assetBump, stakingSignerBump, {
         accounts: {
@@ -119,7 +117,7 @@ export class TokenStaker {
       tx.add(...createTokenAccountInstructions).add(addAssetInstruction)
     }
 
-    const depositInstruction = await this.program.instruction.deposit(depositAmount, {
+    const depositInstruction = await this.program.instruction.deposit(new BN(1), {
       accounts: {
         pool: this.pool,
         passbook: passbook.address,
@@ -141,28 +139,25 @@ export class TokenStaker {
     callback?.['onConfirm']?.()
   }
 
-  async withdraw(withdrawAmount: BN, callback?: EventCallback): Promise<void> {
+  async withdraw(tokenMint: PublicKey, callback?: EventCallback): Promise<void> {
     callback?.['onBuilding']?.()
 
     const { address: passbook } = await getPassbook({
       pool: this.pool,
       user: this.user,
       program: this.program
-    }).catch(e => {
-      throw e
     })
 
-    const depositTokenMint = await this.getDepositTokenMint()
-    const { pubkey: withdrawAccount } = await this.getWithdrawTokenAccount()
+    const { pubkey: withdrawAccount } = await this.getTokenAccount(tokenMint)
 
     const [asset] = await PublicKey.findProgramAddress(
-      [Buffer.from('asset'), passbook.toBuffer(), depositTokenMint.toBuffer()],
+      [Buffer.from('asset'), passbook.toBuffer(), tokenMint.toBuffer()],
       this.program.programId
     )
 
     const { stakingAccount, stakingSigner } = await this.program.account.asset.fetch(asset)
 
-    const signature = await this.program.rpc.withdraw(withdrawAmount, {
+    const signature = await this.program.rpc.withdraw(new BN(1), {
       accounts: {
         pool: this.pool,
         passbook,
@@ -184,6 +179,7 @@ export class TokenStaker {
   async claim(callback?: EventCallback): Promise<void> {
     callback?.['onBuilding']?.()
 
+    const decimals = await this.getRewardTokenDecimals()
     const availableRewards = await this.getAvailableRewards()
 
     const poolAccount = await this.getPoolAccount(true)
@@ -197,13 +193,15 @@ export class TokenStaker {
       pool: this.pool,
       user: this.user,
       program: this.program
+    }).catch(e => {
+      throw e
     })
 
     const claimAccount = (
       await this.program.provider.connection.getTokenAccountsByOwner(this.user, { mint: poolAccount.rewardMint })
     ).value[0].pubkey
 
-    const signature = await this.program.rpc.claim(new BN(availableRewards.toString()), {
+    const signature = await this.program.rpc.claim(new BN(availableRewards.shiftedBy(decimals).toString()), {
       accounts: {
         passbook: passbook.address,
         pool: this.pool,
@@ -218,6 +216,7 @@ export class TokenStaker {
     callback?.['onSent']?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
+
     callback?.['onConfirm']?.()
   }
 
@@ -259,7 +258,9 @@ export class TokenStaker {
 
     const IncRewardAmount = factor.mul(passbook.account.stakingAmount).div(multiple)
 
-    return new BigNumber(passbook.account.rewardAmount.add(IncRewardAmount).toString())
+    const decimals = await this.getRewardTokenDecimals()
+
+    return new BigNumber(passbook.account.rewardAmount.add(IncRewardAmount).toString()).shiftedBy(-decimals)
   }
 
   async getClaimedRewards(): Promise<BigNumber> {
@@ -267,15 +268,15 @@ export class TokenStaker {
       pool: this.pool,
       user: this.user,
       program: this.program
-    }).catch(e => {
-      throw e
     })
 
     if (!passbook.account) {
-      throw new Error('Passbook account not found, maybe you have not deposit yet?')
+      return new BigNumber(0)
     }
 
-    return new BigNumber(passbook.account.claimedAmount.toString())
+    const decimals = await this.getRewardTokenDecimals()
+
+    return new BigNumber(passbook.account.claimedAmount.toString()).shiftedBy(-decimals)
   }
 
   async getAvailableRewards(): Promise<BigNumber> {
@@ -283,42 +284,18 @@ export class TokenStaker {
 
     const claimedReward = await this.getClaimedRewards()
 
-    const decimals = await this.getRewardTokenDecimals()
-
-    return new BigNumber(historyTotalReward.minus(claimedReward).toString()).shiftedBy(-decimals)
+    return new BigNumber(historyTotalReward.minus(claimedReward).toString())
   }
 
-  depositTokenDecimals(): Promise<number> {
-    return this.getDepositTokenMint()
-      .then(tokenMint => this.program.provider.connection.getParsedAccountInfo(tokenMint))
-      .then(account => (account.value?.data as ParsedAccountData).parsed.info.decimals)
-  }
-
-  getRewardTokenDecimals(): Promise<number> {
-    return this.getPoolAccount()
-      .then(poolAccount => poolAccount.rewardMint)
-      .then(rewardMint => this.program.provider.connection.getParsedAccountInfo(rewardMint))
-      .then(account => (account.value?.data as ParsedAccountData).parsed.info.decimals)
-  }
-
-  async findBalanceEnoughDepositAccount(
-    amount: BN
-  ): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> {
-    const accounts = await this.getTokenAccounts()
-
-    if (!accounts.length) {
-      throw new Error('')
+  async getRewardTokenDecimals(): Promise<number> {
+    if (this._rewardTokenDecimals === undefined) {
+      this._rewardTokenDecimals = await this.getPoolAccount()
+        .then(poolAccount => poolAccount.rewardMint)
+        .then(rewardMint => this.program.provider.connection.getParsedAccountInfo(rewardMint))
+        .then(account => (account.value?.data as ParsedAccountData).parsed.info.decimals as number)
     }
 
-    for (const element of accounts) {
-      if (new BN(element.account.data.parsed.info.tokenAmount.amount).gte(amount)) {
-        return element
-      }
-    }
-
-    throw new Error(
-      `${accounts.length} available token account(s) was found, but no one of them has sufficient balance`
-    )
+    return this._rewardTokenDecimals
   }
 
   async getPassbook(): Promise<Passbook> {
@@ -327,68 +304,9 @@ export class TokenStaker {
     return getPassbook({ pool, user, program })
   }
 
-  async getUserDeposited(): Promise<BigNumber> {
-    const passbook = await this.getPassbook()
-
-    const amount = passbook.account?.stakingAmount
-
-    if (!amount) {
-      return new BigNumber(0)
-    }
-
-    const decimals = await this.depositTokenDecimals()
-
-    return new BigNumber(amount.toString()).shiftedBy(-decimals)
-  }
-
-  async getTokenAccounts(): Promise<Array<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }>> {
-    if (!this._tokenAccounts) {
-      const tokenMint = await this.getDepositTokenMint()
-
-      this._tokenAccounts = (
-        await this.program.provider.connection.getParsedTokenAccountsByOwner(this.user, { mint: tokenMint })
-      ).value
-    }
-
-    return this._tokenAccounts
-  }
-
-  async getDepositTokenMint(): Promise<PublicKey> {
-    if (!this._depositTokenMint) {
-      const account = await this.program.account.whitelist.fetchNullable(this.whitelist).catch(e => {
-        throw new Error(`Failed to fetch whitelist account of public key: ${this.whitelist}. (${e.toString()})`)
-      })
-
-      if (!account) {
-        throw new Error(`Whitelist account not found by public key: ${this.whitelist}`)
-      }
-
-      this._depositTokenMint = account.addr
-    }
-
-    return this._depositTokenMint
-  }
-
-  async getWithdrawTokenAccount(): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> {
-    return (await this.getTokenAccounts())[0]
-  }
-
-  async getPoolBalance(): Promise<BigNumber> {
-    const account = await this.program.account.whitelist.fetchNullable(this.whitelist).catch(e => {
-      throw new Error(`Failed to fetch whitelist account of public key: ${this.whitelist}. (${e.toString()})`)
-    })
-
-    if (!account) {
-      throw new Error(`Whitelist account not found by public key: ${this.whitelist}`)
-    }
-
-    const tokenMint = account.addr
-
-    const tokenAccount = await this.program.provider.connection.getParsedTokenAccountsByOwner(this.user, {
-      mint: tokenMint
-    })
-
-    return new BigNumber(tokenAccount.value?.[0]?.account?.data?.parsed?.info?.tokenAmount?.uiAmountString || '0')
+  async getTokenAccount(tokenMint: PublicKey): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> {
+    return (await this.program.provider.connection.getParsedTokenAccountsByOwner(this.user, { mint: tokenMint }))
+      .value[0]
   }
 
   async getPoolAccount(refresh?: boolean): Promise<AccountFromIDL<StakingProgramIdlType, 'pool'>> {
@@ -399,11 +317,18 @@ export class TokenStaker {
     return this._poolAccount
   }
 
-  async getTotalDeposited(): Promise<BigNumber> {
-    const poolAccount = await this.getPoolAccount(true)
+  async getDepositedNFTs(): Promise<Array<ProgramAccount<AccountFromIDL<StakingProgramIdlType, 'asset'>>>> {
+    const passbook = await this.getPassbook()
 
-    const decimals = await this.depositTokenDecimals()
+    const filter = [
+      {
+        memcmp: {
+          offset: 8, // need to prepend 8 bytes for anchor's disc
+          bytes: passbook.address.toBase58()
+        }
+      }
+    ]
 
-    return new BigNumber(poolAccount.totalStakingAmount.toString()).shiftedBy(-decimals)
+    return this.program.account.asset.all(filter)
   }
 }

@@ -5,58 +5,61 @@ import {
   NftCollectionImage,
   StyledNftStakingPoolCard
 } from '@/pages/staking/components/NftStakingPoolCard/index.styles'
-import { PublicKey } from '@solana/web3.js'
 import styled from 'styled-components'
 import Tabs from '@/contexts/theme/components/Tabs/Tabs'
 import NFTsGridView from '@/pages/staking/components/NFTsGridView'
-import { useCitizenOnesWithoutRaritiesQuery } from '@/hooks/queries/useMyCitizenOnesQuery'
-import { BankseaNftCollection } from '@/hooks/programs/useCandyMachine/helpers/constant'
-
-export type NftStakingPoolConfig = {
-  collectionName: string
-  collectionIcon: string
-  publicKey: PublicKey
-}
+import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
+import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
+import { useNFTStaking } from '@/hooks/programs/useStaking'
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, auto);
-  gap: 0 40px;
+  grid-template-columns: repeat(2, minmax(200px, max-content));
+  gap: 10px 40px;
 `
 
-const NftStakingPoolCard: React.FC<BankseaNftCollection> = props => {
-  const { logo, name } = props
+export type NFTStatus = 'deposited' | 'hold'
+
+const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
+  const { logo, name, creator, rewardTokenName } = props
 
   const [key, setKey] = useState('deposit')
 
-  const deposits: any[]  = []
-  const { data: holds } = useCitizenOnesWithoutRaritiesQuery(props)
+  const { data: holds } = useOwnedNFTsQuery(creator)
+
+  const { userDeposited, totalDeposited, userTotalRewards, rewardsPerDay, availableRewards, claim } = useNFTStaking(props)
 
   return (
     <StyledNftStakingPoolCard>
-      <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
-        <NftCollectionImage src={logo} />
-        <Text fontSize={'24px'} bold>
-          {name}
-        </Text>
+      <Flex justifySpaceBetween alignItemsCenter style={{ marginBottom: '48px' }}>
+        <Flex row alignItemsCenter>
+          <NftCollectionImage src={logo} />
+          <Text fontSize={'28px'} bold>
+            {name}
+          </Text>
+        </Flex>
+
+        <Flex alignItemsCenter style={{ background: 'rgb(25,66,101)', padding: '8px 32px', borderRadius: '40px' }}>
+          <Text mr={'16px'} fontSize={'22px'} bold>Available rewards: {availableRewards ? `${availableRewards.toFixed(6)} ${rewardTokenName}` : '-'}</Text>
+          <Button scale={'md'} onClick={claim}>Harvest</Button>
+        </Flex>
       </Flex>
-      <Flex row justifySpaceBetween alignItemsCenter style={{ marginBottom: '48px', padding: '0 16px' }}>
+      <Flex row justifyCenter alignItemsCenter style={{ marginBottom: '48px', padding: '0 16px' }}>
         <GridContainer>
-          <Text>Total Deposit: 91,778</Text>
-          <Text>Total Deposit: 91,1231778</Text>
-          <Text>Total Deposit: 978</Text>
-          <Text>Total Deposit: 91,3222222778</Text>
+          <Text>Total Deposited: {totalDeposited ?? '-'}</Text>
+          <Text>Your Total Rewards: {userTotalRewards ? `${userTotalRewards.toFixed(6)} ${rewardTokenName}` : '-'}</Text>
+          <Text>Your Deposited: {userDeposited?.length ?? '-'}</Text>
+          <Text>Rewards Per Staking: {rewardsPerDay ? `${rewardsPerDay.toFixed(6)} ${rewardTokenName}/day` : '-'}</Text>
         </GridContainer>
-        <Button scale={'sm'}>Claim</Button>
       </Flex>
 
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>
-          <Tabs.Pane title={'My Deposit'} tabKey={'deposit'}>
-            <NFTsGridView list={deposits} type={'deposit'} />
+          <Tabs.Pane title={'My Deposited'} tabKey={'deposit'}>
+            <NFTsGridView {...props} list={userDeposited} type={'deposited'} />
           </Tabs.Pane>
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
-            <NFTsGridView list={holds} type={'hold'} />
+            <NFTsGridView {...props} list={holds} type={'hold'} />
           </Tabs.Pane>
         </Tabs>
       </Flex>
