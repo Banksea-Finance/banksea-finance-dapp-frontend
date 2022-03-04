@@ -1,22 +1,27 @@
 import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
 import React, { useCallback } from 'react'
 import { MetadataResult } from '@/utils/metaplex/metadata'
-import { useModal, useRefreshController } from '@/contexts'
-import { Dialog, Text } from '@/contexts/theme/components'
+import { useModal } from '@/contexts'
+import { Text } from '@/contexts/theme/components'
+import TransactionalDialog from '@/components/TransactionalDialog'
 
-const NFTWithdrawDialog: React.FC<{ staker: NFTStaker, metadataResult: MetadataResult }> = ({ staker, metadataResult }) => {
+const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataResult }> = ({
+  staker,
+  metadataResult
+}) => {
   const { closeModal } = useModal()
-  const { forceRefresh } = useRefreshController()
 
   return (
-    <Dialog
+    <TransactionalDialog
       title={`Withdraw ${staker.poolName}`}
       width={'600px'}
       onCancel={closeModal}
-      onConfirm={() => staker?.withdraw(metadataResult.mint, { onSent: closeModal, onConfirm: forceRefresh })}
+      onSendTransaction={callbacks => staker?.withdraw(metadataResult.mint, callbacks)}
     >
-      <Text bold fontSize={'24px'}>Are you sure to withdraw {metadataResult.data?.name}?</Text>
-    </Dialog>
+      <Text bold fontSize={'24px'}>
+        Are you sure to withdraw {metadataResult.data?.name}?
+      </Text>
+    </TransactionalDialog>
   )
 }
 

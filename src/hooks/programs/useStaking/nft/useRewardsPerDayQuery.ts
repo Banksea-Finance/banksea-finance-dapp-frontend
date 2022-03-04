@@ -37,7 +37,9 @@ const useRewardsPerDayQuery = (staker?: NFTStaker): UseQueryResult<BigNumber> =>
 
       const slotInDay = 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ * 1000 /*milliseconds*/ * slotPerMs
 
-      const rewardsPerDay = new BigNumber(poolAccount.rewardPerSlot.toString()).multipliedBy(new BigNumber(slotInDay))
+      const rewardsPerDay = new BigNumber(poolAccount.rewardPerSlot.toString())
+        .multipliedBy(new BigNumber(slotInDay))
+        .div(new BigNumber(poolAccount.totalStakingAmount.toString()))
 
       const decimals = await staker.getRewardTokenDecimals()
 

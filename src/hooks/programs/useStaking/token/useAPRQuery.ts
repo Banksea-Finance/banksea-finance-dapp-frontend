@@ -1,16 +1,16 @@
 import { useQuery, UseQueryResult } from 'react-query'
 import useStakingProgram from '@/hooks/programs/useStaking/useStakingProgram'
-import { PublicKey } from '@solana/web3.js'
+import { ParsedAccountData, PublicKey } from '@solana/web3.js'
 import BigNumber from 'bignumber.js'
 import { useRefreshController } from '@/contexts'
 
-const useAPRQuery = (pool?: PublicKey): UseQueryResult<BigNumber> => {
+const useAPRQuery = (pool?: PublicKey): UseQueryResult<undefined | { APR: BigNumber, totalRewardsPerDay: BigNumber }> => {
   const { program } = useStakingProgram()
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
     ['TOKEN_APR', program?.programId, pool, intermediateRefreshFlag],
-    async (): Promise<BigNumber | undefined> => {
+    async (): Promise<undefined | { APR: BigNumber, totalRewardsPerDay: BigNumber }> => {
       if (!program || !pool) return undefined
 
       const curSlot = await program.provider.connection.getSlot()
@@ -49,7 +49,14 @@ const useAPRQuery = (pool?: PublicKey): UseQueryResult<BigNumber> => {
         new BigNumber(slotInYear)
       )
 
-      return totalRewardsInYear.div(new BigNumber(poolAccount.totalStakingAmount.toString()))
+      const APR = totalRewardsInYear.div(new BigNumber(poolAccount.totalStakingAmount.toString()))
+
+      const rewardToken = await program.provider.connection.getParsedAccountInfo(poolAccount.rewardMint)
+
+      return {
+        APR,
+        totalRewardsPerDay: totalRewardsInYear.div(365).shiftedBy(-(rewardToken!.value!.data as ParsedAccountData).parsed.info.decimals)
+      }
     },
     { refetchInterval: false }
   )

@@ -1,21 +1,21 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useModal, useRefreshController } from '@/contexts'
-import { Dialog, Input, Text } from '@/contexts/theme/components'
+import { useModal } from '@/contexts'
+import { Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import useUserDepositedQuery from './useUserDepositedQuery'
+import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
+import TransactionalDialog from '@/components/TransactionalDialog'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
   whitelistAddress?: PublicKey
 }
 
-const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = ({ staker, onClose }) => {
+const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const [value, setValue] = useState('')
-  const { closeModal } = useModal()
-  const { forceRefresh } = useRefreshController()
 
   const { data: userDeposits } = useUserDepositedQuery(staker)
 
@@ -52,11 +52,9 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = (
   )
 
   return (
-    <Dialog
+    <TransactionalDialog
+      onSendTransaction={(callbacks: EventCallback) => staker?.withdraw(new BigNumber(value), callbacks)}
       title={`Withdraw ${staker.poolName}`}
-      onConfirm={() => staker?.withdraw(new BigNumber(value), { onSent: closeModal, onConfirm: forceRefresh })}
-      onCancel={onClose}
-      confirmButtonProps={{ disabled: !!inputInvalidError }}
     >
       <div style={{ width: '550px' }}>
         <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
@@ -94,17 +92,17 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker; onClose: () => void }> = (
           </Flex.Item>
         </Flex>
       </div>
-    </Dialog>
+    </TransactionalDialog>
   )
 }
 
 const useWithdraw = (staker?: TokenStaker) => {
-  const { openModal, closeModal } = useModal()
+  const { openModal } = useModal()
 
   return useCallback(async () => {
     if (!staker) return
 
-    openModal(<WithdrawDialog staker={staker} onClose={closeModal} />, false)
+    openModal(<WithdrawDialog staker={staker} />, false)
   }, [staker])
 }
 

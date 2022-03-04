@@ -33,7 +33,7 @@ const useNFTStaking = (props: NFTStakingPoolConfig) => {
   const withdraw = useWithdraw(staker)
   const claim = useClaim(staker)
   const { data: totalDeposited } = useTotalDepositedQuery(staker)
-  const { data: userDeposited } = useUserDepositedQuery(staker)
+  const userDeposited = useUserDepositedQuery(staker)
   const { data: userTotalRewards } = useUserHistoryRewardsQuery(staker)
   const { data: rewardsPerDay } = useRewardsPerDayQuery(staker)
   const { data: availableRewards } = useAvailableRewardsQuery(staker)

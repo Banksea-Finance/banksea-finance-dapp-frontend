@@ -1,11 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useModal, useRefreshController } from '@/contexts'
-import { Dialog, Input, Text } from '@/contexts/theme/components'
+import { useModal } from '@/contexts'
+import { Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { useQuery } from 'react-query'
+import TransactionalDialog from '@/components/TransactionalDialog'
+import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -13,11 +15,7 @@ export type UseTokenDepositProps = {
 }
 
 const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
-  const { closeModal } = useModal()
-  const { forceRefresh } = useRefreshController()
-
   const [value, setValue] = useState('')
-
   const inputInvalidError = useMemo(() => {
     if (!value) {
       return
@@ -52,11 +50,9 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   }, [poolBalance])
 
   return (
-    <Dialog
+    <TransactionalDialog
+      onSendTransaction={(callbacks: EventCallback) => staker?.deposit(new BigNumber(value), callbacks)}
       title={`Deposit ${staker.poolName}`}
-      onConfirm={() => staker?.deposit(new BigNumber(value), { onSent: closeModal, onConfirm: forceRefresh })}
-      onCancel={closeModal}
-      confirmButtonProps={{ disabled: !!inputInvalidError }}
     >
       <div style={{ width: '550px' }}>
         <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
@@ -90,7 +86,7 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
           </Flex.Item>
         </Flex>
       </div>
-    </Dialog>
+    </TransactionalDialog>
   )
 }
 

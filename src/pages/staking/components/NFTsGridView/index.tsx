@@ -6,6 +6,9 @@ import { useSolanaWeb3 } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { NFTStatus } from '@/pages/staking/components/NftStakingPoolCard'
+import { UseQueryResult } from 'react-query'
+import { PropagateLoader } from 'react-spinners'
+import { Flex } from '@react-css/flex'
 
 const Grid = styled.div`
   display: grid;
@@ -15,23 +18,31 @@ const Grid = styled.div`
 `
 
 export type NFTsGridViewProps = NFTStakingPoolConfig & {
-  list?: MetadataResult[]
+  queryResult: UseQueryResult<MetadataResult[] | undefined>
   type: NFTStatus
 }
 
-const NFTsGridView: React.FC<NFTsGridViewProps> = ({ list, type, ...rest }) => {
+const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, type, ...rest }) => {
   const { account } = useSolanaWeb3()
 
   if (!account) {
-    return  (
+    return (
       <Text bold fontSize={'24px'} textAlign={'center'}>
         Please connect to wallet first.
       </Text>
     )
   }
 
-  if (!list?.length) {
-    return  (
+  if (queryResult.isLoading || queryResult.data === undefined) {
+    return (
+      <Flex justifyCenter style={{ margin: '16px 0 56px 0' }}>
+        <PropagateLoader size={32} color={'#abc'}  />
+      </Flex>
+    )
+  }
+
+  if (!queryResult.data?.length) {
+    return (
       <Text bold fontSize={'24px'} textAlign={'center'}>
         You have NOT {type} anyone.
       </Text>
@@ -40,7 +51,7 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ list, type, ...rest }) => {
 
   return (
     <Grid>
-      {list?.map(o => (
+      {queryResult.data.map(o => (
         <NftCard type={type} {...rest} {...o} key={o.mint.toBase58()} />
       ))}
     </Grid>

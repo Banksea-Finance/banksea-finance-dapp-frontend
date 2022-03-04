@@ -9,11 +9,14 @@ import Flex from '@react-css/flex'
 import { Button, Text } from '@/contexts/theme/components'
 import { useTokenStaking } from '@/hooks/programs/useStaking'
 import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
+import { ClipLoader } from 'react-spinners'
+
+const Loader = () => <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies } = props
 
-  const { deposit, userDeposited, totalDeposited, totalRewards, APR, withdraw, harvest } = useTokenStaking(props)
+  const { deposit, userDeposited, totalDeposited, availableRewards, APR, withdraw, harvest } = useTokenStaking(props)
 
   return (
     <StyledTokenStakingPoolCard>
@@ -35,19 +38,19 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
       </Flex>
 
       <InfoGrid>
-        <Text>Total Deposits: {totalDeposited?.toString() || '-'}</Text>
+        <Text>Total Deposits: {totalDeposited?.toString() || <Loader />}</Text>
 
-        <Text>APR: {APR ? `${APR?.multipliedBy(100)?.toFixed(2)}%` : '-'}</Text>
+        <Text>APR: {APR ? `${APR?.APR.multipliedBy(100)?.toFixed(2)}% (${APR.totalRewardsPerDay.toFixed(2)}/day)` : <Loader />}</Text>
 
-        <Text>Your Deposits: {userDeposited?.toString() || '-'}</Text>
+        <Text>Your Deposits: {userDeposited?.toString() || <Loader />}</Text>
 
-        <Text>Your Total Rewards: {totalRewards?.toString() || '-'}</Text>
+        <Text>Available Rewards: {availableRewards?.toFixed(6) || <Loader />}</Text>
       </InfoGrid>
 
       <Flex row justifySpaceBetween>
         <Button onClick={deposit}>Deposit</Button>
         <Button onClick={withdraw}>Withdraw</Button>
-        <Button onClick={harvest}>Claim</Button>
+        <Button onClick={harvest}>Harvest</Button>
       </Flex>
     </StyledTokenStakingPoolCard>
   )

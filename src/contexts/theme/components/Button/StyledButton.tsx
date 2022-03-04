@@ -4,7 +4,7 @@ import { scaleVariants, styleVariants } from './theme'
 import { BaseButtonProps } from './types'
 
 interface ThemedButtonProps extends BaseButtonProps {
-  theme: DefaultTheme;
+  theme: DefaultTheme
 }
 
 const getDisabledStyles = ({ isLoading, theme }: ThemedButtonProps) => {
@@ -38,8 +38,10 @@ interface TransientButtonProps extends ThemedButtonProps {
   $isLoading?: boolean;
 }
 
-const getOpacity = ({ $isLoading = false }: TransientButtonProps) => {
-  return $isLoading ? '.5' : '1'
+const getOpacity = ({ disabled, $isLoading }: TransientButtonProps) => {
+  if ($isLoading) return '1'
+
+  return disabled ? '.5' : '1'
 }
 
 const StyledButton = styled.button<BaseButtonProps>`

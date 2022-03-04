@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Card, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
-import { ReactComponent as CloseIcon } from '@/assets/images/close.svg'
 import { ButtonProps } from '@/contexts/theme/components/Button'
 import { CardProps } from '@/contexts/theme/components/Card'
 
@@ -12,6 +11,7 @@ export type DialogProps = CardProps & {
   confirmButtonProps?: ButtonProps
   onConfirm?: () => void
   onCancel?: () => void
+  bottomMessage?: string | JSX.Element
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -20,6 +20,7 @@ const Dialog: React.FC<DialogProps> = ({
   confirmButtonProps,
   onCancel,
   onConfirm,
+  bottomMessage,
   children,
   ...rest
 }) => {
@@ -33,13 +34,8 @@ const Dialog: React.FC<DialogProps> = ({
         <Text bold fontSize={'24px'}>
           {title}
         </Text>
-        <Text onClick={onCancel}>
-          <CloseIcon width={'24px'} height={'24px'} fill={'#909090'} style={{ cursor: 'pointer' }} />
-        </Text>
       </Flex>
-      <div style={{ marginBottom: '16px' }}>
-        {children}
-      </div>
+      <div style={{ marginBottom: '16px' }}>{children}</div>
       <div
         style={{
           display: 'grid',
@@ -54,6 +50,10 @@ const Dialog: React.FC<DialogProps> = ({
         <Button {...confirmButtonProps} onClick={onConfirm}>
           {confirmButtonProps?.children || 'Confirm'}
         </Button>
+      </div>
+
+      <div style={{ marginTop: '16px' }}>
+        {bottomMessage}
       </div>
     </Card>
   )

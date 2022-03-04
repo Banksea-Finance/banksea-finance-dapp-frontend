@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import useStakingProgram from './useStakingProgram'
 import {
   useAPRQuery,
+  useAvailableRewardsQuery,
   useClaim,
   useDeposit,
   useTotalDepositedQuery,
@@ -35,6 +36,7 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const { data: APR } = useAPRQuery(staker?.pool)
   const { data: userDeposited } = useUserDepositedQuery(staker)
   const { data: totalDeposited } = useTotalDepositedQuery(staker)
+  const { data: availableRewards } = useAvailableRewardsQuery(staker)
 
   const { data: totalRewards } = useUserHistoryRewards(staker)
 
@@ -46,6 +48,7 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
     totalRewards,
     userDeposited,
     totalDeposited,
+    availableRewards,
     program
   }
 }

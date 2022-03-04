@@ -11,6 +11,9 @@ import NFTsGridView from '@/pages/staking/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { useNFTStaking } from '@/hooks/programs/useStaking'
+import { ClipLoader } from 'react-spinners'
+
+export type NFTStatus = 'deposited' | 'hold'
 
 const GridContainer = styled.div`
   display: grid;
@@ -18,15 +21,13 @@ const GridContainer = styled.div`
   gap: 10px 40px;
 `
 
-export type NFTStatus = 'deposited' | 'hold'
+const Loader = () => <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
 
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
 
   const [key, setKey] = useState('deposit')
-
-  const { data: holds } = useOwnedNFTsQuery(creator)
-
+  const holds = useOwnedNFTsQuery(creator)
   const { userDeposited, totalDeposited, userTotalRewards, rewardsPerDay, availableRewards, claim } = useNFTStaking(props)
 
   return (
@@ -40,26 +41,28 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         </Flex>
 
         <Flex alignItemsCenter style={{ background: 'rgb(25,66,101)', padding: '8px 32px', borderRadius: '40px' }}>
-          <Text mr={'16px'} fontSize={'22px'} bold>Available rewards: {availableRewards ? `${availableRewards.toFixed(6)} ${rewardTokenName}` : '-'}</Text>
+          <Text mr={'16px'} fontSize={'22px'} bold>Available rewards: {availableRewards ? `${availableRewards.toFixed(6)} ${rewardTokenName}` : (<Loader />)}</Text>
           <Button scale={'md'} onClick={claim}>Harvest</Button>
         </Flex>
       </Flex>
+
       <Flex row justifyCenter alignItemsCenter style={{ marginBottom: '48px', padding: '0 16px' }}>
         <GridContainer>
-          <Text>Total Deposited: {totalDeposited ?? '-'}</Text>
-          <Text>Your Total Rewards: {userTotalRewards ? `${userTotalRewards.toFixed(6)} ${rewardTokenName}` : '-'}</Text>
-          <Text>Your Deposited: {userDeposited?.length ?? '-'}</Text>
-          <Text>Rewards Per Staking: {rewardsPerDay ? `${rewardsPerDay.toFixed(6)} ${rewardTokenName}/day` : '-'}</Text>
+          <Text>Total Deposited: {totalDeposited ?? (<Loader />)}</Text>
+          <Text>Your Total Rewards: {userTotalRewards ? `${userTotalRewards.toFixed(6)} ${rewardTokenName}` : (<Loader />)}</Text>
+          <Text>Your Deposited: {userDeposited?.data?.length ?? (<Loader />)}</Text>
+          <Text>Rewards Per Staking: {rewardsPerDay ? `${rewardsPerDay.toFixed(6)} ${rewardTokenName}/day` : (<Loader />)}</Text>
         </GridContainer>
       </Flex>
 
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>
           <Tabs.Pane title={'My Deposited'} tabKey={'deposit'}>
-            <NFTsGridView {...props} list={userDeposited} type={'deposited'} />
+            <NFTsGridView {...props} queryResult={userDeposited} type={'deposited'} />
           </Tabs.Pane>
+
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
-            <NFTsGridView {...props} list={holds} type={'hold'} />
+            <NFTsGridView {...props} queryResult={holds} type={'hold'} />
           </Tabs.Pane>
         </Tabs>
       </Flex>

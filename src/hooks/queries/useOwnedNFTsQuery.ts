@@ -8,16 +8,16 @@ const belongsToCollection = (data: MetadataResult, creator: PublicKey) => {
   return data?.creators?.[0]?.address === creator.toBase58()
 }
 
-export const useOwnedNFTsQuery = (creator: PublicKey): UseQueryResult<MetadataResult[]> => {
+export const useOwnedNFTsQuery = (creator: PublicKey): UseQueryResult<MetadataResult[] | undefined> => {
   const { connection } = useSolanaConnectionConfig()
   const { account } = useSolanaWeb3()
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
     ['OwnedNFTs', account, creator, intermediateRefreshFlag],
-    async (): Promise<MetadataResult[]> => {
+    async (): Promise<MetadataResult[] | undefined> => {
       if (!account || !connection) {
-        return []
+        return undefined
       }
 
       const tokenAccounts = await connection.getParsedTokenAccountsByOwner(

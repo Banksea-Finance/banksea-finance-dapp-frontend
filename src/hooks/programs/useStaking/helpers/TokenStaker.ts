@@ -49,8 +49,6 @@ export class TokenStaker {
    * @param callback
    */
   async deposit(amount: BigNumber, callback?: EventCallback): Promise<void> {
-    callback?.['onBuilding']?.()
-
     const decimals = await this.depositTokenDecimals()
     const depositAmount: BN = new BN(amount.shiftedBy(decimals).toString())
 
@@ -128,12 +126,13 @@ export class TokenStaker {
     })
 
     tx.add(depositInstruction)
+    callback?.['onTransactionBuilt']?.()
 
     const signature = await this.program.provider.send(tx, assetAccount ? [] : [newStakingAccount])
     callback?.['onSent']?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.()
+    callback?.['onConfirm']?.(signature)
   }
 
   /**
@@ -141,8 +140,6 @@ export class TokenStaker {
    * @param callback
    */
   async withdraw(amount: BigNumber, callback?: EventCallback): Promise<void> {
-    callback?.['onBuilding']?.()
-
     const decimals = await this.depositTokenDecimals()
     const withdrawAmount: BN = new BN(amount.shiftedBy(decimals).toString())
 
@@ -163,6 +160,7 @@ export class TokenStaker {
     )
 
     const { stakingAccount, stakingSigner } = await this.program.account.asset.fetch(asset)
+    callback?.['onTransactionBuilt']?.()
 
     const signature = await this.program.rpc.withdraw(withdrawAmount, {
       accounts: {
@@ -180,12 +178,10 @@ export class TokenStaker {
     callback?.['onSent']?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.()
+    callback?.['onConfirm']?.(signature)
   }
 
   async claim(callback?: EventCallback): Promise<void> {
-    callback?.['onBuilding']?.()
-
     const decimals = await this.getRewardTokenDecimals()
     const availableRewards = await this.getAvailableRewards()
 
@@ -206,6 +202,8 @@ export class TokenStaker {
       await this.program.provider.connection.getTokenAccountsByOwner(this.user, { mint: poolAccount.rewardMint })
     ).value[0].pubkey
 
+    callback?.['onTransactionBuilt']?.()
+
     const signature = await this.program.rpc.claim(new BN(availableRewards.shiftedBy(decimals).toString()), {
       accounts: {
         passbook: passbook.address,
@@ -221,7 +219,7 @@ export class TokenStaker {
     callback?.['onSent']?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.()
+    callback?.['onConfirm']?.(signature)
   }
 
   async getHistoryTotalRewards(): Promise<BigNumber> {

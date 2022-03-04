@@ -47,7 +47,7 @@ export class NFTStaker {
   }
 
   async deposit(tokenMint: PublicKey, metadata: PublicKey, callback?: EventCallback): Promise<void> {
-    callback?.['onBuilding']?.()
+    callback?.['onTransactionBuilt']?.()
 
     const depositAccount = await this.getTokenAccount(tokenMint)
 
@@ -140,7 +140,7 @@ export class NFTStaker {
   }
 
   async withdraw(tokenMint: PublicKey, callback?: EventCallback): Promise<void> {
-    callback?.['onBuilding']?.()
+    callback?.['onTransactionBuilt']?.()
 
     const { address: passbook } = await getPassbook({
       pool: this.pool,
@@ -177,7 +177,7 @@ export class NFTStaker {
   }
 
   async claim(callback?: EventCallback): Promise<void> {
-    callback?.['onBuilding']?.()
+    callback?.['onTransactionBuilt']?.()
 
     const decimals = await this.getRewardTokenDecimals()
     const availableRewards = await this.getAvailableRewards()
