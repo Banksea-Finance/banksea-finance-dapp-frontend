@@ -51,11 +51,9 @@ const useAPRQuery = (pool?: PublicKey): UseQueryResult<undefined | { APR: BigNum
 
       const APR = totalRewardsInYear.div(new BigNumber(poolAccount.totalStakingAmount.toString()))
 
-      const rewardToken = await program.provider.connection.getParsedAccountInfo(poolAccount.rewardMint)
-
       return {
         APR,
-        totalRewardsPerDay: totalRewardsInYear.div(365).shiftedBy(-(rewardToken!.value!.data as ParsedAccountData).parsed.info.decimals)
+        totalRewardsPerDay: APR.div(365)
       }
     },
     { refetchInterval: false }
