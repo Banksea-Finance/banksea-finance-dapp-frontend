@@ -38,13 +38,45 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
       </Flex>
 
       <InfoGrid>
-        <Text>Total Deposits: {totalDeposited?.toString() || <Loader />}</Text>
+        <Text>
+          {'Total Deposits: '}
+          {
+            totalDeposited.isLoading
+              ? <Loader />
+              : (totalDeposited.data?.toFixed(4) || '-')
+          }
+        </Text>
 
-        <Text>APR: {APR ? `${APR?.APR.multipliedBy(100)?.toFixed(2)}% (${APR.totalRewardsPerDay.toFixed(2)}/day)` : <Loader />}</Text>
+        <Text>
+          {'APR: '}
+          {
+            APR.isLoading ? (
+              <Loader />
+            ) : (
+              APR.data
+                ? `${APR.data.APR.multipliedBy(100)?.toFixed(2)}% (${APR.data.totalRewardsPerDay.toFixed(9)}/day)`
+                : '-'
+            )
+          }
+        </Text>
 
-        <Text>Your Deposits: {userDeposited?.toString() || <Loader />}</Text>
+        <Text>
+          {'Your Deposits: '}
+          {
+            userDeposited.isLoading
+              ? <Loader />
+              : (userDeposited.data?.toFixed(4) || '-')
+          }
+        </Text>
 
-        <Text>Available Rewards: {availableRewards?.toFixed(6) || <Loader />}</Text>
+        <Text>
+          {'Available Rewards: '}
+          {
+            availableRewards.isLoading
+              ? <Loader />
+              : (availableRewards.data?.toFixed(4) || '-')
+          }
+        </Text>
       </InfoGrid>
 
       <Flex row justifySpaceBetween>

@@ -33,10 +33,10 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const withdraw = useWithdraw(staker)
   const harvest = useClaim(staker)
 
-  const { data: APR } = useAPRQuery(staker?.pool)
-  const { data: userDeposited } = useUserDepositedQuery(staker)
-  const { data: totalDeposited } = useTotalDepositedQuery(staker)
-  const { data: availableRewards } = useAvailableRewardsQuery(staker)
+  const APR = useAPRQuery(staker?.pool)
+  const userDeposited = useUserDepositedQuery(staker)
+  const totalDeposited = useTotalDepositedQuery(staker)
+  const availableRewards = useAvailableRewardsQuery(staker)
 
   const { data: totalRewards } = useUserHistoryRewards(staker)
 
