@@ -8,4 +8,5 @@ export interface TextProps extends SpaceProps, TypographyProps {
   bold?: boolean
   small?: boolean
   textTransform?: 'uppercase' | 'lowercase' | 'capitalize'
+  important?: boolean
 }

@@ -5,6 +5,7 @@ import Navbar from '@/components/navbar'
 import StakingPage from '@/pages/staking'
 import Redirect from '@/pages/redirect'
 import BigNumber from 'bignumber.js'
+import AirdropPage from '@/pages/airdrop'
 
 BigNumber.config({
   EXPONENTIAL_AT: 64
@@ -18,7 +19,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path={'/'} element={<Redirect to={'/staking'} />} />
           <Route path={'staking'} element={<StakingPage />} />
-          <Route path={'airdrop'} element={<div>????</div>} />
+          <Route path={'airdrop'} element={<AirdropPage />} />
         </Routes>
       </BrowserRouter>
     </AppContainer>

@@ -1,6 +1,8 @@
 import React, { cloneElement, useCallback, useContext, useState } from 'react'
 import ReactModal from 'react-modal'
 import { useResponsive } from '@/contexts/theme/hooks'
+import styled, { keyframes } from 'styled-components'
+import { sleep } from '@/utils'
 
 export type ModalContextValue = {
   open: (content: ModalConfig['content'], closeable?: boolean) => void
@@ -57,6 +59,26 @@ const ModalContext = React.createContext<ModalContextValue>({
   removeEventListener: (_event: ModalEvents, _callbackId: number) => {}
 })
 
+const ZoomIn = keyframes`
+  from {
+    transform: scale(0%);
+  }
+  
+  to {
+    transform: scale(100%);
+  }
+`
+
+const AnimatedContainer = styled.div`
+  animation: ${ZoomIn} 0.15s ease-out;
+`
+
+const StyledReactModal = styled(ReactModal)`
+  :focus-visible {
+    outline: none;
+  }
+`
+
 const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boolean; contentWrapper?: JSX.Element }> = ({
   contentStyle,
   contentWrapper,
@@ -66,7 +88,7 @@ const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boole
   const { isDesktop } = useResponsive()
 
   return (
-    <ReactModal
+    <StyledReactModal
       preventScroll={true}
       isOpen={isOpen}
       className={'modal-wrapper'}
@@ -84,7 +106,7 @@ const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boole
       }}
     >
       {contentWrapper ? cloneElement(contentWrapper, { children }) : children}
-    </ReactModal>
+    </StyledReactModal>
   )
 }
 
@@ -117,8 +139,14 @@ const ModalProvider: React.FC = ({ children }) => {
     closeable: true
   })
 
-  const open = useCallback((content: ModalConfig['content'], closeable?: boolean) => {
+  const open = useCallback(async (content: ModalConfig['content'], closeable?: boolean) => {
+    if (!visible) {
+      setVisible(false)
+      await sleep(50)
+    }
+
     setVisible(true)
+
     if (closeable === undefined) {
       setConfig(prev => ({ ...prev, closeable: true }))
     } else {
@@ -204,7 +232,6 @@ const ModalProvider: React.FC = ({ children }) => {
         return -1
       }
 
-
       callbacks?.splice(index(), 1)
 
       return prev?.set(event, callbacks || [])
@@ -217,7 +244,9 @@ const ModalProvider: React.FC = ({ children }) => {
     <ModalContext.Provider value={{ open, update, close, configModal, addEventListener, removeEventListener }}>
       <ModalWrapper isOpen={visible} contentStyle={config.contentStyle} contentWrapper={config.contentWrapper}>
         <CloseButton show={config.closeable} onClose={close} />
-        {content}
+        <AnimatedContainer>
+          {content}
+        </AnimatedContainer>
       </ModalWrapper>
       {children}
     </ModalContext.Provider>

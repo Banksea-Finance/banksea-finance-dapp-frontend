@@ -40,7 +40,7 @@ function notify({ title = '', message = '', type = 'info' }: NotifyProps) {
     style: {
       left: '2%',
       bottom: '2%',
-      position: 'absolute'
+      position: 'fixed'
     },
     closable: true,
     duration: 3

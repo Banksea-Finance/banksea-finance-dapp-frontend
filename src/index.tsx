@@ -25,15 +25,15 @@ ReactDOM.render(
   <QueryClientProvider client={queryClient}>
     <ThemeWrapperProvider>
       <GlobalStyles />
-      <ModalProvider>
-        <RefreshControllerProvider>
-          <SolanaConnectionConfigProvider>
-            <SolanaWeb3Provider>
+      <SolanaConnectionConfigProvider>
+        <SolanaWeb3Provider>
+          <ModalProvider>
+            <RefreshControllerProvider>
               <App />
-            </SolanaWeb3Provider>
-          </SolanaConnectionConfigProvider>
-        </RefreshControllerProvider>
-      </ModalProvider>
+            </RefreshControllerProvider>
+          </ModalProvider>
+        </SolanaWeb3Provider>
+      </SolanaConnectionConfigProvider>
     </ThemeWrapperProvider>
   </QueryClientProvider>,
   document.getElementById('root')

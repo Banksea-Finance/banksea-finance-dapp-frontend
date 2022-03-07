@@ -11,7 +11,7 @@ const getDisabledStyles = ({ isLoading, theme }: ThemedButtonProps) => {
   if (isLoading === true) {
     return `
       &:disabled,
-      &.pancake-button--disabled {
+      &.button--disabled {
         cursor: not-allowed;
       }
     `
@@ -19,7 +19,7 @@ const getDisabledStyles = ({ isLoading, theme }: ThemedButtonProps) => {
 
   return `
     &:disabled,
-    &.pancake-button--disabled {
+    &.button--disabled {
       background-color: ${theme.colors.backgroundDisabled};
       border-color: ${theme.colors.backgroundDisabled};
       box-shadow: none;

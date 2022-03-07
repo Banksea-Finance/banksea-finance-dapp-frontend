@@ -1,5 +1,5 @@
 import styled, { DefaultTheme } from 'styled-components'
-import { display, flexbox, layout, space } from 'styled-system'
+import { display, flexbox, layout, overflow, space } from 'styled-system'
 import { CardProps } from './types'
 import { getCardTheme } from './theme'
 
@@ -8,10 +8,14 @@ interface StyledCardProps extends CardProps {
 }
 
 /**
- * Priority: Warning --> Success --> Active
+ * Priority: Plain --> Warning --> Success --> Active
  */
-const getBoxShadow = ({ isActive, isSuccess, isWarning, theme }: StyledCardProps) => {
+const getBoxShadow = ({ plain, isActive, isSuccess, isWarning, theme }: StyledCardProps) => {
   const cardTheme = getCardTheme({ theme })
+
+  if (plain) {
+    return ''
+  }
 
   if (isWarning) {
     return cardTheme.boxShadowWarning
@@ -41,6 +45,7 @@ const StyledCard = styled.div<StyledCardProps>`
   ${layout}
   ${flexbox}
   ${display}
+  ${overflow}
 `
 
 StyledCard.defaultProps = {
