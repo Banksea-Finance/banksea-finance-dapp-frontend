@@ -26,10 +26,12 @@ export interface CardProps
     SpaceProps,
     HTMLAttributes<HTMLDivElement>,
     OverflowProps {
+
   plain?: boolean
   isActive?: boolean
   isSuccess?: boolean
   isWarning?: boolean
   isDisabled?: boolean
   ribbon?: React.ReactNode
+  activeOnHover?: boolean
 }

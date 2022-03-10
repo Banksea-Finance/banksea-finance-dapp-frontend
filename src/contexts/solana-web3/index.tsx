@@ -9,8 +9,7 @@ import { shortenAddress } from '@/utils'
 import useEagerConnect from '@/hooks/useEagerConnect'
 import useLocalStorage, { LOCAL_STORAGE_WALLET_KEY } from '@/hooks/useLocalStorage'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
-import { Card, notify, Text } from '@/contexts/theme/components'
-import { useResponsive } from '@/contexts/theme/hooks'
+import { notify } from '@/contexts/theme/components'
 
 export interface WalletAdapter extends EventEmitter {
   publicKey: PublicKey
@@ -52,37 +51,6 @@ const SolanaWeb3Context = React.createContext<WalletContextValues>({
   // connect: () => {},
   disconnect: () => {}
 })
-
-const WalletSelectDialog: React.FC = ({ children }) => {
-  const { isDesktop } = useResponsive()
-
-  const style: React.CSSProperties = isDesktop
-    ? {
-      width: '400px',
-      height: 'fit-content',
-      display: 'grid',
-      rowGap: '16px',
-      alignItems: 'center',
-      padding: '24px 32px'
-    }
-    : {
-      width: '90%',
-      height: 'fit-content',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '20px'
-    }
-
-  return (
-    <Card style={style}>
-      <Text fontSize={'28px'} marginBottom={'16px'} important textAlign={'center'}>
-        Connect Wallet
-      </Text>
-      {children}
-    </Card>
-  )
-}
 
 export const SolanaWeb3Provider: React.FC = ({ children }) => {
   const { endpointUrl } = useSolanaConnectionConfig()

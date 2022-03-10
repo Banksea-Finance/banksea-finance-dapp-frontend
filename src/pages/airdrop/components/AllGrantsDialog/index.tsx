@@ -6,17 +6,17 @@ import { Flex } from '@react-css/flex'
 import { CardRibbon } from '@/contexts/theme/components/Card'
 import { useModal } from '@/contexts'
 import { RegisterGrantDialog } from '@/pages/airdrop/components/RegisterGrantDialog'
-import { SupportedChainKeys } from '@/hooks/useMultiChains'
+import { SupportedChainIds } from '@/hooks/useMultiChainsWeb3'
 
 export type Grant = {
   key: string
   name: string
-  chain: SupportedChainKeys
+  chainId: SupportedChainIds
   image: string
 }
 
 const ALL_GRANTS: Grant[] = [
-  {
+  /* {
     key: 'solana-1',
     name: 'Solana Grant',
     chain: 'SOLANA',
@@ -27,29 +27,29 @@ const ALL_GRANTS: Grant[] = [
     name: 'Solana Ignition Hackathon Round-2',
     chain: 'SOLANA',
     image: 'https://hackerlink.s3.amazonaws.com/static/files/Solana2_eJt96fb.jpg',
-  },
+  },*/
   {
     key: 'polygon',
     name: 'Polygon-Grants Hackathon Round-1',
-    chain: 'POLYGON',
-    image: 'https://hackerlink.s3.amazonaws.com/static/files/polygon_Zvm92US.jpg'
+    chainId: 137,
+    image: require('@/assets/images/grants/polygon.png')
   },
   {
     key: 'filecoin',
     name: 'Filecoin Grant',
-    chain: 'BSC',
-    image: 'https://hackerlink.s3.amazonaws.com/static/files/filecoin_aDAkjr6.jpg'
+    chainId: 56,
+    image: require('@/assets/images/grants/filecoin.png')
   },
   {
     key: 'okexchain',
     name: 'OKExChain Grant',
-    chain: 'OEC',
-    image: 'https://hackerlink.s3.amazonaws.com/static/files/okexchain_qcs6jCM.jpg'
+    chainId: 66,
+    image: require('@/assets/images/grants/okexchain.png')
   },
 ]
 
 const GrantCard: React.FC<Grant & { registered?: boolean }> = props => {
-  const { name, chain, image, key, registered } = props
+  const { name, image, registered } = props
 
   const { openModal } = useModal()
 
@@ -59,6 +59,8 @@ const GrantCard: React.FC<Grant & { registered?: boolean }> = props => {
       p={'0 0 4px 0'}
       ribbon={registered ? <CardRibbon text={'Registered'} textStyle={{ fontSize: '18px', bold: true }} /> : undefined}
       isActive={registered}
+      activeOnHover
+      style={{ cursor: 'pointer' }}
     >
       <img src={image} alt={name} style={{ width: '350px' }} />
       <Flex alignItemsCenter justifyCenter>

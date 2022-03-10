@@ -40,6 +40,13 @@ const StyledCard = styled.div<StyledCardProps>`
   color: ${({ theme, isDisabled }) => theme.colors[isDisabled ? 'textDisabled' : 'text']};
   overflow: hidden;
   position: relative;
+  transition: all 0.28s;
+  
+  ${props => props.activeOnHover && `
+    &:hover {
+      box-shadow: ${getCardTheme(props).boxShadowActive};
+    }  
+  `}
 
   ${space}
   ${layout}

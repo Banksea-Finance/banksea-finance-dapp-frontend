@@ -26,7 +26,7 @@ const NFTImage = styled.img`
 
 const NftCard: React.FC<MetadataResult> = ({ data }) => {
   return (
-    <StyledNftCard className={'nft-card'}>
+    <StyledNftCard className={'nft-card'} plain>
       <NFTImage src={data?.image} alt="" />
       <Text bold fontSize={'24px'} color={'primary'} mb={'8px'}>
         {data?.name}
@@ -36,10 +36,10 @@ const NftCard: React.FC<MetadataResult> = ({ data }) => {
 }
 
 const Container = styled.div`
-  width: 654px;
+  width: 644px;
 
   @media screen and (max-width: 1620px) {
-    width: 436px;
+    width: 426px;
   }
 
   @media screen and (max-width: 1334px) {
@@ -51,11 +51,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, 208px);
   justify-content: start;
-  gap: 0 20px;
-  
-  .nft-card {
-    margin-bottom: 20px;
-  }
+  gap: 10px;
 `
 
 export const UserHoldNFTs: React.FC = () => {

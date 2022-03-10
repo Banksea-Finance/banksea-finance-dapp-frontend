@@ -1,6 +1,5 @@
 import { PhantomWalletAdapter, SlopeWalletAdapter } from '@/contexts/solana-web3/wallet-adapters'
 import { SolanaWallet, SupportWalletNames } from '@/contexts'
-import { Cluster, clusterApiUrl } from '@solana/web3.js'
 
 export const SUPPORT_WALLETS: Record<SupportWalletNames, SolanaWallet> = {
   Phantom: {
