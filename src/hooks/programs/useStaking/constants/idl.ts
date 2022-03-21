@@ -48,11 +48,11 @@ export type Staking = {
       ],
       'args': [
         {
-          'name': 'rewardPerSlot',
+          'name': 'rewardPerSec',
           'type': 'u64'
         },
         {
-          'name': 'rewardEndSlot',
+          'name': 'rewardEndSec',
           'type': 'u64'
         },
         {
@@ -110,7 +110,7 @@ export type Staking = {
       ]
     },
     {
-      'name': 'setEnddingSlot',
+      'name': 'setEndding',
       'accounts': [
         {
           'name': 'pool',
@@ -130,7 +130,7 @@ export type Staking = {
       ],
       'args': [
         {
-          'name': 'endSlot',
+          'name': 'endSec',
           'type': 'u64'
         }
       ]
@@ -156,7 +156,7 @@ export type Staking = {
       ],
       'args': [
         {
-          'name': 'rewardPerSlot',
+          'name': 'rewardPerSec',
           'type': 'u64'
         }
       ]
@@ -348,7 +348,7 @@ export type Staking = {
         },
         {
           'name': 'user',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -363,6 +363,47 @@ export type Staking = {
           'type': 'u64'
         }
       ]
+    },
+    {
+      'name': 'refund',
+      'accounts': [
+        {
+          'name': 'pool',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'refundAccount',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'rewardSigner',
+          'isMut': false,
+          'isSigner': false
+        },
+        {
+          'name': 'rewardAccount',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'tokenProgram',
+          'isMut': false,
+          'isSigner': false
+        },
+        {
+          'name': 'authority',
+          'isMut': false,
+          'isSigner': true
+        },
+        {
+          'name': 'clock',
+          'isMut': false,
+          'isSigner': false
+        }
+      ],
+      'args': []
     },
     {
       'name': 'claim',
@@ -431,11 +472,11 @@ export type Staking = {
             'type': 'publicKey'
           },
           {
-            'name': 'rewardPerSlot',
+            'name': 'rewardPerSec',
             'type': 'u64'
           },
           {
-            'name': 'lastAccSlot',
+            'name': 'lastAccSec',
             'type': 'u64'
           },
           {
@@ -463,7 +504,7 @@ export type Staking = {
             'type': 'u64'
           },
           {
-            'name': 'endSlot',
+            'name': 'endSec',
             'type': 'u64'
           },
           {
@@ -612,13 +653,23 @@ export type Staking = {
     },
     {
       'code': 303,
-      'name': 'InvalidEndSlot',
-      'msg': 'invalid end slot'
+      'name': 'InvalidEndSec',
+      'msg': 'invalid end sec'
     },
     {
       'code': 304,
       'name': 'StakingHasEnded',
       'msg': 'staking has ended'
+    },
+    {
+      'code': 305,
+      'name': 'StakingHasNotEnded',
+      'msg': 'staking hasn\'t ended'
+    },
+    {
+      'code': 306,
+      'name': 'InvalidRefundAmount',
+      'msg': 'invalid refund amount'
     }
   ]
 };
@@ -673,11 +724,11 @@ export const IDL: Staking = {
       ],
       'args': [
         {
-          'name': 'rewardPerSlot',
+          'name': 'rewardPerSec',
           'type': 'u64'
         },
         {
-          'name': 'rewardEndSlot',
+          'name': 'rewardEndSec',
           'type': 'u64'
         },
         {
@@ -735,7 +786,7 @@ export const IDL: Staking = {
       ]
     },
     {
-      'name': 'setEnddingSlot',
+      'name': 'setEndding',
       'accounts': [
         {
           'name': 'pool',
@@ -755,7 +806,7 @@ export const IDL: Staking = {
       ],
       'args': [
         {
-          'name': 'endSlot',
+          'name': 'endSec',
           'type': 'u64'
         }
       ]
@@ -781,7 +832,7 @@ export const IDL: Staking = {
       ],
       'args': [
         {
-          'name': 'rewardPerSlot',
+          'name': 'rewardPerSec',
           'type': 'u64'
         }
       ]
@@ -973,7 +1024,7 @@ export const IDL: Staking = {
         },
         {
           'name': 'user',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -988,6 +1039,47 @@ export const IDL: Staking = {
           'type': 'u64'
         }
       ]
+    },
+    {
+      'name': 'refund',
+      'accounts': [
+        {
+          'name': 'pool',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'refundAccount',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'rewardSigner',
+          'isMut': false,
+          'isSigner': false
+        },
+        {
+          'name': 'rewardAccount',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'tokenProgram',
+          'isMut': false,
+          'isSigner': false
+        },
+        {
+          'name': 'authority',
+          'isMut': false,
+          'isSigner': true
+        },
+        {
+          'name': 'clock',
+          'isMut': false,
+          'isSigner': false
+        }
+      ],
+      'args': []
     },
     {
       'name': 'claim',
@@ -1056,11 +1148,11 @@ export const IDL: Staking = {
             'type': 'publicKey'
           },
           {
-            'name': 'rewardPerSlot',
+            'name': 'rewardPerSec',
             'type': 'u64'
           },
           {
-            'name': 'lastAccSlot',
+            'name': 'lastAccSec',
             'type': 'u64'
           },
           {
@@ -1088,7 +1180,7 @@ export const IDL: Staking = {
             'type': 'u64'
           },
           {
-            'name': 'endSlot',
+            'name': 'endSec',
             'type': 'u64'
           },
           {
@@ -1237,13 +1329,23 @@ export const IDL: Staking = {
     },
     {
       'code': 303,
-      'name': 'InvalidEndSlot',
-      'msg': 'invalid end slot'
+      'name': 'InvalidEndSec',
+      'msg': 'invalid end sec'
     },
     {
       'code': 304,
       'name': 'StakingHasEnded',
       'msg': 'staking has ended'
+    },
+    {
+      'code': 305,
+      'name': 'StakingHasNotEnded',
+      'msg': 'staking hasn\'t ended'
+    },
+    {
+      'code': 306,
+      'name': 'InvalidRefundAmount',
+      'msg': 'invalid refund amount'
     }
   ]
 }

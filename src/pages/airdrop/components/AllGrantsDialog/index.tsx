@@ -9,7 +9,7 @@ import { RegisterGrantDialog } from '@/pages/airdrop/components/RegisterGrantDia
 import { SupportedChainIds } from '@/hooks/useMultiChainsWeb3'
 
 export type Grant = {
-  key: string
+  grantKey: string
   name: string
   chainId: SupportedChainIds
   image: string
@@ -29,19 +29,19 @@ const ALL_GRANTS: Grant[] = [
     image: 'https://hackerlink.s3.amazonaws.com/static/files/Solana2_eJt96fb.jpg',
   },*/
   {
-    key: 'polygon',
+    grantKey: 'polygon',
     name: 'Polygon-Grants Hackathon Round-1',
     chainId: 137,
     image: require('@/assets/images/grants/polygon.png')
   },
   {
-    key: 'filecoin',
+    grantKey: 'filecoin',
     name: 'Filecoin Grant',
     chainId: 56,
     image: require('@/assets/images/grants/filecoin.png')
   },
   {
-    key: 'okexchain',
+    grantKey: 'okexchain',
     name: 'OKExChain Grant',
     chainId: 66,
     image: require('@/assets/images/grants/okexchain.png')
@@ -86,8 +86,8 @@ export const AllGrantsDialog: React.FC = () => {
           ALL_GRANTS.map(grant => (
             <GrantCard
               {...grant}
-              registered={userByWallet?.grants.map(g => g.key).includes(grant.key)}
-              key={grant.key}
+              registered={userByWallet?.grants.map(g => g.key).includes(grant.grantKey)}
+              key={grant.grantKey}
             />
           ))
         }

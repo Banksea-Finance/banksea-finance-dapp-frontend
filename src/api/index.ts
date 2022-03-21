@@ -1,17 +1,22 @@
-import { Service } from './service'
+import { AirdropService, DefaultService } from './service'
 
 const API = {
   core: {
     user: {
       bindingUser(token: string, wallet: string) {
-        return Service.post('/blindboxes/binding', { token, wallet })
+        return DefaultService.post('/blindboxes/binding', { token, wallet })
       },
       getBoundUserByWallet(wallet?: string) {
-        return wallet ? Service.post('/blindboxes/user', { wallet }) : undefined
+        return wallet ? DefaultService.post('/blindboxes/user', { wallet }) : undefined
       },
       getUserByToken(token?: string) {
-        return token ? Service.post('/blindboxes/findUserByToken', { token }) : undefined
+        return token ? DefaultService.post('/blindboxes/findUserByToken', { token }) : undefined
       }
+    }
+  },
+  airdrop: {
+    findGrantVoteInfo(address: string, buildName: string) {
+      return AirdropService.post('/user/vote/find', { address, buildName })
     }
   }
 }

@@ -235,23 +235,25 @@ export class TokenStaker {
 
     const poolAccount = await this.getPoolAccount(true)
 
-    const slot = await this.program.provider.connection.getSlot()
+    const slot = await this.program.provider.connection.getSlot('confirmed')
 
-    let rewardSlot = slot
+    const currentSeconds = (await this.program.provider.connection.getBlockTime(slot))!
+
+    let rewardSeconds = currentSeconds
 
     // check it is ending
-    if (!poolAccount.endSlot.eqn(0)) {
-      rewardSlot = slot < poolAccount.endSlot.toNumber() ? slot : poolAccount.endSlot.toNumber()
+    if (!poolAccount.endSec.eqn(0)) {
+      rewardSeconds = currentSeconds < poolAccount.endSec.toNumber() ? currentSeconds : poolAccount.endSec.toNumber()
     }
 
-    const curSlot = new BN(rewardSlot)
+    const curSlot = new BN(rewardSeconds)
     const multiple = new BN((1e18).toString())
     let factor = new BN(0)
 
     if (!poolAccount.totalStakingAmount.eqn(0)) {
       factor = curSlot
-        .sub(poolAccount.lastAccSlot)
-        .mul(poolAccount.rewardPerSlot)
+        .sub(poolAccount.lastAccSec)
+        .mul(poolAccount.rewardPerSec)
         .mul(multiple)
         .div(poolAccount.totalStakingAmount)
     }

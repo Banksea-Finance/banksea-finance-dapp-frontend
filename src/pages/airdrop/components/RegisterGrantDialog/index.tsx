@@ -7,6 +7,7 @@ import { CHAINS, SupportedChainIds, useMultiChainsWeb3, WalletConfig, WALLETS } 
 import { Grid } from '@react-css/grid'
 import { shortenAddress } from '@/utils'
 import { TextProps } from '@/contexts/theme/components/Text'
+import useGrantVotesQuery from '@/hooks/queries/airdrop/useGrantVotesQuery'
 
 const WalletItem: React.FC<WalletConfig & { onClick: () => void }> = ({ icon, onClick, name }) => {
   return (
@@ -35,11 +36,15 @@ const Wallets: React.FC<{ chainId: SupportedChainIds }> = ({ chainId }) => {
   )
 }
 
-const ConfirmRegister: React.FC<{ requiredChainId: number }> = ({ requiredChainId }) => {
+const ConfirmRegister: React.FC<Grant & { requiredChainId: number }> = ({ requiredChainId, grantKey }) => {
   const { account, connectedWallet, disconnect, chainId, provider } = useMultiChainsWeb3()
 
   const wallet = WALLETS[connectedWallet!]
   const chain = chainId ? CHAINS[chainId] : undefined
+
+  const { data: grantVotes } = useGrantVotesQuery(account!, grantKey)
+
+  console.log(grantVotes)
 
   useEffect(() => {
     if (chainId && requiredChainId !== chainId) {
@@ -68,12 +73,13 @@ const ConfirmRegister: React.FC<{ requiredChainId: number }> = ({ requiredChainI
   const messageToSign = useMemo(() => {
     if (!account) return undefined
 
-    return `Hi, dear friend! We need to sign 
-the message to confirm that the 
-address(${account}) 
-is own to you.
-This will cost no any fees. 
-`
+    return account
+    //     return `Hi, dear friend! We need to sign
+    // the message to confirm that the
+    // address(${account})
+    // is own to you.
+    // This will cost no any fees.
+    // `
   }, [account])
 
   const handleConfirm = useCallback(async () => {
@@ -124,7 +130,9 @@ This will cost no any fees.
   )
 }
 
-export const RegisterGrantDialog: React.FC<Grant> = ({ name, chainId, image }) => {
+export const RegisterGrantDialog: React.FC<Grant> = props => {
+  const { name, chainId, image } = props
+
   const { openModal } = useModal()
 
   const chain = CHAINS[chainId]
@@ -176,7 +184,7 @@ export const RegisterGrantDialog: React.FC<Grant> = ({ name, chainId, image }) =
         <img src={image} alt="" style={{ width: '550px', borderRadius: '20px' }} />
       </Flex>
 
-      {account ? <ConfirmRegister requiredChainId={chainId} /> : <SelectWallets />}
+      {account ? <ConfirmRegister {...props} requiredChainId={chainId} /> : <SelectWallets />}
     </Card>
   )
 }

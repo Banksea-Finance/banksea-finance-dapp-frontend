@@ -15,25 +15,6 @@ const useAPRQuery = (
     async (): Promise<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
       if (!program || !pool) return undefined
 
-      const curSlot = await program.provider.connection.getSlot()
-      const curSlotTime = (await program.provider.connection.getBlockTime(curSlot)) as number
-
-      let prevSlot
-      let prevSlotTime
-
-      const slotOffsetBase = 3600 * 24 * 2
-      let offsetFactor = 0
-
-      do {
-        offsetFactor++
-
-        prevSlot = curSlot - slotOffsetBase * offsetFactor
-        prevSlotTime = await program.provider.connection.getBlockTime(prevSlot).catch(() => undefined)
-      } while (!prevSlotTime)
-
-      const timeOffset = (curSlotTime - prevSlotTime) * 1000
-      const slotPerMs = (curSlot - prevSlot) / timeOffset
-
       const poolAccount = await program.account.pool.fetch(pool).catch(() => undefined)
 
       if (!poolAccount) {
@@ -44,14 +25,12 @@ const useAPRQuery = (
         return undefined
       }
 
-      const slotInYear =
-        365 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ * 1000 /*milliseconds*/ * slotPerMs
+      const totalStakingAmount = new BigNumber(poolAccount.totalStakingAmount.toString())
+      const rewardPerSec = new BigNumber(poolAccount.rewardPerSec.toString())
+      const secondsInYear = new BigNumber(365 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/)
 
-      const totalRewardsInYear = new BigNumber(poolAccount.rewardPerSlot.toString()).multipliedBy(
-        new BigNumber(slotInYear)
-      )
-
-      const APR = totalRewardsInYear.div(new BigNumber(poolAccount.totalStakingAmount.toString()))
+      const totalRewardsInYear = rewardPerSec.multipliedBy(secondsInYear)
+      const APR = totalRewardsInYear.div(totalStakingAmount)
 
       return {
         APR,

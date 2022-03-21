@@ -29,12 +29,20 @@ function onRejected(error: any) {
   return Promise.reject(responseData)
 }
 
-const Service = axios.create({
+const DefaultService = axios.create({
   baseURL: 'http://52.221.228.254:19001'
 })
 
-Service.interceptors.response.use(
+const AirdropService = axios.create({
+  baseURL: 'http://52.221.228.254:25580/banksea/web/v1'
+})
+
+DefaultService.interceptors.response.use(
   onFulfilled, onRejected
 )
 
-export { Service }
+AirdropService.interceptors.response.use(
+  onFulfilled, onRejected
+)
+
+export { DefaultService, AirdropService }

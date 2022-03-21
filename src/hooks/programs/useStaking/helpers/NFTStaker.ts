@@ -233,13 +233,15 @@ export class NFTStaker {
 
     const poolAccount = await this.getPoolAccount(true)
 
-    const slot = await this.program.provider.connection.getSlot()
+    const slot = await this.program.provider.connection.getSlot('confirmed')
 
-    let rewardSlot = slot
+    const currentSeconds = (await this.program.provider.connection.getBlockTime(slot))!
+
+    let rewardSlot = currentSeconds
 
     // check it is ending
-    if (!poolAccount.endSlot.eqn(0)) {
-      rewardSlot = slot < poolAccount.endSlot.toNumber() ? slot : poolAccount.endSlot.toNumber()
+    if (!poolAccount.endSec.eqn(0)) {
+      rewardSlot = currentSeconds < poolAccount.endSec.toNumber() ? currentSeconds : poolAccount.endSec.toNumber()
     }
 
     const curSlot = new BN(rewardSlot)
@@ -248,8 +250,8 @@ export class NFTStaker {
 
     if (!poolAccount.totalStakingAmount.eqn(0)) {
       factor = curSlot
-        .sub(poolAccount.lastAccSlot)
-        .mul(poolAccount.rewardPerSlot)
+        .sub(poolAccount.lastAccSec)
+        .mul(poolAccount.rewardPerSec)
         .mul(multiple)
         .div(poolAccount.totalStakingAmount)
     }
