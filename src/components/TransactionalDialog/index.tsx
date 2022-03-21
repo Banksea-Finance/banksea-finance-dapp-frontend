@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { SOLANA_CLUSTER, useModal, useRefreshController } from '@/contexts'
-import { Dialog, Text } from '@/contexts/theme/components'
+import { Dialog } from '@/contexts/theme/components'
 import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 
@@ -68,7 +68,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
       {...rest}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
-      bottomMessage={<Text fontSize={'14px'} textAlign={'center'}>{message}</Text>}
+      bottomMessage={{ children: message }}
       confirmButtonProps={{ ...confirmButtonProps, isLoading: ongoing }}
       cancelButtonProps={{ ...cancelButtonProps, disabled: ongoing }}
     >

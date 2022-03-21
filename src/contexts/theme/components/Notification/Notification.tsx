@@ -12,14 +12,15 @@ export type NotifyProps = {
   title: string
   message: JSX.Element | string
   type?: NotifyTypes
+  duration?: number
 }
 
-function notify({ title = '', message = '', type = 'info' }: NotifyProps) {
+function notify({ title = '', message = '', type = 'info', duration = 3 }: NotifyProps) {
   if (!notification) {
     Notification.newInstance(
       {
         maxCount: 5,
-        getContainer: () => document.getElementById('root')!
+        getContainer: () => document.getElementById('root')!,
       },
       instance => {
         notification = instance
@@ -40,10 +41,12 @@ function notify({ title = '', message = '', type = 'info' }: NotifyProps) {
     style: {
       left: '2%',
       bottom: '2%',
-      position: 'fixed'
+      position: 'fixed',
+      minWidth: 300,
+      zIndex: 19
     },
     closable: true,
-    duration: 3
+    duration
   })
 }
 

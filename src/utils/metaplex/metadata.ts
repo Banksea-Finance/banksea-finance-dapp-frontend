@@ -5,7 +5,7 @@ import { programs } from '@metaplex/js'
 import axios from 'axios'
 
 const {
-  metadata: { Metadata },
+  metadata: { Metadata }
 } = programs
 
 export interface Creator {
@@ -55,6 +55,7 @@ export type MetadataResult = {
   address: PublicKey
   creators: programs.metadata.Creator[] | null
   data: MetaplexMetadataAccountDataCore | null
+  account: MetaplexMetadataAccount | undefined
 }
 
 export const loadMetadata = async (connection: Connection, mintPublicKey: PublicKey): Promise<MetadataResult | undefined> => {
@@ -79,6 +80,7 @@ export const loadMetadata = async (connection: Connection, mintPublicKey: Public
     address: metadataAddress,
     mint: mintPublicKey,
     creators,
-    data
+    data,
+    account: metaplexMetadataAccount
   }
 }

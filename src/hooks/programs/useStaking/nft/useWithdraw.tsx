@@ -19,7 +19,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
       onSendTransaction={callbacks => staker?.withdraw(metadataResult.mint, callbacks)}
     >
       <Text bold fontSize={'24px'}>
-        Are you sure to withdraw {metadataResult.data?.name}?
+        Are you sure to withdraw {metadataResult.account?.data.data.name}?
       </Text>
     </TransactionalDialog>
   )

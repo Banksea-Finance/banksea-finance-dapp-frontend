@@ -47,19 +47,24 @@ export const useMultiChainsWeb3 = () => {
     return connectedWallet ? providers[connectedWallet] : undefined
   }, [connectedWallet, providers])
 
-  const activate = useCallback(async (wallet: WalletConfig, chainId: SupportedChainIds) => {
-    const chain = CHAINS[chainId]
+  const activate = useCallback(async (wallet: WalletConfig, chainId?: SupportedChainIds) => {
+    const chain = chainId ? CHAINS[chainId] : undefined
 
     const connector = wallet.connector
 
     if (connector instanceof MetaMask) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { chainLogo, ...config } = chain
+      if (chainId && chain) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { chainLogo, ...config } = chain
 
-      await connector.activate({
-        ...config,
-        chainId
-      })
+        await connector.activate({
+          ...config,
+          chainId
+        })
+      } else {
+        await connector.activate()
+      }
+
       setConnectedWallet('Metamask')
     }
 

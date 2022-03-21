@@ -1,22 +1,21 @@
-import { AirdropService, DefaultService } from './service'
+import { AirdropService } from './service'
 
 const API = {
-  core: {
-    user: {
-      bindingUser(token: string, wallet: string) {
-        return DefaultService.post('/blindboxes/binding', { token, wallet })
-      },
-      getBoundUserByWallet(wallet?: string) {
-        return wallet ? DefaultService.post('/blindboxes/user', { wallet }) : undefined
-      },
-      getUserByToken(token?: string) {
-        return token ? DefaultService.post('/blindboxes/findUserByToken', { token }) : undefined
-      }
-    }
-  },
   airdrop: {
-    findGrantVoteInfo(address: string, buildName: string) {
-      return AirdropService.post('/user/vote/find', { address, buildName })
+    getUserInfo(wallet: string) {
+      return AirdropService.post('/user/find', { wallet })
+    },
+    getDiscordUser(token: string) {
+      return AirdropService.post('/user/discord/find', { token })
+    },
+    bindDiscord(data: { token: string; wallet: string }) {
+      return AirdropService.post('/user/discord/binding', data)
+    },
+    getUserVoteInfo(data: { address: string; buildName: string }) {
+      return AirdropService.post('/user/vote/find', data)
+    },
+    registerVote(data: { buildName: string; message: string; signature: string; wallet: string; address: string }) {
+      return AirdropService.post('/user/vote/binding', data)
     }
   }
 }

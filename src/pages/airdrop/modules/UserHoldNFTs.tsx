@@ -11,7 +11,7 @@ const StyledNftCard = styled(Card)`
   flex-direction: column;
   align-items: center;
   background-image: url('${require('@/assets/images/citizen-one-bg.png')}');
-  padding: 16px;
+  padding: 16px 16px 8px 16px;
   border-radius: 32px;
   width: 208px;
 `
@@ -28,7 +28,7 @@ const NftCard: React.FC<MetadataResult> = ({ data }) => {
   return (
     <StyledNftCard className={'nft-card'} plain>
       <NFTImage src={data?.image} alt="" />
-      <Text bold fontSize={'24px'} color={'primary'} mb={'8px'}>
+      <Text bold fontSize={'24px'} color={'primary'}>
         {data?.name}
       </Text>
     </StyledNftCard>

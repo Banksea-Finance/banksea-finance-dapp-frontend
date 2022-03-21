@@ -30,11 +30,11 @@ function onRejected(error: any) {
 }
 
 const DefaultService = axios.create({
-  baseURL: 'http://52.221.228.254:19001'
+  baseURL: ''
 })
 
 const AirdropService = axios.create({
-  baseURL: 'http://52.221.228.254:25580/banksea/web/v1'
+  baseURL: 'https://api.banksea.finance/banksea/web/v1'
 })
 
 DefaultService.interceptors.response.use(

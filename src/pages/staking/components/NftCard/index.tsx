@@ -10,7 +10,7 @@ const StyledNftCard = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url("${require('@/assets/images/citizen-one-bg.png')}");
+  background-image: url('${require('@/assets/images/citizen-one-bg.png')}');
   padding: 16px;
   border-radius: 32px;
   width: 258px;
@@ -29,14 +29,14 @@ export type NFTCardProps = NFTStakingPoolConfig & MetadataResult & {
 }
 
 const NftCard: React.FC<NFTCardProps> = props => {
-  const { data, type, ...rest } = props
+  const { data, account, type, ...rest } = props
 
   const { deposit, withdraw } = useNFTStaking(rest)
 
   return (
     <StyledNftCard>
       <NFTImage src={data?.image} alt="" />
-      <Text bold fontSize={'24px'} color={'primary'} mb={'8px'}>{data?.name}</Text>
+      <Text bold fontSize={'24px'} color={'primary'} mb={'8px'}>{account?.data.data.name}</Text>
       {
         type === 'deposited'
           ? (

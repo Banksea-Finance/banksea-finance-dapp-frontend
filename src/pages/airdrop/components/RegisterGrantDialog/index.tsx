@@ -1,56 +1,59 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
-import { AllGrantsDialog, Grant } from '@/pages/airdrop/components/AllGrantsDialog'
+import React, { useCallback, useMemo, useState } from 'react'
+import { AllGrantsDialog } from '@/pages/airdrop/components/AllGrantsDialog'
 import { Button, Card, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
-import { useModal } from '@/contexts'
-import { CHAINS, SupportedChainIds, useMultiChainsWeb3, WalletConfig, WALLETS } from '@/hooks/useMultiChainsWeb3'
+import { useModal, useSolanaWeb3 } from '@/contexts'
+import { ChainConfig, CHAINS, useMultiChainsWeb3, WalletConfig, WALLETS } from '@/hooks/useMultiChainsWeb3'
 import { Grid } from '@react-css/grid'
 import { shortenAddress } from '@/utils'
 import { TextProps } from '@/contexts/theme/components/Text'
 import useGrantVotesQuery from '@/hooks/queries/airdrop/useGrantVotesQuery'
+import { RegisterGrantConfig } from '@/pages/airdrop/constant'
+import BigNumber from 'bignumber.js'
+import { ClipLoader } from 'react-spinners'
+import API from '@/api'
 
-const WalletItem: React.FC<WalletConfig & { onClick: () => void }> = ({ icon, onClick, name }) => {
-  return (
-    <Card p={'4px 32px'} style={{ cursor: 'pointer' }} activeOnHover onClick={onClick}>
-      <Flex alignItemsCenter>
-        <img src={icon} style={{ width: '64px', height: '64px', borderRadius: '50%' }} alt="" />
-        <Text ml={'16px'} fontSize={'22px'} bold>
-          {name}
-        </Text>
-      </Flex>
-    </Card>
-  )
-}
-
-const Wallets: React.FC<{ chainId: SupportedChainIds }> = ({ chainId }) => {
+const Wallets: React.FC /*<{ chainId: SupportedChainIds }>*/ = (/*{ chainId }*/) => {
   const { activate } = useMultiChainsWeb3()
 
-  const handleConnect = (wallet: WalletConfig) => activate(wallet, chainId)
+  const handleConnect = (wallet: WalletConfig) => activate(wallet /*, chainId*/)
 
   return (
     <Grid gap={'20px'}>
       {Object.values(WALLETS).map(w => (
-        <WalletItem onClick={() => handleConnect(w)} {...w} key={w.name} />
+        <Card onClick={() => handleConnect(w)} key={w.name} p={'4px 32px'} style={{ cursor: 'pointer' }} activeOnHover>
+          <Flex alignItemsCenter>
+            <img src={w.icon} style={{ width: '64px', height: '64px', borderRadius: '50%' }} alt="" />
+            <Text ml={'16px'} fontSize={'22px'} bold>
+              {w.name}
+            </Text>
+          </Flex>
+        </Card>
       ))}
     </Grid>
   )
 }
 
-const ConfirmRegister: React.FC<Grant & { requiredChainId: number }> = ({ requiredChainId, grantKey }) => {
-  const { account, connectedWallet, disconnect, chainId, provider } = useMultiChainsWeb3()
+const ConfirmRegister: React.FC<RegisterGrantConfig /* & { requiredChainId: number }*/> = ({
+  /*requiredChainId,*/ grantKey
+}) => {
+  const { account, connectedWallet, disconnect, provider } = useMultiChainsWeb3()
+  const { account: solanaAccount } = useSolanaWeb3()
 
   const wallet = WALLETS[connectedWallet!]
-  const chain = chainId ? CHAINS[chainId] : undefined
+  // const chain = chainId ? CHAINS[chainId] : undefined
 
-  const { data: grantVotes } = useGrantVotesQuery(account!, grantKey)
+  const { data: grantVotes, isLoading } = useGrantVotesQuery(account!, grantKey)
 
-  console.log(grantVotes)
+  const [requesting, setRequesting] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (chainId && requiredChainId !== chainId) {
       void disconnect()
     }
-  }, [requiredChainId, disconnect, chainId])
+  }, [requiredChainId, disconnect, chainId])*/
 
   const Row: React.FC = ({ children }) => (
     <Flex alignItemsCenter style={{ marginBottom: '8px' }}>
@@ -85,9 +88,27 @@ const ConfirmRegister: React.FC<Grant & { requiredChainId: number }> = ({ requir
   const handleConfirm = useCallback(async () => {
     if (!provider || !messageToSign) return
 
+    setError('')
+    setRequesting(true)
+
     const signed = await provider?.getSigner().signMessage(messageToSign)
 
-    console.log(signed)
+    API.airdrop.registerVote({
+      address: account!,
+      buildName: grantKey,
+      message: messageToSign,
+      signature: signed,
+      wallet: solanaAccount!.toBase58()
+    })
+      .then(() => {
+        setSuccess(true)
+      })
+      .catch(e => {
+        setError(e.toString())
+      })
+      .finally(() => {
+        setRequesting(false)
+      })
   }, [provider, messageToSign])
 
   return (
@@ -105,32 +126,74 @@ const ConfirmRegister: React.FC<Grant & { requiredChainId: number }> = ({ requir
         </Flex>
       </Row>
 
-      <Row>
+      {/*<Row>
         <Label mr={'16px'}>Chain: </Label>
         <Flex alignItemsCenter>
           <img src={chain?.chainLogo} alt="" style={{ width: '32px', marginRight: '8px' }} />
           {chain?.chainName}
         </Flex>
-      </Row>
+      </Row>*/}
 
       <Row>
         <Label mr={'16px'}>Voted amount: </Label>
-        <ScopeText>124</ScopeText>
+        <ScopeText>
+          {isLoading ? (
+            <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+          ) : grantVotes?.totalVotes ? (
+            new BigNumber(grantVotes.totalVotes).toString()
+          ) : (
+            'Not Found'
+          )}
+        </ScopeText>
       </Row>
 
       <Grid gap={'20px'} columns={'repeat(2, 1fr)'}>
         <Button variant={'danger'} mt={'24px'} onClick={disconnect}>
-          Disconnect and go back
+          Disconnect and Go Back
         </Button>
-        <Button variant={'primary'} mt={'24px'} onClick={handleConfirm}>
-          Confirm to register
+        <Button variant={'primary'} mt={'24px'} onClick={handleConfirm} isLoading={requesting} disabled={success}>
+          {
+            success ? 'Registered Successfully' : 'Confirm to Register'
+          }
         </Button>
       </Grid>
+
+      {
+        error && (
+          <Text color={'failure'} textAlign={'center'} marginTop={'8px'} fontSize={'18px'} important bold>
+            Error: {error}
+          </Text>
+        )
+      }
     </>
   )
 }
 
-export const RegisterGrantDialog: React.FC<Grant> = props => {
+const SelectWallets: React.FC<{ grantName: string; chain: ChainConfig }> = ({ chain, grantName }) => {
+  return (
+    <>
+      <Text fontSize={'20px'} mr={'4px'} mb={'8px'}>
+        You are now trying to register <span className="primary">{grantName}</span> <br />
+      </Text>
+
+      <Flex alignItemsCenter>
+        <Text fontSize={'20px'}>The grant was held on</Text>
+        <img src={chain.chainLogo} alt="" style={{ width: '24px', height: '24px', margin: '0 6px 0 8px' }} />
+        <Text fontSize={'20px'} mr={'4px'} bold color={'primary'}>
+          {chain.chainName}
+        </Text>
+      </Flex>
+
+      <Text fontSize={'20px'} mr={'4px'} mt={'4px'} mb={'24px'}>
+        So firstly, you need to connect to it by the wallets below:
+      </Text>
+
+      <Wallets />
+    </>
+  )
+}
+
+export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
   const { name, chainId, image } = props
 
   const { openModal } = useModal()
@@ -138,30 +201,6 @@ export const RegisterGrantDialog: React.FC<Grant> = props => {
   const chain = CHAINS[chainId]
 
   const { account } = useMultiChainsWeb3()
-
-  const SelectWallets: React.FC = () => {
-    return (
-      <>
-        <Text fontSize={'20px'} mr={'4px'} mb={'8px'}>
-          You are now trying to register <span className="primary">{name}</span> <br />
-        </Text>
-
-        <Flex alignItemsCenter>
-          <Text fontSize={'20px'}>The grant was held on</Text>
-          <img src={chain.chainLogo} alt="" style={{ width: '24px', height: '24px', margin: '0 6px 0 8px' }} />
-          <Text fontSize={'20px'} mr={'4px'} bold color={'primary'}>
-            {chain.chainName}
-          </Text>
-        </Flex>
-
-        <Text fontSize={'20px'} mr={'4px'} mt={'4px'} mb={'24px'}>
-          So firstly, you need to connect to it by the wallets below:
-        </Text>
-
-        <Wallets chainId={chainId} />
-      </>
-    )
-  }
 
   return (
     <Card p={'32px'} isActive>
@@ -184,7 +223,7 @@ export const RegisterGrantDialog: React.FC<Grant> = props => {
         <img src={image} alt="" style={{ width: '550px', borderRadius: '20px' }} />
       </Flex>
 
-      {account ? <ConfirmRegister {...props} requiredChainId={chainId} /> : <SelectWallets />}
+      {account ? <ConfirmRegister {...props} /> : <SelectWallets chain={chain} grantName={name} />}
     </Card>
   )
 }

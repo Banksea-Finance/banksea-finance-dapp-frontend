@@ -1,66 +1,29 @@
 import React from 'react'
 import { Card, Text } from '@/contexts/theme/components'
 import { Grid } from '@react-css/grid'
-import { useUserByWalletQuery } from '@/hooks/queries/useUserByWalletQuery'
+import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
 import { Flex } from '@react-css/flex'
 import { CardRibbon } from '@/contexts/theme/components/Card'
 import { useModal } from '@/contexts'
 import { RegisterGrantDialog } from '@/pages/airdrop/components/RegisterGrantDialog'
-import { SupportedChainIds } from '@/hooks/useMultiChainsWeb3'
+import { GrantsCanBeRegister, RegisterGrantConfig } from '@/pages/airdrop/constant'
 
-export type Grant = {
-  grantKey: string
-  name: string
-  chainId: SupportedChainIds
-  image: string
-}
-
-const ALL_GRANTS: Grant[] = [
-  /* {
-    key: 'solana-1',
-    name: 'Solana Grant',
-    chain: 'SOLANA',
-    image: 'https://hackerlink.s3.amazonaws.com/static/files/Solana1_GKLekgH.jpg',
-  },
-  {
-    key: 'solana-2',
-    name: 'Solana Ignition Hackathon Round-2',
-    chain: 'SOLANA',
-    image: 'https://hackerlink.s3.amazonaws.com/static/files/Solana2_eJt96fb.jpg',
-  },*/
-  {
-    grantKey: 'polygon',
-    name: 'Polygon-Grants Hackathon Round-1',
-    chainId: 137,
-    image: require('@/assets/images/grants/polygon.png')
-  },
-  {
-    grantKey: 'filecoin',
-    name: 'Filecoin Grant',
-    chainId: 56,
-    image: require('@/assets/images/grants/filecoin.png')
-  },
-  {
-    grantKey: 'okexchain',
-    name: 'OKExChain Grant',
-    chainId: 66,
-    image: require('@/assets/images/grants/okexchain.png')
-  },
-]
-
-const GrantCard: React.FC<Grant & { registered?: boolean }> = props => {
+const GrantCard: React.FC<RegisterGrantConfig & { registered?: boolean }> = props => {
   const { name, image, registered } = props
 
   const { openModal } = useModal()
 
   return (
     <Card
-      onClick={() => openModal(<RegisterGrantDialog {...props} />)}
+      onClick={() => {
+        if (registered) return
+        openModal(<RegisterGrantDialog {...props} />)
+      }}
       p={'0 0 4px 0'}
       ribbon={registered ? <CardRibbon text={'Registered'} textStyle={{ fontSize: '18px', bold: true }} /> : undefined}
       isActive={registered}
       activeOnHover
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: registered ? 'not-allowed' : 'pointer' }}
     >
       <img src={image} alt={name} style={{ width: '350px' }} />
       <Flex alignItemsCenter justifyCenter>
@@ -82,15 +45,13 @@ export const AllGrantsDialog: React.FC = () => {
       </Text>
 
       <Grid gap={'24px'} columns={'repeat(2, 350px)'}>
-        {
-          ALL_GRANTS.map(grant => (
-            <GrantCard
-              {...grant}
-              registered={userByWallet?.grants.map(g => g.key).includes(grant.grantKey)}
-              key={grant.grantKey}
-            />
-          ))
-        }
+        {GrantsCanBeRegister.map(grant => (
+          <GrantCard
+            {...grant}
+            registered={userByWallet?.builds.map(g => g.grant).includes(grant.grantKey)}
+            key={grant.grantKey}
+          />
+        ))}
       </Grid>
     </Card>
   )
