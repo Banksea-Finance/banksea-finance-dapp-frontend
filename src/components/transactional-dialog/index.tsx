@@ -1,22 +1,28 @@
 import React, { useCallback, useState } from 'react'
 import { SOLANA_CLUSTER, useModal, useRefreshController } from '@/contexts'
-import { Dialog } from '@/contexts/theme/components'
+import { Dialog, Text } from '@/contexts/theme/components'
 import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
+import { Flex } from '@react-css/flex'
 
 const TransactionStages = {
   building: 'Building transaction...',
   built: 'Please approve transaction in you wallet',
   sent: 'Transaction has been sent. Wait for confirmation...',
   complete: (signature?: string) => (
-    <>
-      Transaction completed!{' '}
-      {signature && (
-        <a href={`https://solscan.io/tx/${signature}?cluster=${SOLANA_CLUSTER}`} target={'_blank'} rel="noreferrer">
-          View transaction on Solscan.
-        </a>
-      )}
-    </>
+    <Flex alignItemsCenter justifyCenter>
+      <Text mr={'4px'}>
+        Transaction completed!
+      </Text>
+
+      <Text color={'primaryContrary'}>
+        {signature && (
+          <a href={`https://solscan.io/tx/${signature}?cluster=${SOLANA_CLUSTER}`} target={'_blank'} rel="noreferrer">
+            View transaction on Solscan.
+          </a>
+        )}
+      </Text>
+    </Flex>
   ),
   error: (e: any) => `Transaction failed: ${e.message || e.toString()}`
 }

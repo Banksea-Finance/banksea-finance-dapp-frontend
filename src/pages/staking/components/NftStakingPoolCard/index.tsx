@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import Flex from '@react-css/flex'
 import { Button, Card, Text } from '@/contexts/theme/components'
 import {
+  GridContainer,
   NftCollectionImage,
   StyledNftStakingPoolCard
 } from '@/pages/staking/components/NftStakingPoolCard/index.styles'
-import styled from 'styled-components'
 import Tabs from '@/contexts/theme/components/Tabs/Tabs'
 import NFTsGridView from '@/pages/staking/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
@@ -15,12 +15,6 @@ import { ClipLoader } from 'react-spinners'
 import { DataItem } from '@/pages/staking/components/DataItem'
 
 export type NFTStatus = 'deposited' | 'hold'
-
-const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(200px, max-content));
-  gap: 10px 40px;
-`
 
 const Loader = () => <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
 
@@ -50,7 +44,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                   ? <Loader />
                   : (
                     availableRewards.data
-                      ? `${availableRewards.data?.toFixed(4)} ${rewardTokenName}`
+                      ? `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
                       : '-'
                   )
               }
@@ -89,7 +83,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
 
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>
-          <Tabs.Pane title={'My Deposited'} tabKey={'deposit'}>
+          <Tabs.Pane title={'My Deposit'} tabKey={'deposit'}>
             <NFTsGridView {...props} queryResult={userDeposited} type={'deposited'} />
           </Tabs.Pane>
 

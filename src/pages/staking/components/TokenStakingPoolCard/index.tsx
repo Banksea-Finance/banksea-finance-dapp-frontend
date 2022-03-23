@@ -41,26 +41,26 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         <DataItem
           label={'Total Deposits'}
           loading={totalDeposited.isLoading}
-          value={totalDeposited.data?.toFixed(4) || '-'}
+          value={totalDeposited.data?.toFixed(6) || '-'}
         />
         <DataItem
           label={'APR'}
           loading={APR.isLoading}
           value={
             APR.data
-              ? `${APR.data.APR.multipliedBy(100)?.toFixed(2)}% (${APR.data.totalRewardsPerDay.toFixed(9)}/day)`
+              ? `${APR.data.APR.multipliedBy(100)?.toFixed(2)}% (${APR.data.totalRewardsPerDay.toFixed(6)}/day)`
               : '-'
           }
         />
         <DataItem
           label={'Your Deposits'}
           loading={userDeposited.isLoading}
-          value={userDeposited.data?.toFixed(4) || '-'}
+          value={userDeposited.data?.toFixed(6) || '-'}
         />
         <DataItem
           label={'Available Rewards'}
           loading={availableRewards.isLoading}
-          value={availableRewards.data?.toFixed(4) || '-'}
+          value={availableRewards.data?.toFixed(6) || '-'}
         />
       </InfoGrid>
 

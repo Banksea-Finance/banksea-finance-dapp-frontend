@@ -1,7 +1,8 @@
 import { useQuery, UseQueryResult } from 'react-query'
-import { useSolanaWeb3 } from '@/contexts'
+import { useRefreshController, useSolanaWeb3 } from '@/contexts'
 import API from '@/api'
 import { GrantKeys } from '@/pages/airdrop/constant'
+import { useEffect } from 'react'
 
 export interface User {
   wallet: string
@@ -34,9 +35,14 @@ export interface UserVotedGrant {
 
 export const useUserByWalletQuery = (): UseQueryResult<UserInfo> => {
   const { account } = useSolanaWeb3()
+  const { quietRefreshFlag } = useRefreshController()
+
+  useEffect(() => {
+    console.log(quietRefreshFlag)
+  }, [quietRefreshFlag])
 
   return useQuery(
-    ['USER_BY_WALLET', account],
+    ['USER_BY_WALLET', account, quietRefreshFlag],
     async () => {
       if (!account) return undefined
 

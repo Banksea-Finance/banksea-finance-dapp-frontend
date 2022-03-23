@@ -6,6 +6,7 @@ import { useModal } from '@/contexts'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
+import { ClipLoader } from 'react-spinners'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -13,7 +14,7 @@ export type UseTokenDepositProps = {
 }
 
 const ClaimDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
-  const { data: availableRewards } = useAvailableRewardsQuery(staker)
+  const { data: availableRewards, isLoading } = useAvailableRewardsQuery(staker)
 
   return (
     <TransactionalDialog
@@ -23,7 +24,20 @@ const ClaimDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     >
       <div style={{ width: '650px' }}>
         <Text textAlign={'center'} fontSize={'20px'} mb={'16px'}>
-          You have {availableRewards ? availableRewards.toString() : '-'} {staker.poolName} rewards available now
+          {'You have  '}
+          <b className="primary">
+            {
+              isLoading
+                ? <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px; margin-right: 12px;'} />
+                : (
+                  availableRewards
+                    ? `${availableRewards.toString()}${staker.poolName} `
+                    : '-'
+                )
+            }
+
+          </b>
+          rewards available now
         </Text>
         <Text textAlign={'center'} fontSize={'20px'}>
           Would you like to harvest them all?

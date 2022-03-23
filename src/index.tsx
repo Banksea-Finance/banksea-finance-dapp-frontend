@@ -29,13 +29,13 @@ ReactDOM.render(
       <GlobalStyles />
       <SolanaConnectionConfigProvider>
         <SolanaWeb3Provider>
-          <ModalProvider>
-            <RefreshControllerProvider>
+          <RefreshControllerProvider>
+            <ModalProvider>
               <BrowserRouter>
                 <App />
               </BrowserRouter>
-            </RefreshControllerProvider>
-          </ModalProvider>
+            </ModalProvider>
+          </RefreshControllerProvider>
         </SolanaWeb3Provider>
       </SolanaConnectionConfigProvider>
     </ThemeWrapperProvider>

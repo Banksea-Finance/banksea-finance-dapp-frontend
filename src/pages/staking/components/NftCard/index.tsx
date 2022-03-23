@@ -11,7 +11,6 @@ const StyledNftCard = styled(Card)`
   flex-direction: column;
   align-items: center;
   background: rgb(247, 247, 247);
-  //background-image: url('${require('@/assets/images/citizen-one-bg.png')}');
   background-size: 100%;
   border-radius: 20px;
 `

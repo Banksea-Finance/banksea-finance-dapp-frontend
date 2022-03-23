@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from 'react-query'
 import API from '@/api'
 import { GrantKeys } from '@/pages/airdrop/constant'
+import { useRefreshController } from '@/contexts'
 
 export type GrantVotes = {
   buildId: number
@@ -11,8 +12,10 @@ export type GrantVotes = {
 }
 
 const useGrantVotesQuery = (address: string, buildName: string): UseQueryResult<GrantVotes | null> => {
+  const { quietRefreshFlag } = useRefreshController()
+
   return useQuery(
-    ['GrantVotes', address, buildName],
+    ['GrantVotes', address, buildName, quietRefreshFlag],
     () => {
       return API.airdrop.getUserVoteInfo({ address, buildName })
     },

@@ -57,16 +57,16 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       <div style={{ width: '550px' }}>
         <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
           <Flex.Item flex={12}>
-            <Text textAlign={'end'}>You have</Text>
+            <Text textAlign={'end'} fontSize={'18px'}>You have</Text>
           </Flex.Item>
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>
-            <Text>{poolBalance?.toString() || '-'}</Text>
+            <Text fontSize={'18px'} bold color={'primary'}>{poolBalance?.toString() || '-'}</Text>
           </Flex.Item>
         </Flex>
         <Flex row alignItemsCenter>
           <Flex.Item flex={12}>
-            <Text textAlign={'end'}>You want to deposit</Text>
+            <Text textAlign={'end'} fontSize={'18px'}>You want to deposit</Text>
           </Flex.Item>
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>

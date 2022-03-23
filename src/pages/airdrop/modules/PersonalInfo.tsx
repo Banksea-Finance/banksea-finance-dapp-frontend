@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
-import { useModal, useSolanaWeb3 } from '@/contexts'
+import { useModal, useRefreshController, useSolanaWeb3 } from '@/contexts'
 import { Button, Dialog, Tag, Text } from '@/contexts/theme/components'
 import { ReactComponent as DiscordIcon } from '@/assets/images/social-media-logos/discord.svg'
 import { Flex } from '@react-css/flex'
@@ -15,8 +15,10 @@ import { Skeleton } from '@/contexts/theme/components/Skeleton'
 
 const BindingDialog: React.FC<{ token: string; wallet: string; username: string }> = ({ token, wallet, username }) => {
   const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
 
-  const { openModal, closeModal } = useModal()
+  const { forceRefresh } = useRefreshController()
+  const { closeModal } = useModal()
   const [error, setError] = useState<string>()
 
   const confirm = () => {
@@ -25,11 +27,10 @@ const BindingDialog: React.FC<{ token: string; wallet: string; username: string 
     API.airdrop
       .bindDiscord({ token, wallet })
       .then(() => {
-        openModal(
-          <Dialog title={'Connect Discord and Wallet'} width={'450px'} onConfirm={closeModal}>
-            <Text>Connect successfully!</Text>
-          </Dialog>
-        )
+        forceRefresh()
+        setLoading(false)
+        setDone(true)
+        setTimeout(closeModal, 2500)
       })
       .catch(e => {
         setLoading(false)
@@ -43,11 +44,17 @@ const BindingDialog: React.FC<{ token: string; wallet: string; username: string 
       width={'450px'}
       onCancel={closeModal}
       onConfirm={confirm}
-      confirmButtonProps={{ isLoading: loading }}
-      bottomMessage={{
-        children: error,
-        color: 'failure'
-      }}
+      cancelButtonProps={{ children: done ? 'Close' : undefined }}
+      confirmButtonProps={{ isLoading: loading, disabled: done }}
+      bottomMessage={
+        done ? {
+          children: 'Connect successfully!',
+          color: 'success'
+        } : {
+          children: error,
+          color: 'failure'
+        }
+      }
     >
       <Text>
         Are you sure want to connect Discord account <b className={'primary'}>{username}</b> to Solana wallet{' '}

@@ -8,6 +8,7 @@ import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import useUserDepositedQuery from './useUserDepositedQuery'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 import TransactionalDialog from '@/components/transactional-dialog'
+import { ClipLoader } from 'react-spinners'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -59,24 +60,20 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       <div style={{ width: '550px' }}>
         <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
           <Flex.Item flex={12}>
-            <Text textAlign={'end'}>You have deposited</Text>
+            <Text textAlign={'end'} fontSize={'18px'}>You have deposited</Text>
           </Flex.Item>
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>
-            <Text>
-              {userDeposits?.toString() || (
-                <img
-                  style={{ width: '16px' }}
-                  src="https://i.stack.imgur.com/kOnzy.gif"
-                  alt=""
-                />
-              )}
+            <Text fontSize={'18px'} color={'primary'} bold>
+              {
+                userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+              }
             </Text>
           </Flex.Item>
         </Flex>
         <Flex row alignItemsCenter>
           <Flex.Item flex={12}>
-            <Text textAlign={'end'}>You want to withdraw</Text>
+            <Text textAlign={'end'} fontSize={'18px'}>You want to withdraw</Text>
           </Flex.Item>
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>
