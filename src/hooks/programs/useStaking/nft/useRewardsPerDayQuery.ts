@@ -22,6 +22,10 @@ const useRewardsPerDayQuery = (staker?: NFTStaker): UseQueryResult<BigNumber> =>
 
       const rewardsPerDay = rewardPerSec.multipliedBy(secondsInYear).div(totalStakingAmount)
 
+      if (!rewardsPerDay.isFinite()) {
+        return undefined
+      }
+
       const decimals = await staker.getRewardTokenDecimals()
 
       return rewardsPerDay.shiftedBy(-decimals)

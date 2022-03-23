@@ -29,6 +29,7 @@
     "bs58": "^4.0.1",
     "buffer": "^6.0.3",
     "buffer-layout": "^1.2.2",
+    "lodash": "^4.17.21",
     "rc-input": "^0.0.1-alpha.2",
     "rc-notification": "^4.5.7",
     "react": "^17.0.2",

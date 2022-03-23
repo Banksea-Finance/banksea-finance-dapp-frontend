@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useModal } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
-import TransactionalDialog from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/transactional-dialog'
 
 const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataResult }> = ({
   staker,

@@ -29,9 +29,8 @@ export type TokenStakingPoolConfig = {
 const TOKEN_STAKING_POOLS: TokenStakingPoolConfig[] = [
   {
     currencies: [CURRENCY_KSE],
-    poolAddress: new PublicKey('7a4qvVbHnPGDm21EasVv5wNgjpyp6GusL9KLSW8j6Qyy'),
-    whitelist: new PublicKey('3TLWSXokdJ6XAxQvTTB5FvxM4Qb2U2zPc6TqyC58JcEw')
-
+    poolAddress: new PublicKey('249mh37jLtX873X2TXU4ffocKjxx2FxTBxM5a5rbpHTm'),
+    whitelist: new PublicKey('9jg26o911JEAZVtjYcjqXDXkupKGoHAywt6ZRdfSS4T7')
   },
   // {
   //   currencies: [CURRENCY_KSE, CURRENCY_ETH],

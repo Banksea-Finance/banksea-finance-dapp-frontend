@@ -15,7 +15,8 @@ const useEagerConnect = () => {
         await sleep(1000)
         const solana = (window as any).solana
 
-        solana?.connect({ onlyIfTrusted: true })
+        solana
+          ?.connect({ onlyIfTrusted: true })
           .then(() => {
             setEagerConnected(true)
           })

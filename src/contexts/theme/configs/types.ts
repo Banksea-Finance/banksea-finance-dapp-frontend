@@ -48,6 +48,7 @@ export type Colors = {
   background: string;
   backgroundDisabled: string;
   text: string;
+  textContrary: string;
   textDisabled: string;
   textSubtle: string;
   borderColor: string;

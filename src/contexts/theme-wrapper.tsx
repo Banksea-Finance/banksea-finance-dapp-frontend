@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { DefaultTheme, ThemeProvider } from 'styled-components'
-import { ThemeType, themes } from './theme'
+import { themes, ThemeType } from './theme'
 import useLocalStorage from '@/hooks/useLocalStorage'
 
 export const THEME_STORAGE_KEY = 'theme'
@@ -12,7 +12,7 @@ const ThemeWrapperContext = React.createContext({
 })
 
 const ThemeWrapperProvider: React.FC = ({ children }) => {
-  const [storedThemeType, setStoredTheme] = useLocalStorage<ThemeType>(THEME_STORAGE_KEY, 'dark')
+  const [storedThemeType, setStoredTheme] = useLocalStorage<ThemeType>(THEME_STORAGE_KEY, 'light')
 
   const [themeType, setThemeType] = useState<ThemeType>(storedThemeType as ThemeType)
 
@@ -32,7 +32,7 @@ const ThemeWrapperProvider: React.FC = ({ children }) => {
     <ThemeWrapperContext.Provider
       value={{
         themeType,
-        themeInstance: themes[themeType],
+        themeInstance: activeTheme,
         switchTheme
       }}
     >
@@ -43,6 +43,7 @@ const ThemeWrapperProvider: React.FC = ({ children }) => {
 
 const useThemeWrapper = () => {
   const { themeType, themeInstance, switchTheme } = useContext(ThemeWrapperContext)
+
   return {
     themeType,
     themeInstance,

@@ -30,6 +30,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
   const { forceRefresh } = useRefreshController()
   const [message, setMessage] = useState<string | JSX.Element>()
   const [ongoing, setOngoing] = useState(false)
+  const [done, setDone] = useState(false)
 
   const TransactionEventsCallbacks = {
     onTransactionBuilt: () => {
@@ -41,6 +42,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
     onConfirm: (signature?: string)=> {
       forceRefresh()
       setOngoing(false)
+      setDone(true)
       setMessage(TransactionStages.complete(signature))
     }
   }
@@ -66,11 +68,12 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
   return (
     <Dialog
       {...rest}
+      closeable={!ongoing}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
       bottomMessage={{ children: message }}
-      confirmButtonProps={{ ...confirmButtonProps, isLoading: ongoing }}
-      cancelButtonProps={{ ...cancelButtonProps, disabled: ongoing }}
+      confirmButtonProps={{ ...confirmButtonProps, isLoading: ongoing, disabled: done }}
+      cancelButtonProps={{ ...cancelButtonProps, disabled: ongoing, children: done ? 'Close' : undefined }}
     >
       {children}
     </Dialog>

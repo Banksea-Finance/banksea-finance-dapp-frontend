@@ -17,6 +17,9 @@ export const styleVariants = {
   [variants.PRIMARY]: {
     backgroundColor: 'primary',
   },
+  [variants.PRIMARY_CONTRARY]: {
+    backgroundColor: 'primaryContrary',
+  },
   [variants.SECONDARY]: {
     backgroundColor: 'secondary',
   },

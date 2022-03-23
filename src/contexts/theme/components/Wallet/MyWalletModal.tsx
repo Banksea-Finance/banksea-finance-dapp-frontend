@@ -1,8 +1,9 @@
 import React from 'react'
-import { Card, Text, Button } from '../'
+import { Text } from '../'
 import { useModal } from '@/contexts/modal'
 import { shortenAddress } from '@/utils'
 import { SOLANA_CLUSTER } from '@/contexts'
+import { Dialog } from '@/contexts/theme/components'
 
 export const WalletModalContent: React.FC<{ account: string; disconnect: VoidFunction }> = ({
   account,
@@ -16,14 +17,13 @@ export const WalletModalContent: React.FC<{ account: string; disconnect: VoidFun
   }
 
   return (
-    <Card padding={'50px'} width={'500px'} display={'flex'} flexDirection={'column'} alignItems={'center'}>
-      <Text fontSize={'48px'} fontFamily={'orbitron'} bold marginBottom={'50px'}>
-        Wallet
+    <Dialog title={'Your Wallet'} onCancel={handleDisconnect} cancelButtonProps={{ children: 'Disconnect' }}>
+      <Text textAlign={'center'} fontSize={'18px'} mb={'16px'}>
+        You are now connected to <b>{shortenAddress(account)}</b>
       </Text>
-      <Text marginBottom={'30px'}>You are now connected to {shortenAddress(account)}</Text>
-
-      <Text marginBottom={'30px'}>Network: {SOLANA_CLUSTER}</Text>
-      <Button onClick={handleDisconnect}>Disconnect</Button>
-    </Card>
+      <Text textAlign={'center'} fontSize={'18px'}>
+        Current Network: {SOLANA_CLUSTER}
+      </Text>
+    </Dialog>
   )
 }

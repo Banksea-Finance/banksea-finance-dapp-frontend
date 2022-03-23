@@ -7,7 +7,7 @@ interface ThemedProps extends TextProps {
   theme: DefaultTheme
 }
 
-const getColor = ({ color, theme }: ThemedProps) => {
+const getColor = ({ color = 'text', theme }: ThemedProps) => {
   return getThemeValue(`colors.${color}`, color)(theme)
 }
 

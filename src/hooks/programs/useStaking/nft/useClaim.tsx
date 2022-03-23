@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { useModal } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
 import useAvailableRewardsQuery from '@/hooks/programs/useStaking/nft/useAvailableRewardsQuery'
-import TransactionalDialog from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/transactional-dialog'
 
 const NFTClaimDialog: React.FC<{ staker: NFTStaker }> = ({ staker }) => {
   const { data: availableRewards } = useAvailableRewardsQuery(staker)

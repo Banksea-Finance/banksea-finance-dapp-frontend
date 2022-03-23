@@ -4,12 +4,7 @@ import styled from 'styled-components'
 import { TOKEN_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/token'
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 45%);
-  gap: 50px;
   width: 100%;
-
-  justify-content: center;
 `
 
 const TokenStakingModule: React.FC = () => {

@@ -57,3 +57,5 @@ export const GrantsCanBeRegister: RegisterGrantConfig[] = [
     image: require('@/assets/images/grants/okexchain.png')
   },
 ]
+
+export const COLUMN_LAYOUT_WIDTH_THRESHOLD = 1396

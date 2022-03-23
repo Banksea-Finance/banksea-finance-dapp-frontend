@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   CurrencyIconImage,
-  CurrencyName,
   InfoGrid,
   StyledTokenStakingPoolCard
 } from '@/pages/staking/components/TokenStakingPoolCard/index.styles'
@@ -9,9 +8,8 @@ import Flex from '@react-css/flex'
 import { Button, Text } from '@/contexts/theme/components'
 import { useTokenStaking } from '@/hooks/programs/useStaking'
 import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
-import { ClipLoader } from 'react-spinners'
-
-const Loader = () => <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+import { Grid } from '@react-css/grid'
+import { DataItem } from '../DataItem'
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies } = props
@@ -34,55 +32,50 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           )
         })}
 
-        <CurrencyName>{currencies.map(c => c.name).join(' / ')}</CurrencyName>
+        <Text ml={'16px'} bold fontSize={'24px'}>
+          {currencies.map(c => c.name).join(' / ')}
+        </Text>
       </Flex>
 
       <InfoGrid>
-        <Text>
-          {'Total Deposits: '}
-          {
-            totalDeposited.isLoading
-              ? <Loader />
-              : (totalDeposited.data?.toFixed(4) || '-')
+        <DataItem
+          label={'Total Deposits'}
+          loading={totalDeposited.isLoading}
+          value={totalDeposited.data?.toFixed(4) || '-'}
+        />
+        <DataItem
+          label={'APR'}
+          loading={APR.isLoading}
+          value={
+            APR.data
+              ? `${APR.data.APR.multipliedBy(100)?.toFixed(2)}% (${APR.data.totalRewardsPerDay.toFixed(9)}/day)`
+              : '-'
           }
-        </Text>
-
-        <Text>
-          {'APR: '}
-          {
-            APR.isLoading ? (
-              <Loader />
-            ) : (
-              APR.data
-                ? `${APR.data.APR.multipliedBy(100)?.toFixed(2)}% (${APR.data.totalRewardsPerDay.toFixed(9)}/day)`
-                : '-'
-            )
-          }
-        </Text>
-
-        <Text>
-          {'Your Deposits: '}
-          {
-            userDeposited.isLoading
-              ? <Loader />
-              : (userDeposited.data?.toFixed(4) || '-')
-          }
-        </Text>
-
-        <Text>
-          {'Available Rewards: '}
-          {
-            availableRewards.isLoading
-              ? <Loader />
-              : (availableRewards.data?.toFixed(4) || '-')
-          }
-        </Text>
+        />
+        <DataItem
+          label={'Your Deposits'}
+          loading={userDeposited.isLoading}
+          value={userDeposited.data?.toFixed(4) || '-'}
+        />
+        <DataItem
+          label={'Available Rewards'}
+          loading={availableRewards.isLoading}
+          value={availableRewards.data?.toFixed(4) || '-'}
+        />
       </InfoGrid>
 
-      <Flex row justifySpaceBetween>
-        <Button onClick={deposit}>Deposit</Button>
-        <Button onClick={withdraw}>Withdraw</Button>
-        <Button onClick={harvest}>Harvest</Button>
+      <Flex row justifyCenter>
+        <Grid gap={'20px'} columns={'repeat(3, 1fr)'}>
+          <Button onClick={deposit} scale={'sm'}>
+            Deposit
+          </Button>
+          <Button onClick={withdraw} scale={'sm'}>
+            Withdraw
+          </Button>
+          <Button onClick={harvest} scale={'sm'}>
+            Harvest
+          </Button>
+        </Grid>
       </Flex>
     </StyledTokenStakingPoolCard>
   )

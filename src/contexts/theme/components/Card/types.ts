@@ -1,4 +1,4 @@
-import React, { HTMLAttributes } from 'react'
+import React, { CSSProperties, HTMLAttributes } from 'react'
 import { DisplayProps, FlexboxProps, LayoutProps, OverflowProps, SpaceProps } from 'styled-system'
 import { Colors } from '../../configs/types'
 import { TextProps } from '@/contexts/theme/components/Text'
@@ -34,4 +34,6 @@ export interface CardProps
   isDisabled?: boolean
   ribbon?: React.ReactNode
   activeOnHover?: boolean
+
+  backgroundColor?: keyof Colors | CSSProperties['color']
 }

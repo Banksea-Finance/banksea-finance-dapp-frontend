@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Flex from '@react-css/flex'
-import { Button, Text } from '@/contexts/theme/components'
+import { Button, Card, Text } from '@/contexts/theme/components'
 import {
   NftCollectionImage,
   StyledNftStakingPoolCard
@@ -12,6 +12,7 @@ import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { useNFTStaking } from '@/hooks/programs/useStaking'
 import { ClipLoader } from 'react-spinners'
+import { DataItem } from '@/pages/staking/components/DataItem'
 
 export type NFTStatus = 'deposited' | 'hold'
 
@@ -40,18 +41,49 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           </Text>
         </Flex>
 
-        <Flex alignItemsCenter style={{ background: 'rgb(25,66,101)', padding: '8px 32px', borderRadius: '40px' }}>
-          <Text mr={'16px'} fontSize={'22px'} bold>Available rewards: {availableRewards ? `${availableRewards.toFixed(6)} ${rewardTokenName}` : (<Loader />)}</Text>
-          <Button scale={'md'} onClick={claim}>Harvest</Button>
-        </Flex>
+        <Card plain backgroundColor={'secondary'}>
+          <Flex alignItemsCenter style={{ padding: '8px 32px', borderRadius: '40px' }}>
+            <Text mr={'16px'} fontSize={'18px'} bold color={'textContrary'}>
+              {'Available rewards: '}
+              {
+                availableRewards.isLoading
+                  ? <Loader />
+                  : (
+                    availableRewards.data
+                      ? `${availableRewards.data?.toFixed(4)} ${rewardTokenName}`
+                      : '-'
+                  )
+              }
+            </Text>
+            <Button scale={'sm'} onClick={claim} variant={'primaryContrary'}>Harvest</Button>
+          </Flex>
+        </Card>
       </Flex>
 
       <Flex row justifyCenter alignItemsCenter style={{ marginBottom: '48px', padding: '0 16px' }}>
         <GridContainer>
-          <Text>Total Deposited: {totalDeposited ?? (<Loader />)}</Text>
-          <Text>Your Total Rewards: {userTotalRewards ? `${userTotalRewards.toFixed(6)} ${rewardTokenName}` : (<Loader />)}</Text>
-          <Text>Your Deposited: {userDeposited?.data?.length ?? (<Loader />)}</Text>
-          <Text>Rewards Per Staking: {rewardsPerDay ? `${rewardsPerDay.toFixed(6)} ${rewardTokenName}/day` : (<Loader />)}</Text>
+          <DataItem
+            label={'Total Deposits'}
+            loading={totalDeposited.isLoading}
+            value={totalDeposited?.data?.toString() || '-'}
+          />
+          <DataItem
+            label={'Your Total Rewards'}
+            loading={userTotalRewards.isLoading}
+            value={userTotalRewards.data ? `${userTotalRewards.data.toFixed(6)} ${rewardTokenName}` : '-'}
+          />
+
+          <DataItem
+            label={'Your Deposited'}
+            loading={userDeposited.isLoading}
+            value={userDeposited.data ? userDeposited?.data?.length.toString() : '-'}
+          />
+
+          <DataItem
+            label={'Rewards Per Staking'}
+            loading={rewardsPerDay.isLoading}
+            value={rewardsPerDay.data ? `${rewardsPerDay.data.toFixed(6)} ${rewardTokenName}/day` : '-'}
+          />
         </GridContainer>
       </Flex>
 

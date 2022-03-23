@@ -5,12 +5,13 @@ import { LayoutProps, SpaceProps } from 'styled-system'
 export const scales = {
   MD: 'md',
   SM: 'sm',
-  XS: 'xs',
+  XS: 'xs'
 } as const
 
 export const variants = {
   PRIMARY: 'primary',
   SECONDARY: 'secondary',
+  PRIMARY_CONTRARY: 'primaryContrary',
   TERTIARY: 'tertiary',
   TEXT: 'text',
   DANGER: 'danger',

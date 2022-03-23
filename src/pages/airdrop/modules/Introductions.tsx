@@ -3,8 +3,8 @@ import { Text } from '@/contexts/theme/components'
 
 export const Introductions: React.FC = () => {
   return (
-    <div style={{ width: '100%', marginBottom: '48px' }}>
-      <Text fontSize={'32px'} mb={'16px'} color={'primary'} important bold>
+    <div style={{ width: '100%', marginBottom: '16px' }}>
+      <Text fontSize={'28px'} mb={'16px'} color={'primary'} important bold>
         Introductions about airdrop:
       </Text>
 

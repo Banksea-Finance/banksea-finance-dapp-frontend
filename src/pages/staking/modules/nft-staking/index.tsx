@@ -4,7 +4,7 @@ import { NFT_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/nft'
 
 const NFTStakingModule: React.FC = () => {
   return (
-    <div style={{ display: 'grid', rowGap: '20px' }}>
+    <div style={{ width: '100%' }}>
       {NFT_STAKING_POOLS.map((p, index) => (
         <NftStakingPoolCard {...p} key={index} />
       ))}

@@ -54,6 +54,7 @@ const StyledButton = styled.button<BaseButtonProps>`
   box-shadow: 0px -1px 0px 0px rgba(14, 14, 44, 0.4) inset;
   
   cursor: pointer;
+  user-select: none;
   font-family: inherit;
   font-size: 16px;
   ${({ theme }) => theme.mediaQueries.xl} {
@@ -65,14 +66,15 @@ const StyledButton = styled.button<BaseButtonProps>`
   line-height: 1;
   opacity: ${getOpacity};
   outline: 0;
-  transition: background-color 0.2s;
+  transition: all 0.2s, transform 0s;
 
-  &:hover:not(:disabled):not(.pancake-button--disabled):not(.pancake-button--disabled):not(:active) {
+  &:hover:not(:disabled):not(:active) {
     filter: brightness(110%);
   }
 
-  &:active:not(:disabled):not(.pancake-button--disabled):not(.pancake-button--disabled) {
+  &:active:not(:disabled) {
     filter: brightness(110%);
+    transform: scale(98%);
   }
   
   @media screen and (max-width: 1080px) {

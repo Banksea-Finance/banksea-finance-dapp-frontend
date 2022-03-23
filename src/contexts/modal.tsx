@@ -1,7 +1,7 @@
 import React, { cloneElement, useCallback, useContext, useState } from 'react'
 import ReactModal from 'react-modal'
 import { useResponsive } from '@/contexts/theme/hooks'
-import styled, { keyframes } from 'styled-components'
+import styled, { createGlobalStyle, keyframes } from 'styled-components'
 import { sleep } from '@/utils'
 
 export type ModalContextValue = {
@@ -21,6 +21,28 @@ export type ModalConfig = {
 }
 
 export type ModalEvents = 'open' | 'close' | 'update'
+
+const ModalGlobalStyle = createGlobalStyle`
+  .ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 0.18s ease-in-out;
+
+    background-color: rgba(3, 2, 29, 0.7) !important;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // backdropFilter: 'blur(1px)',
+  }
+
+  .ReactModal__Overlay--after-open{
+    opacity: 1;
+  }
+
+  .ReactModal__Overlay--before-close{
+    opacity: 0;
+  }
+`
 
 const responsiveDefaultContentStyle = (isDesktop: boolean) => {
   if (isDesktop) {
@@ -69,8 +91,24 @@ const ZoomIn = keyframes`
   }
 `
 
-const AnimatedContainer = styled.div`
-  animation: ${ZoomIn} 0.15s ease-out;
+const ZoomOut = keyframes`
+  from {
+    transform: scale(100%);
+  }
+  
+  to {
+    transform: scale(0%);
+  }
+`
+
+const ZoomContainer = styled.div`
+  &.in {
+    animation: ${ZoomIn} 0.2s ease-out;
+  }
+  
+  &.out {
+    animation: ${ZoomOut} 0.2s ease-out;
+  }
 `
 
 const StyledReactModal = styled(ReactModal)`
@@ -92,16 +130,9 @@ const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boole
       preventScroll={true}
       isOpen={isOpen}
       className={'modal-wrapper'}
-      appElement={document.getElementById('app')!}
+      appElement={document.getElementById('root')!}
+      closeTimeoutMS={200}
       style={{
-        overlay: {
-          background: 'rgba(29, 20, 56, 0.09)',
-          backdropFilter: 'blur(10px)',
-          zIndex: 11,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        },
         content: { ...responsiveDefaultContentStyle(isDesktop), ...contentStyle }
       }}
     >
@@ -110,25 +141,9 @@ const ModalWrapper: React.FC<{ contentStyle?: React.CSSProperties; isOpen: boole
   )
 }
 
-const CloseButton: React.FC<{ show?: boolean; onClose: () => void }> = ({ show, onClose }) => {
-  const { isDesktop } = useResponsive()
-
-  if (!show) {
-    return <></>
-  }
-
-  return (
-    <img
-      alt={'close'}
-      onClick={onClose}
-      src={require('@/assets/images/close.png')}
-      style={{ position: 'absolute', right: '20px', top: isDesktop ? '20px' : '70px', cursor: 'pointer' }}
-    />
-  )
-}
-
 const ModalProvider: React.FC = ({ children }) => {
-  const [visible, setVisible] = useState(false)
+  const [onClosing, setOnClosing] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [content, setContent] = useState<JSX.Element | string>()
 
   const [callbackByEvent, setCallbackByEvent] = useState<Map<ModalEvents, { id: number; callback: () => void }[]>>(
@@ -139,13 +154,26 @@ const ModalProvider: React.FC = ({ children }) => {
     closeable: true
   })
 
+  const close = useCallback(async () => {
+    setOnClosing(true)
+    await sleep(100)
+    setContent(undefined)
+    setIsOpen(false)
+
+    const callbacks = callbackByEvent.get('close')
+
+    callbacks?.forEach(({ callback }) => {
+      callback()
+    })
+  }, [callbackByEvent])
+
   const open = useCallback(async (content: ModalConfig['content'], closeable?: boolean) => {
-    if (!visible) {
-      setVisible(false)
-      await sleep(50)
+    if (!isOpen) {
+      await close()
     }
 
-    setVisible(true)
+    setIsOpen(true)
+    setOnClosing(false)
 
     if (closeable === undefined) {
       setConfig(prev => ({ ...prev, closeable: true }))
@@ -160,25 +188,15 @@ const ModalProvider: React.FC = ({ children }) => {
     callbacks?.forEach(({ callback }) => {
       callback()
     })
-  }, [callbackByEvent])
+  }, [callbackByEvent, close])
 
-  const update = useCallback(
-    (modalContent?: JSX.Element) => {
-      setContent(modalContent)
+  const update = useCallback(async (modalContent?: JSX.Element) => {
+    setOnClosing(true)
+    await sleep(100)
+    setContent(modalContent)
+    setOnClosing(false)
 
-      const callbacks = callbackByEvent.get('update')
-      callbacks?.forEach(({ callback }) => {
-        callback()
-      })
-    },
-    [callbackByEvent]
-  )
-
-  const close = useCallback(() => {
-    setVisible(false)
-
-    const callbacks = callbackByEvent.get('close')
-
+    const callbacks = callbackByEvent.get('update')
     callbacks?.forEach(({ callback }) => {
       callback()
     })
@@ -242,11 +260,11 @@ const ModalProvider: React.FC = ({ children }) => {
 
   return (
     <ModalContext.Provider value={{ open, update, close, configModal, addEventListener, removeEventListener }}>
-      <ModalWrapper isOpen={visible} contentStyle={config.contentStyle} contentWrapper={config.contentWrapper}>
-        <CloseButton show={config.closeable} onClose={close} />
-        <AnimatedContainer>
+      <ModalGlobalStyle />
+      <ModalWrapper isOpen={isOpen} contentStyle={config.contentStyle} contentWrapper={config.contentWrapper}>
+        <ZoomContainer className={onClosing ? 'out' : 'in'}>
           {content}
-        </AnimatedContainer>
+        </ZoomContainer>
       </ModalWrapper>
       {children}
     </ModalContext.Provider>

@@ -4,9 +4,9 @@ import { SolanaWallet, SupportWalletNames, useSolanaWeb3 } from '@/contexts/sola
 import { WalletModalContent } from './MyWalletModal'
 import { Button } from '../Button'
 import { useModal } from '@/contexts'
-import { useResponsive } from '@/contexts/theme'
-import { Card, Text } from '@/contexts/theme/components'
+import { Card, Dialog } from '@/contexts/theme/components'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
+import { Grid } from '@react-css/grid'
 
 const WalletButton = styled(Button)`
   font-weight: bold;
@@ -26,8 +26,8 @@ const SCCurrentAccount = styled.div`
   }
 `
 
-export const WalletItemContainer = styled(Card)`
-  background: ${({ theme }) => theme.colors.primaryContrary};
+export const WalletItemCard = styled(Card)`
+  background: ${({ theme }) => theme.colors.secondary};
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -41,8 +41,8 @@ export const WalletItemContainer = styled(Card)`
   cursor: pointer;
 
   img {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
   }
 `
 
@@ -53,10 +53,10 @@ export const WalletItem: React.FC<{ wallet: SolanaWallet; onClick: (name: Suppor
   const { name, icon } = wallet
 
   return (
-    <WalletItemContainer onClick={() => onClick(name)} plain>
+    <WalletItemCard onClick={() => onClick(name)} plain color={'secondary'}>
       <span className="wallet-name">{name}</span>
-      <img className="SelectImg" src={icon} alt="" />
-    </WalletItemContainer>
+      <img src={icon} alt="" />
+    </WalletItemCard>
   )
 }
 
@@ -85,46 +85,25 @@ const CurrentAccount: React.FC = () => {
   )
 }
 
-const WalletSelectDialog: React.FC = () => {
-  const { isDesktop } = useResponsive()
+export const WalletSelectDialog: React.FC = () => {
   const { select } = useSolanaWeb3()
   const { closeModal } = useModal()
 
-  const style: React.CSSProperties = isDesktop
-    ? {
-      width: '400px',
-      height: 'fit-content',
-      display: 'grid',
-      rowGap: '16px',
-      alignItems: 'center',
-      padding: '24px 32px'
-    }
-    : {
-      width: '90%',
-      height: 'fit-content',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '20px'
-    }
-
   return (
-    <Card style={style}>
-      <Text fontSize={'28px'} marginBottom={'16px'} important textAlign={'center'}>
-        Connect Wallet
-      </Text>
-
-      {Object.values(SUPPORT_WALLETS).map(wallet => (
-        <WalletItem
-          wallet={wallet}
-          key={wallet.name}
-          onClick={() => {
-            select(wallet.name as SupportWalletNames)
-            closeModal()
-          }}
-        />
-      ))}
-    </Card>
+    <Dialog title={'Connect to a wallet'}>
+      <Grid gap={'16px'} rows={'repeat(2, 1fr)'}>
+        {Object.values(SUPPORT_WALLETS).map(wallet => (
+          <WalletItem
+            wallet={wallet}
+            key={wallet.name}
+            onClick={() => {
+              select(wallet.name as SupportWalletNames)
+              closeModal()
+            }}
+          />
+        ))}
+      </Grid>
+    </Dialog>
   )
 }
 

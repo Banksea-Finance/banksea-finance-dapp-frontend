@@ -4,7 +4,7 @@ import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { Text } from '@/contexts/theme/components'
 import { useModal } from '@/contexts'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
-import TransactionalDialog from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/transactional-dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 
 export type UseTokenDepositProps = {

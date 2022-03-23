@@ -10,18 +10,19 @@ const MenuItemButton = styled(Button)`
   width: fit-content;
   padding: 8px 40px;
   height: 100%;
+  box-shadow: none;
 
   ${({ theme }) => theme.mediaQueries.xl} {
     padding-left: 20px;
     padding-right: 20px;
   }
-  
+
   &.active {
     background-color: ${p => getButtonMenuTheme(p).activeBackground};
-    color: ${({ theme }) => theme.colors.text};
-    transition: all ease-out 0.58s;
+    color: ${({ theme }) => theme.colors.textContrary};
+    transition: all ease-out 0.38s;
   }
-  
+
   &.inactive {
     background-color: transparent;
     color: ${({ theme }) => theme.colors.textSubtle};

@@ -6,7 +6,7 @@ import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { useQuery } from 'react-query'
-import TransactionalDialog from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/transactional-dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 
 export type UseTokenDepositProps = {

@@ -3,6 +3,8 @@ import DefaultPageContainer from '@/components/default-page-container'
 
 export const AirdropPageContainer = styled(DefaultPageContainer)`
   align-items: start;
+  display: grid;
+  gap: 24px;
 `
 
 export const Avatar = styled.img`

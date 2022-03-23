@@ -2,6 +2,7 @@ import styled, { DefaultTheme } from 'styled-components'
 import { display, flexbox, layout, overflow, space } from 'styled-system'
 import { CardProps } from './types'
 import { getCardTheme } from './theme'
+import getThemeValue from '@/contexts/theme/utils/getThemeValue'
 
 interface StyledCardProps extends CardProps {
   theme: DefaultTheme
@@ -32,16 +33,19 @@ const getBoxShadow = ({ plain, isActive, isSuccess, isWarning, theme }: StyledCa
   return cardTheme.boxShadow
 }
 
+const getBackgroundColor = ({ backgroundColor, theme }: StyledCardProps) => {
+  return getThemeValue(`colors.${backgroundColor}`, getCardTheme({ theme }).background)(theme)
+}
+
 const StyledCard = styled.div<StyledCardProps>`
-  background-color: ${p => getCardTheme(p).background};
+  background-color: ${getBackgroundColor};
   border: ${p => getCardTheme(p).boxShadow};
   border-radius: 32px;
   box-shadow: ${getBoxShadow};
-  color: ${({ theme, isDisabled }) => theme.colors[isDisabled ? 'textDisabled' : 'text']};
   overflow: hidden;
   position: relative;
   transition: all 0.28s;
-  
+
   ${props => props.activeOnHover && `
     &:hover {
       box-shadow: ${getCardTheme(props).boxShadowActive};

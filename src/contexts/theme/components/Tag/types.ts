@@ -3,6 +3,7 @@ import { SpaceProps, TypographyProps } from 'styled-system'
 
 export const variants = {
   PRIMARY: 'primary',
+  PRIMARY_CONTRARY: 'primaryContrary',
   SECONDARY: 'secondary',
   SUCCESS: 'success',
   TEXTDISABLED: 'textDisabled',

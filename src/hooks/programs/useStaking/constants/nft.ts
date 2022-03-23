@@ -12,11 +12,11 @@ export type NFTStakingPoolConfig = {
 
 export const NFT_STAKING_POOLS: NFTStakingPoolConfig[] = [
   {
-    poolAddress: new PublicKey('9r8Tg2EB7NinBZchdrx6upiB5Z7DX3645sxUWz8sfXXc'),
-    whitelist: new PublicKey('6VWanpd8GwrVrKo4sWpvY33Sys3bHgE3wiY43yXomh83'),
-    creator: new PublicKey('6eowspZT2akp1y8qGTzRDeJH5h8BZbew4feqawGfy5ez'),
-    name: 'Test',
-    logo: 'https://content.solsea.io/files/thumbnail/1643474033004-292668735.png',
+    poolAddress: new PublicKey('53PMPQeXZc6axm3F1c99c1PaFinU42dJkpbAVyW1dMug'),
+    whitelist: new PublicKey('81LwoAGtqZFgfegwWLTmqpJYgENp4vEaUVpC8Sv9KPwP'),
+    creator: new PublicKey('A7aksxoZFvnMy58ing8M4Wbuu8XweaRonf6PGqZ7Fyso'),
+    name: 'Citizenone-dev',
+    logo: 'https://hn52zxyctuoztwo2oxnt3pxqmmcdhwkbqensvb2mbuswf7oxpm.arweave.net/O3us3wKdHZnZ2nXbPb7w_YwQz2UGBGyqHTA0lYv3Xe8?ext=png',
     rewardTokenName: 'KSE'
   }
 ]

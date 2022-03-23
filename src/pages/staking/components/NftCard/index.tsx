@@ -10,43 +10,60 @@ const StyledNftCard = styled(Card)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url('${require('@/assets/images/citizen-one-bg.png')}');
-  padding: 16px;
-  border-radius: 32px;
-  width: 258px;
+  background: rgb(247, 247, 247);
+  //background-image: url('${require('@/assets/images/citizen-one-bg.png')}');
+  background-size: 100%;
+  border-radius: 20px;
 `
 
 const NFTImage = styled.img`
-  border-radius: 16px;
   width: 100%;
   height: 232px;
   object-fit: cover;
-  margin-bottom: 8px;
 `
 
-export type NFTCardProps = NFTStakingPoolConfig & MetadataResult & {
+export type OperableNftCardProps = NFTStakingPoolConfig & MetadataResult & {
   type: NFTStatus
 }
 
-const NftCard: React.FC<NFTCardProps> = props => {
+const StyledButton = styled(Button)`
+  background: rgba(25, 214, 151, 0.82);
+  border-radius: 16px;
+`
+
+const OperableNftCard: React.FC<OperableNftCardProps> = props => {
   const { data, account, type, ...rest } = props
 
   const { deposit, withdraw } = useNFTStaking(rest)
 
   return (
-    <StyledNftCard>
+    <StyledNftCard isSuccess width={'258px'}>
       <NFTImage src={data?.image} alt="" />
-      <Text bold fontSize={'24px'} color={'primary'} mb={'8px'}>{account?.data.data.name}</Text>
-      {
-        type === 'deposited'
-          ? (
-            <Button scale={'sm'} onClick={() => withdraw(props)}>Withdraw</Button>
-          ) : (
-            <Button scale={'sm'} onClick={() => deposit(props)}>Deposit</Button>
-          )
-      }
+      <Text fontWeight={700} fontSize={'20px'} color={'primary'} m={'12px 0'}>{account?.data.data.name}</Text>
+      <div style={{ position: 'absolute', right: '8px', top: '8px' }}>
+        {
+          type === 'deposited'
+            ? (
+              <StyledButton scale={'xs'} variant={'primaryContrary'} onClick={() => withdraw(props)}>Withdraw</StyledButton>
+            ) : (
+              <StyledButton scale={'xs'} variant={'primaryContrary'} onClick={() => deposit(props)}>Deposit</StyledButton>
+            )
+        }
+      </div>
+
     </StyledNftCard>
   )
 }
 
-export default NftCard
+const InoperableNftCard: React.FC<MetadataResult> = props => {
+  const { data, account } = props
+
+  return (
+    <StyledNftCard isSuccess width={'208px'}>
+      <NFTImage src={data?.image} alt="" />
+      <Text fontWeight={700} fontSize={'16px'} color={'primary'} m={'8px 0'}>{account?.data.data.name}</Text>
+    </StyledNftCard>
+  )
+}
+
+export { OperableNftCard, InoperableNftCard }

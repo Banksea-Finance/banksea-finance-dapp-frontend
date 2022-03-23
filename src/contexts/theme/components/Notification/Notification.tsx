@@ -20,7 +20,8 @@ function notify({ title = '', message = '', type = 'info', duration = 3 }: Notif
     Notification.newInstance(
       {
         maxCount: 5,
-        getContainer: () => document.getElementById('root')!,
+        getContainer: () => document.getElementById('app')!,
+        style: { position: 'fixed' }
       },
       instance => {
         notification = instance

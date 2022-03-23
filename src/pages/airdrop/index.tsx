@@ -3,9 +3,11 @@ import { AirdropPageContainer } from '@/pages/airdrop/index.styles'
 import { Introductions, PersonalInfo, UserVotedGrants } from '@/pages/airdrop/modules'
 import { UserHoldNFTs } from '@/pages/airdrop/modules/UserHoldNFTs'
 import styled from 'styled-components'
+import { Card } from '@/contexts/theme/components'
+import { COLUMN_LAYOUT_WIDTH_THRESHOLD } from './constant'
+import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
 
-const Grid = styled.div`
-  margin-top: 48px;
+const StyledCard = styled(Card)`
   display: flex;
   width: 100%;
 
@@ -14,7 +16,7 @@ const Grid = styled.div`
     margin-right: 48px;
   }
 
-  @media screen and (max-width: 1334px) {
+  @media screen and (max-width: ${COLUMN_LAYOUT_WIDTH_THRESHOLD}px) {
     flex-direction: column;
 
     .user-hold-NFTs {
@@ -24,14 +26,26 @@ const Grid = styled.div`
 `
 
 const AirdropPage: React.FC = () => {
+  const { data: userByWallet } = useUserByWalletQuery()
+
   return (
     <AirdropPageContainer>
-      <Introductions />
-      <PersonalInfo />
-      <Grid>
-        <UserVotedGrants />
-        <UserHoldNFTs />
-      </Grid>
+      <Card p={'24px'}>
+        <Introductions />
+        <div style={{ padding: '0 24px' }}>
+          <PersonalInfo />
+        </div>
+      </Card>
+
+      {
+        userByWallet?.username
+          ? (
+            <StyledCard p={'24px'}>
+              <UserVotedGrants />
+              <UserHoldNFTs />
+            </StyledCard>
+          ) : <></>
+      }
     </AirdropPageContainer>
   )
 }

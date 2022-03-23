@@ -11,6 +11,7 @@ import {
 } from './contexts'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { GlobalStyles } from './contexts/theme/styles'
+import { BrowserRouter } from 'react-router-dom'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +31,9 @@ ReactDOM.render(
         <SolanaWeb3Provider>
           <ModalProvider>
             <RefreshControllerProvider>
-              <App />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </RefreshControllerProvider>
           </ModalProvider>
         </SolanaWeb3Provider>

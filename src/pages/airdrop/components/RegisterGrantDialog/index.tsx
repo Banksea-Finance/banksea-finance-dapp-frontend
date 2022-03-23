@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { AllGrantsDialog } from '@/pages/airdrop/components/AllGrantsDialog'
-import { Button, Card, Text } from '@/contexts/theme/components'
+import { Button, Card, Dialog, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import { useModal, useSolanaWeb3 } from '@/contexts'
 import { ChainConfig, CHAINS, useMultiChainsWeb3, WalletConfig, WALLETS } from '@/hooks/useMultiChainsWeb3'
@@ -12,6 +12,7 @@ import { RegisterGrantConfig } from '@/pages/airdrop/constant'
 import BigNumber from 'bignumber.js'
 import { ClipLoader } from 'react-spinners'
 import API from '@/api'
+import styled from 'styled-components'
 
 const Wallets: React.FC /*<{ chainId: SupportedChainIds }>*/ = (/*{ chainId }*/) => {
   const { activate } = useMultiChainsWeb3()
@@ -24,7 +25,7 @@ const Wallets: React.FC /*<{ chainId: SupportedChainIds }>*/ = (/*{ chainId }*/)
         <Card onClick={() => handleConnect(w)} key={w.name} p={'4px 32px'} style={{ cursor: 'pointer' }} activeOnHover>
           <Flex alignItemsCenter>
             <img src={w.icon} style={{ width: '64px', height: '64px', borderRadius: '50%' }} alt="" />
-            <Text ml={'16px'} fontSize={'22px'} bold>
+            <Text ml={'16px'} fontSize={'22px'} fontWeight={500} important>
               {w.name}
             </Text>
           </Flex>
@@ -149,7 +150,7 @@ const ConfirmRegister: React.FC<RegisterGrantConfig /* & { requiredChainId: numb
 
       <Grid gap={'20px'} columns={'repeat(2, 1fr)'}>
         <Button variant={'danger'} mt={'24px'} onClick={disconnect}>
-          Disconnect and Go Back
+          Disconnect
         </Button>
         <Button variant={'primary'} mt={'24px'} onClick={handleConfirm} isLoading={requesting} disabled={success}>
           {
@@ -173,7 +174,7 @@ const SelectWallets: React.FC<{ grantName: string; chain: ChainConfig }> = ({ ch
   return (
     <>
       <Text fontSize={'20px'} mr={'4px'} mb={'8px'}>
-        You are now trying to register <span className="primary">{grantName}</span> <br />
+        You are now trying to register <b className="primary">{grantName}</b> <br />
       </Text>
 
       <Flex alignItemsCenter>
@@ -193,6 +194,17 @@ const SelectWallets: React.FC<{ grantName: string; chain: ChainConfig }> = ({ ch
   )
 }
 
+const GrantImage = styled.img`
+  width: 550px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  border-bottom: 1.5px solid #ccc;
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 80vw;
+  }
+`
+
 export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
   const { name, chainId, image } = props
 
@@ -203,27 +215,23 @@ export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
   const { account } = useMultiChainsWeb3()
 
   return (
-    <Card p={'32px'} isActive>
-      <Button
-        scale={'sm'}
-        variant={'danger'}
-        onClick={() => openModal(<AllGrantsDialog />)}
-        style={{ position: 'absolute' }}
-      >
-        Go back
-      </Button>
-
-      <Flex justifyCenter>
-        <Text important bold fontSize={'32px'} mb={'16px'}>
-          Register Grant
-        </Text>
-      </Flex>
-
-      <Flex justifyCenter style={{ marginBottom: '24px' }}>
-        <img src={image} alt="" style={{ width: '550px', borderRadius: '20px' }} />
-      </Flex>
+    <Dialog
+      isActive
+      title={'Register Grant'}
+      titlePrefix={
+        <Button
+          scale={'sm'}
+          mr={'8px'}
+          variant={'danger'}
+          onClick={() => openModal(<AllGrantsDialog />)}
+        >
+          Go back
+        </Button>
+      }
+    >
+      <GrantImage src={image} alt="" />
 
       {account ? <ConfirmRegister {...props} /> : <SelectWallets chain={chain} grantName={name} />}
-    </Card>
+    </Dialog>
   )
 }

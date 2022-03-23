@@ -23,7 +23,9 @@ export const CurrencyName = styled(Text)`
 
 export const InfoGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 50%);
-  gap: 16px 0;
-  margin-bottom: 50px;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: center;
+  gap: 16px 12.5%;
+  margin-bottom: 32px;
+  justify-items: start;
 `

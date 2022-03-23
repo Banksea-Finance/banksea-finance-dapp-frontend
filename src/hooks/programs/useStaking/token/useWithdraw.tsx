@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import useUserDepositedQuery from './useUserDepositedQuery'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
-import TransactionalDialog from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/transactional-dialog'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey

@@ -4,31 +4,35 @@ import { Flex } from '@react-css/flex'
 import { ButtonProps } from '@/contexts/theme/components/Button'
 import { CardProps } from '@/contexts/theme/components/Card'
 import { TextProps } from '@/contexts/theme/components/Text'
+import CloseIcon from '@/assets/images/close.svg'
+import { useModal } from '@/contexts'
 
 export type DialogProps = CardProps & {
   title: string | JSX.Element
+  titlePrefix?: React.ReactElement
   footer?: string | JSX.Element
-  showCancelButton?: boolean
-  showConfirmButton?: boolean
   cancelButtonProps?: ButtonProps
   confirmButtonProps?: ButtonProps
   onConfirm?: () => void
   onCancel?: () => void
   bottomMessage?: string | TextProps
+  closeable?: boolean
 }
 
 const Dialog: React.FC<DialogProps> = ({
   title,
+  titlePrefix,
   cancelButtonProps,
   confirmButtonProps,
-  showCancelButton = true,
-  showConfirmButton = true,
+  closeable = true,
   onCancel,
   onConfirm,
   bottomMessage,
   children,
   ...rest
 }) => {
+  const { closeModal } = useModal()
+
   const hasBottomMessage = useMemo(() => {
     if (typeof bottomMessage === 'string') {
       return bottomMessage?.length
@@ -38,33 +42,44 @@ const Dialog: React.FC<DialogProps> = ({
   }, [bottomMessage])
 
   return (
-    <Card p={'24px'} minWidth={'350px'} {...rest} isActive>
+    <Card p={'24px'} minWidth={'448px'} {...rest} isActive>
       <Flex
         justifySpaceBetween
         alignItemsCenter
         style={{ borderBottom: '1px solid #909090', paddingBottom: '8px', marginBottom: '16px' }}
       >
-        <Text bold fontSize={'24px'}>
-          {title}
-        </Text>
+        <Flex alignItemsCenter>
+          {titlePrefix}
+          <Text fontSize={'20px'} important fontWeight={500}>
+            {title}
+          </Text>
+        </Flex>
+        {
+          closeable && (
+            <img src={CloseIcon} style={{ cursor: 'pointer' }} alt={'close'} onClick={closeModal} />
+          )
+        }
       </Flex>
-      <div style={{ marginBottom: '16px' }}>{children}</div>
+
+      { children }
+
       <Flex
+        style={{ marginTop: (onCancel || onConfirm) ? '8px' : '0' }}
         justifyCenter
         alignItemsCenter
       >
         {
-          showCancelButton && (
+          onCancel && (
             <Button style={{ flex: 8 }} {...cancelButtonProps} onClick={onCancel} variant={'danger'}>
-              Cancel
+              {cancelButtonProps?.children || 'Cancel'}
             </Button>
           )
         }
         {
-          (showConfirmButton && showCancelButton) ? <div style={{ flex: 1 }} /> : undefined
+          (onCancel && onConfirm) ? <div style={{ flex: 1 }} /> : undefined
         }
         {
-          showConfirmButton && (
+          onConfirm && (
             <Button style={{ flex: 8 }} {...confirmButtonProps} onClick={onConfirm}>
               {confirmButtonProps?.children || 'Confirm'}
             </Button>
