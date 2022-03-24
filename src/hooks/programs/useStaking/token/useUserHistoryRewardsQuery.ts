@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query'
-import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
 import { useRefreshController } from '@/contexts'
+import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 
-const useUserHistoryRewardsQuery = (staker?: NFTStaker) => {
+const useUserHistoryRewardsQuery = (staker?: TokenStaker) => {
   const { quietRefreshFlag } = useRefreshController()
 
-  return useQuery(['NFT_UserHistoryRewards', staker?.user, staker?.pool, quietRefreshFlag], () => {
+  return useQuery(['TOKEN_USER_HISTORY_REWARDS', staker?.user, staker?.pool, quietRefreshFlag], () => {
     if (!staker) return undefined
 
     return staker.getHistoryTotalRewards()

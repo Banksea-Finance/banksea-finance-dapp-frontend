@@ -18,10 +18,10 @@ export const AppContainer = styled.div`
   }
 
   .fade-exit {
-    opacity: 0;
+    display: none;
   }
 
   .fade-exit.fade-exit-active {
-    opacity: 0;
+    display: none;
   }
 `

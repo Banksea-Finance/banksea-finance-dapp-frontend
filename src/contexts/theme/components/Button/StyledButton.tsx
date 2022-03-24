@@ -51,15 +51,11 @@ const StyledButton = styled.button<BaseButtonProps>`
 
   border: 0;
   border-radius: 40px;
-  box-shadow: 0px -1px 0px 0px rgba(14, 14, 44, 0.4) inset;
+  box-shadow: ${({ theme }) => theme.shadows.inset};
   
   cursor: pointer;
   user-select: none;
   font-family: inherit;
-  font-size: 16px;
-  ${({ theme }) => theme.mediaQueries.xl} {
-    font-size: 3.3vw;
-  }
   
   font-weight: 600;
   letter-spacing: 0.03em;
@@ -77,11 +73,6 @@ const StyledButton = styled.button<BaseButtonProps>`
     transform: scale(98%);
   }
   
-  @media screen and (max-width: 1080px) {
-    padding: 10px;
-    height: fit-content;
-  }
-
   ${getDisabledStyles}
   ${variant({
     prop: 'scale',

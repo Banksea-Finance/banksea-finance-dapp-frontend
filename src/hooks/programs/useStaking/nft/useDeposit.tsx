@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useModal } from '@/contexts'
+import { useModal, useRefreshController } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
@@ -9,13 +9,15 @@ const NFTDepositDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataRe
   staker,
   metadataResult
 }) => {
+  const { forceRefresh } = useRefreshController()
+
   return (
     <TransactionalDialog
       title={`Deposit ${staker.poolName}`}
       width={'600px'}
-      onSendTransaction={callbacks => staker?.deposit(metadataResult.mint, metadataResult.address, callbacks)}
+      onSendTransaction={callbacks => staker?.deposit(metadataResult.mint, metadataResult.address, callbacks).then(forceRefresh)}
     >
-      <Text bold fontSize={'24px'}>
+      <Text fontSize={'24px'}>
         Are you sure to deposit {metadataResult.account?.data.data.name}?
       </Text>
     </TransactionalDialog>

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useModal } from '@/contexts'
+import { useModal, useRefreshController } from '@/contexts'
 import { Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
@@ -17,12 +17,12 @@ export type UseTokenDepositProps = {
 
 const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const [value, setValue] = useState('')
-
+  const { forceRefresh } = useRefreshController()
   const { data: userDeposits } = useUserDepositedQuery(staker)
 
   const inputInvalidError = useMemo(() => {
     if (!value) {
-      return
+      return undefined
     }
 
     if (new BigNumber(value).isNaN()) {
@@ -54,8 +54,9 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
-      onSendTransaction={(callbacks: EventCallback) => staker?.withdraw(new BigNumber(value), callbacks)}
+      onSendTransaction={(callbacks: EventCallback) => staker?.withdraw(new BigNumber(value), callbacks).then(forceRefresh)}
       title={`Withdraw ${staker.poolName}`}
+      confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
     >
       <div style={{ width: '550px' }}>
         <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
@@ -77,7 +78,12 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
           </Flex.Item>
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>
-            <Input value={value} allowClear onChange={onChange} />
+            <Input
+              value={value}
+              allowClear
+              autoFocus
+              onChange={onChange}
+            />
           </Flex.Item>
         </Flex>
         <Flex row alignItemsCenter style={{ height: '24px' }}>

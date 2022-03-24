@@ -52,12 +52,14 @@ class Tabs extends React.Component<TabsProps, any> {
               mountOnEnter
               key={activeKey}
               addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
-              classNames="fade"
+              classNames="tabs-fade"
               style={{ width: '100%' }}
             >
-              {React.Children.toArray(children).find(
-                (child: any, _index) => (child as ReactElement).props.tabKey === activeKey
-              )}
+              {
+                React.Children.toArray(children).find(
+                  (child: any, _index) => (child as ReactElement).props.tabKey === activeKey
+                )
+              }
             </CSSTransition>
           </SwitchTransition>
         </div>

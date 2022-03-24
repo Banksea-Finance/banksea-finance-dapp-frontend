@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card, Text } from '@/contexts/theme/components'
+import { Card } from '@/contexts/theme/components'
 
 export const StyledTokenStakingPoolCard = styled(Card)`
   width: inherit;
@@ -16,16 +16,17 @@ export const CurrencyIconImage = styled.img`
   }
 `
 
-export const CurrencyName = styled(Text)`
-  margin-left: 16px;
-  font-weight: 600;
-`
-
 export const InfoGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, max-content);
-  justify-content: center;
   gap: 16px 12.5%;
+  justify-content: center;
   margin-bottom: 32px;
-  justify-items: start;
+  justify-items: center;
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    grid-template-columns: max-content;
+    justify-items: start;
+  }
+}
 `

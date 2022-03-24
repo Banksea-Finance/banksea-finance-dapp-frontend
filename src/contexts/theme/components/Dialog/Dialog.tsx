@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Button, Card, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import { ButtonProps } from '@/contexts/theme/components/Button'
@@ -41,6 +41,27 @@ const Dialog: React.FC<DialogProps> = ({
     return bottomMessage?.children
   }, [bottomMessage])
 
+  useEffect(() => {
+    const cb = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && closeable) closeModal()
+
+      if (
+        onConfirm
+          && (e.key === 'Enter')
+          && !confirmButtonProps?.disabled
+          && !confirmButtonProps?.isLoading
+      ) {
+        onConfirm()
+      }
+    }
+
+    window.addEventListener('keyup', cb)
+
+    return () => {
+      window.removeEventListener('keyup', cb)
+    }
+  }, [closeable, onConfirm, confirmButtonProps])
+
   return (
     <Card p={'24px'} minWidth={'448px'} {...rest} isActive>
       <Flex
@@ -64,7 +85,7 @@ const Dialog: React.FC<DialogProps> = ({
       { children }
 
       <Flex
-        style={{ marginTop: (onCancel || onConfirm) ? '8px' : '0' }}
+        style={{ marginTop: (onCancel || onConfirm) ? '16px' : '0' }}
         justifyCenter
         alignItemsCenter
       >

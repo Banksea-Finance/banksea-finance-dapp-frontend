@@ -3,9 +3,9 @@ import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
 import { useRefreshController } from '@/contexts'
 
 const useAvailableRewardsQuery = (staker?: NFTStaker) => {
-  const { fastRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
 
-  return useQuery(['NFT_AvailableRewards', staker?.pool, staker?.user, fastRefreshFlag], () => {
+  return useQuery(['NFT_AVAILABLE_REWARDS', staker?.pool, staker?.user, slowRefreshFlag], () => {
     if (!staker) return undefined
 
     return staker.getAvailableRewards()

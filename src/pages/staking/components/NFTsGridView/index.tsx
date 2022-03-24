@@ -44,7 +44,7 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, type, ...rest 
   if (!queryResult.data?.length) {
     return (
       <Text bold fontSize={'24px'} textAlign={'center'}>
-        You have NOT {type} anyone.
+        There is nothing here.
       </Text>
     )
   }

@@ -4,16 +4,20 @@ import { Dialog, Text } from '@/contexts/theme/components'
 import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 import { Flex } from '@react-css/flex'
+import { BeatLoader } from 'react-spinners'
 
 const TransactionStages = {
   building: 'Building transaction...',
   built: 'Please approve transaction in you wallet',
-  sent: 'Transaction has been sent. Wait for confirmation...',
+  sent: (
+    <div>
+      <Text>Transaction has been sent. Wait for confirmation...</Text>
+      <BeatLoader color={'#abc'} size={12} />
+    </div>
+  ),
   complete: (signature?: string) => (
     <Flex alignItemsCenter justifyCenter>
-      <Text mr={'4px'}>
-        Transaction completed!
-      </Text>
+      <Text mr={'4px'}>✅ Transaction completed!</Text>
 
       <Text color={'primaryContrary'}>
         {signature && (
@@ -24,7 +28,7 @@ const TransactionStages = {
       </Text>
     </Flex>
   ),
-  error: (e: any) => `Transaction failed: ${e.message || e.toString()}`
+  error: (e: any) => `⚠️ Transaction failed: ${e.message || e.toString()}`
 }
 
 export type TransactionalDialogProps = DialogProps & {
@@ -38,7 +42,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
   const [ongoing, setOngoing] = useState(false)
   const [done, setDone] = useState(false)
 
-  const TransactionEventsCallbacks = {
+  const TransactionEventsCallbacks: EventCallback = {
     onTransactionBuilt: () => {
       setMessage(TransactionStages.built)
     },
@@ -78,7 +82,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
       onConfirm={handleConfirm}
       onCancel={handleCancel}
       bottomMessage={{ children: message }}
-      confirmButtonProps={{ ...confirmButtonProps, isLoading: ongoing, disabled: done }}
+      confirmButtonProps={{ ...confirmButtonProps, isLoading: ongoing, disabled: confirmButtonProps?.disabled || done }}
       cancelButtonProps={{ ...cancelButtonProps, disabled: ongoing, children: done ? 'Close' : undefined }}
     >
       {children}

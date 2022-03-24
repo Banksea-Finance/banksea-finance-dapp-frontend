@@ -17,6 +17,9 @@ export const NftCollectionImage = styled.img`
 
 export const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, minmax(200px, max-content));
-  gap: 10px 40px;
+  grid-template-columns: repeat(2, max-content);
+  gap: 16px 12.5%;
+  justify-content: center;
+  margin-bottom: 32px;
+  justify-items: center;
 `

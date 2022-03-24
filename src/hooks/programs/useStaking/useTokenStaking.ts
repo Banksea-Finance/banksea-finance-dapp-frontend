@@ -13,6 +13,7 @@ import {
   useWithdraw
 } from './token'
 import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
+import useUserHistoryRewardsQuery from '@/hooks/programs/useStaking/token/useUserHistoryRewardsQuery'
 
 const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const { program } = useStakingProgram()
@@ -31,24 +32,26 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
 
   const deposit = useDeposit(staker)
   const withdraw = useWithdraw(staker)
-  const harvest = useClaim(staker)
+  const claim = useClaim(staker)
 
   const APR = useAPRQuery(staker?.pool)
   const userDeposited = useUserDepositedQuery(staker)
   const totalDeposited = useTotalDepositedQuery(staker)
   const availableRewards = useAvailableRewardsQuery(staker)
+  const historyRewardsQuery = useUserHistoryRewardsQuery(staker)
 
   const { data: totalRewards } = useUserHistoryRewards(staker)
 
   return {
     deposit,
     withdraw,
-    harvest,
+    claim,
     APR,
     totalRewards,
     userDeposited,
     totalDeposited,
     availableRewards,
+    historyRewardsQuery,
     program
   }
 }

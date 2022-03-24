@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useModal } from '@/contexts'
+import { useModal, useRefreshController } from '@/contexts'
 import { Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
@@ -8,6 +8,7 @@ import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { useQuery } from 'react-query'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
+import { ClipLoader } from 'react-spinners'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -15,7 +16,9 @@ export type UseTokenDepositProps = {
 }
 
 const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
+  const { forceRefresh } = useRefreshController()
   const [value, setValue] = useState('')
+
   const inputInvalidError = useMemo(() => {
     if (!value) {
       return
@@ -51,8 +54,9 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
-      onSendTransaction={(callbacks: EventCallback) => staker?.deposit(new BigNumber(value), callbacks)}
+      onSendTransaction={(callbacks: EventCallback) => staker?.deposit(new BigNumber(value), callbacks).then(forceRefresh)}
       title={`Deposit ${staker.poolName}`}
+      confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
     >
       <div style={{ width: '550px' }}>
         <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
@@ -61,7 +65,11 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
           </Flex.Item>
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>
-            <Text fontSize={'18px'} bold color={'primary'}>{poolBalance?.toString() || '-'}</Text>
+            <Text fontSize={'18px'} bold color={'primary'}>
+              {
+                poolBalance?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+              }
+            </Text>
           </Flex.Item>
         </Flex>
         <Flex row alignItemsCenter>
@@ -71,6 +79,7 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
           <Flex.Item flex={1} />
           <Flex.Item flex={16}>
             <Input
+              autoFocus
               value={value}
               allowClear
               onChange={onChange}

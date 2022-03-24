@@ -21,13 +21,13 @@ const Loader = () => <ClipLoader color={'#abc'} size={16} css={'position: relati
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
 
-  const [key, setKey] = useState('deposit')
+  const [key, setKey] = useState('hold')
   const holds = useOwnedNFTsQuery(creator)
   const { userDeposited, totalDeposited, userTotalRewards, rewardsPerDay, availableRewards, claim } = useNFTStaking(props)
 
   return (
     <StyledNftStakingPoolCard>
-      <Flex justifySpaceBetween alignItemsCenter style={{ marginBottom: '48px' }}>
+      <Flex justifySpaceBetween alignItemsCenter style={{ marginBottom: '32px' }}>
         <Flex row alignItemsCenter>
           <NftCollectionImage src={logo} />
           <Text fontSize={'28px'} bold>
@@ -40,12 +40,11 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
             <Text mr={'16px'} fontSize={'18px'} bold color={'textContrary'}>
               {'Available rewards: '}
               {
-                availableRewards.isLoading
-                  ? <Loader />
-                  : (
-                    availableRewards.data
-                      ? `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
-                      : '-'
+                availableRewards.data
+                  ? `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
+                  : (availableRewards.isFetching
+                    ? <Loader />
+                    : '-'
                   )
               }
             </Text>
@@ -54,32 +53,31 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         </Card>
       </Flex>
 
-      <Flex row justifyCenter alignItemsCenter style={{ marginBottom: '48px', padding: '0 16px' }}>
-        <GridContainer>
-          <DataItem
-            label={'Total Deposits'}
-            loading={totalDeposited.isLoading}
-            value={totalDeposited?.data?.toString() || '-'}
-          />
-          <DataItem
-            label={'Your Total Rewards'}
-            loading={userTotalRewards.isLoading}
-            value={userTotalRewards.data ? `${userTotalRewards.data.toFixed(6)} ${rewardTokenName}` : '-'}
-          />
-
-          <DataItem
-            label={'Your Deposited'}
-            loading={userDeposited.isLoading}
-            value={userDeposited.data ? userDeposited?.data?.length.toString() : '-'}
-          />
-
-          <DataItem
-            label={'Rewards Per Staking'}
-            loading={rewardsPerDay.isLoading}
-            value={rewardsPerDay.data ? `${rewardsPerDay.data.toFixed(6)} ${rewardTokenName}/day` : '-'}
-          />
-        </GridContainer>
-      </Flex>
+      <GridContainer>
+        <DataItem
+          label={'Total Deposited'}
+          queryResult={totalDeposited}
+          // labelWidth={'121px'}
+        />
+        <DataItem
+          label={'Rewards Per Staking'}
+          queryResult={rewardsPerDay}
+          displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
+          // labelWidth={'154px'}
+        />
+        <DataItem
+          label={'Your Deposited'}
+          queryResult={userDeposited}
+          displayExpress={data => data?.length.toString()}
+          // labelWidth={'121px'}
+        />
+        <DataItem
+          label={'Your History Total Rewards'}
+          queryResult={userTotalRewards}
+          displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
+          // labelWidth={'154px'}
+        />
+      </GridContainer>
 
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>

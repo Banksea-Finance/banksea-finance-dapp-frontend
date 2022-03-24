@@ -1,11 +1,7 @@
-import styled, { DefaultTheme } from 'styled-components'
+import styled from 'styled-components'
 import { space, typography } from 'styled-system'
 import getThemeValue from '../../utils/getThemeValue'
-import { TextProps } from './types'
-
-interface ThemedProps extends TextProps {
-  theme: DefaultTheme
-}
+import { TextProps, ThemedProps } from './types'
 
 const getColor = ({ color = 'text', theme }: ThemedProps) => {
   return getThemeValue(`colors.${color}`, color)(theme)
