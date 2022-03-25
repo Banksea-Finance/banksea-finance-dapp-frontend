@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
 import { Button, Card, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
-import { ButtonProps } from '@/contexts/theme/components/Button'
-import { CardProps } from '@/contexts/theme/components/Card'
-import { TextProps } from '@/contexts/theme/components/Text'
+import { ButtonProps } from '../Button'
+import { CardProps } from '../Card'
+import { TextProps } from '../Text'
 import CloseIcon from '@/assets/images/close.svg'
 import { useModal } from '@/contexts'
 

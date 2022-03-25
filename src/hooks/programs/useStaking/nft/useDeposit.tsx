@@ -15,11 +15,10 @@ const NFTDepositDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataRe
     <TransactionalDialog
       title={`Deposit ${staker.poolName}`}
       width={'600px'}
-      onSendTransaction={callbacks => staker?.deposit(metadataResult.mint, metadataResult.address, callbacks).then(forceRefresh)}
+      onSendTransaction={callbacks =>
+        staker?.deposit(metadataResult.mint, metadataResult.address, callbacks).then(forceRefresh)}
     >
-      <Text fontSize={'24px'}>
-        Are you sure to deposit {metadataResult.account?.data.data.name}?
-      </Text>
+      <Text fontSize={'18px'}>Are you sure to deposit {metadataResult.account?.data.data.name}?</Text>
     </TransactionalDialog>
   )
 }

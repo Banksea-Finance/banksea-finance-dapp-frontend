@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useModal, useRefreshController } from '@/contexts'
-import { Input, Text } from '@/contexts/theme/components'
+import { Checkbox, Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
@@ -9,6 +9,8 @@ import useUserDepositedQuery from './useUserDepositedQuery'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { ClipLoader } from 'react-spinners'
+import useAvailableRewardsQuery from './useAvailableRewardsQuery'
+import { Grid } from '@react-css/grid'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -17,8 +19,10 @@ export type UseTokenDepositProps = {
 
 const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const [value, setValue] = useState('')
+  const [checked, setChecked] = useState(false)
   const { forceRefresh } = useRefreshController()
   const { data: userDeposits } = useUserDepositedQuery(staker)
+  const { data: availableRewards } = useAvailableRewardsQuery(staker)
 
   const inputInvalidError = useMemo(() => {
     if (!value) {
@@ -54,47 +58,44 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
-      onSendTransaction={(callbacks: EventCallback) => staker?.withdraw(new BigNumber(value), callbacks).then(forceRefresh)}
+      onSendTransaction={(callbacks: EventCallback) => staker?.withdraw(new BigNumber(value), checked, callbacks).then(forceRefresh)}
       title={`Withdraw ${staker.poolName}`}
       confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
+      width={'580px'}
     >
-      <div style={{ width: '550px' }}>
-        <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
-          <Flex.Item flex={12}>
-            <Text textAlign={'end'} fontSize={'18px'}>You have deposited</Text>
-          </Flex.Item>
-          <Flex.Item flex={1} />
-          <Flex.Item flex={16}>
-            <Text fontSize={'18px'} color={'primary'} bold>
-              {
-                userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
-              }
-            </Text>
-          </Flex.Item>
+      <Grid gap={'16px 24px'} columns={'max-content max-content'} style={{ marginBottom: '16px', width: 'fit-content' }} alignItems={'center'}>
+        <Text fontSize={'18px'}>You have deposited</Text>
+        <Text fontSize={'18px'} color={'primary'} bold>
+          {
+            userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+          }
+        </Text>
+
+        <Text fontSize={'18px'}>You want to withdraw</Text>
+        <Flex alignItemsCenter>
+          <Input
+            scale={'sm'}
+            value={value}
+            allowClear
+            autoFocus
+            onChange={onChange}
+            style={{ width: 128, marginRight: 8 }}
+          />
+          <Text color={'orangered'} bold>
+            {inputInvalidError}
+          </Text>
         </Flex>
-        <Flex row alignItemsCenter>
-          <Flex.Item flex={12}>
-            <Text textAlign={'end'} fontSize={'18px'}>You want to withdraw</Text>
-          </Flex.Item>
-          <Flex.Item flex={1} />
-          <Flex.Item flex={16}>
-            <Input
-              value={value}
-              allowClear
-              autoFocus
-              onChange={onChange}
-            />
-          </Flex.Item>
-        </Flex>
-        <Flex row alignItemsCenter style={{ height: '24px' }}>
-          <Flex.Item flex={13} />
-          <Flex.Item flex={16}>
-            <Text color={'orangered'} bold>
-              {inputInvalidError}
-            </Text>
-          </Flex.Item>
-        </Flex>
-      </div>
+
+      </Grid>
+
+      {
+        availableRewards?.gt(0) && (
+          <Flex alignItemsCenter>
+            <Text fontSize={'18px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+            <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
+          </Flex>
+        )
+      }
     </TransactionalDialog>
   )
 }

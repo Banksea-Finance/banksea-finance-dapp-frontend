@@ -9444,6 +9444,14 @@ raw-body@2.4.3:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
+rc-checkbox@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/rc-checkbox/-/rc-checkbox-2.3.2.tgz#f91b3678c7edb2baa8121c9483c664fa6f0aefc1"
+  integrity sha512-afVi1FYiGv1U0JlpNH/UaEXdh6WUJjcWokj/nUN2TgG80bfG+MDdbfHKlLcNNba94mbjy2/SXJ1HDgrOkXGAjg==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
+    classnames "^2.2.1"
+
 rc-input@^0.0.1-alpha.2:
   version "0.0.1-alpha.2"
   resolved "https://registry.yarnpkg.com/rc-input/-/rc-input-0.0.1-alpha.2.tgz#617053ea85a7bd3afe9129807395a000748a6426"

@@ -1,27 +1,38 @@
 import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useModal, useRefreshController } from '@/contexts'
-import { Text } from '@/contexts/theme/components'
+import { Checkbox, Text } from '@/contexts/theme/components'
 import TransactionalDialog from '@/components/transactional-dialog'
+import { Flex } from '@react-css/flex'
+import useAvailableRewardsQuery from './useAvailableRewardsQuery'
 
 const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataResult }> = ({
   staker,
   metadataResult
 }) => {
+  const [checked, setChecked] = useState(false)
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
+  const { data: availableRewards } = useAvailableRewardsQuery(staker)
 
   return (
     <TransactionalDialog
       title={`Withdraw ${staker.poolName}`}
       width={'600px'}
       onCancel={closeModal}
-      onSendTransaction={callbacks => staker?.withdraw(metadataResult.mint, callbacks).then(forceRefresh)}
+      onSendTransaction={callbacks => staker?.withdraw(metadataResult.mint, checked, callbacks).then(forceRefresh)}
     >
-      <Text fontSize={'24px'}>
+      <Text fontSize={'18px'} mb={'8px'}>
         Are you sure to withdraw {metadataResult.account?.data.data.name}?
       </Text>
+
+      {availableRewards?.gt(0) && (
+        <Flex alignItemsCenter>
+          <Text fontSize={'18px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+          <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
+        </Flex>
+      )}
     </TransactionalDialog>
   )
 }

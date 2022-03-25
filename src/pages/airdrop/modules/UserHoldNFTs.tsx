@@ -1,4 +1,4 @@
-import { Button, Text } from '@/contexts/theme/components'
+import { Button, Skeleton, Text } from '@/contexts/theme/components'
 import React from 'react'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { NFT_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/nft'
@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import { Flex } from '@react-css/flex'
 import { InoperableNftCard } from '@/pages/staking/components/NftCard'
 import { COLUMN_LAYOUT_WIDTH_THRESHOLD } from '../constant'
-import { Skeleton } from '@/contexts/theme/components/Skeleton'
 
 const Container = styled.div`
   width: ${208 * 3 + 16 * 2}px;

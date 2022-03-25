@@ -5,7 +5,7 @@ export const baseColors = {
   primaryBright: '#53DEE9',
   primaryDark: '#0098A1',
   secondary: '#7645D9',
-  success: '#31D0AA',
+  success: '#25d579',
   warning: '#FFB237',
   rainbow: 'linear-gradient(91.26deg, #8AD4EC 0%, #EF96FF 21.74%, #33FBC6 99.99%, #3DB18E 100%)'
 }

@@ -1,13 +1,12 @@
 import React from 'react'
 import { UserVotedGrant, useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
-import { Button, Card, Text } from '@/contexts/theme/components'
+import { Button, Card, Skeleton, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import { useModal } from '@/contexts'
 import { AllGrantsDialog } from '@/pages/airdrop/components/AllGrantsDialog'
 import { GrantInfo, GrantsInfoByKey } from '@/pages/airdrop/constant'
 import BigNumber from 'bignumber.js'
 import { shortenAddress } from '@/utils'
-import { Skeleton } from '@/contexts/theme/components/Skeleton'
 
 const VotedGrantCard: React.FC<GrantInfo & UserVotedGrant> = ({ image, name, vote, address }) => {
   return (

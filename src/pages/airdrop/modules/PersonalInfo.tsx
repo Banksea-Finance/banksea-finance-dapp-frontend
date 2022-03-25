@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
 import { useModal, useRefreshController, useSolanaWeb3 } from '@/contexts'
-import { Button, Dialog, Tag, Text } from '@/contexts/theme/components'
+import { Button, Dialog, Skeleton, Tag, Text } from '@/contexts/theme/components'
 import { ReactComponent as DiscordIcon } from '@/assets/images/social-media-logos/discord.svg'
 import { Flex } from '@react-css/flex'
 import { Avatar } from '@/pages/airdrop/index.styles'
@@ -11,7 +11,6 @@ import { Grid } from '@react-css/grid'
 import API from '@/api'
 import useDiscordAccessToken from '@/hooks/useDiscordAccessToken'
 import { WalletSelectDialog } from '@/contexts/theme/components/Wallet/Wallet'
-import { Skeleton } from '@/contexts/theme/components/Skeleton'
 
 const BindingDialog: React.FC<{ token: string; wallet: string; username: string }> = ({ token, wallet, username }) => {
   const [loading, setLoading] = useState(false)
@@ -47,13 +46,15 @@ const BindingDialog: React.FC<{ token: string; wallet: string; username: string 
       cancelButtonProps={{ children: done ? 'Close' : undefined }}
       confirmButtonProps={{ isLoading: loading, disabled: done }}
       bottomMessage={
-        done ? {
-          children: 'Connect successfully!',
-          color: 'success'
-        } : {
-          children: error,
-          color: 'failure'
-        }
+        done
+          ? {
+            children: 'Connect successfully!',
+            color: 'success'
+          }
+          : {
+            children: error,
+            color: 'failure'
+          }
       }
     >
       <Text>

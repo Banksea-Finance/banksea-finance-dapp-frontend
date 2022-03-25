@@ -11,12 +11,12 @@ import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/to
 import { Grid } from '@react-css/grid'
 import { DataItem } from '../DataItem'
 import { ClipLoader } from 'react-spinners'
-import styled from 'styled-components'
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
 
-  const { deposit, userDeposited, totalDeposited, availableRewards, historyRewardsQuery, APR, withdraw, claim } = useTokenStaking(props)
+  const { deposit, userDeposited, totalDeposited, availableRewards, historyRewardsQuery, APR, withdraw, claim } =
+    useTokenStaking(props)
 
   return (
     <StyledTokenStakingPoolCard>
@@ -44,16 +44,17 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           <Flex alignItemsCenter style={{ padding: '8px 32px', borderRadius: '40px' }}>
             <Text mr={'16px'} fontSize={'18px'} bold color={'textContrary'}>
               {'Available rewards: '}
-              {
-                availableRewards.data
-                  ? `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
-                  : (availableRewards.isFetching
-                    ? <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
-                    : '-'
-                  )
-              }
+              {availableRewards.data ? (
+                `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
+              ) : availableRewards.isFetching ? (
+                <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+              ) : (
+                '-'
+              )}
             </Text>
-            <Button scale={'sm'} onClick={claim} variant={'primaryContrary'}>Harvest</Button>
+            <Button scale={'sm'} onClick={claim} variant={'primaryContrary'}>
+              Harvest
+            </Button>
           </Flex>
         </Card>
       </Flex>
@@ -87,7 +88,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
       </InfoGrid>
 
       <Flex row justifyCenter>
-        <Grid gap={'20px'} columns={'repeat(3, 1fr)'}>
+        <Grid gap={'20px'} columns={'repeat(2, 1fr)'}>
           <Button onClick={deposit} scale={'sm'}>
             Deposit
           </Button>

@@ -1,4 +1,4 @@
-import { StyledTabs } from '@/contexts/theme/components/Tabs/styles'
+import { StyledTabs } from './styles'
 import React, { cloneElement, ReactElement } from 'react'
 import { ButtonMenu } from '@/contexts/theme/components'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'

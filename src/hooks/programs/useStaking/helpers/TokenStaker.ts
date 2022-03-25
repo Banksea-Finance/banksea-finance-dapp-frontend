@@ -137,44 +137,19 @@ export class TokenStaker {
 
   /**
    * @param amount original number, not lamport
+   * @param claim if claim the rewards at the same time or not
    * @param callback
    */
-  async withdraw(amount: BigNumber, callback?: EventCallback): Promise<void> {
-    const decimals = await this.depositTokenDecimals()
-    const withdrawAmount: BN = new BN(amount.shiftedBy(decimals).toString())
+  async withdraw(amount: BigNumber, claim?: boolean, callback?: EventCallback): Promise<void> {
+    const tx = new Transaction()
 
-    const { address: passbook } = await getPassbook({
-      pool: this.pool,
-      user: this.user,
-      program: this.program
-    }).catch(e => {
-      throw e
-    })
-
-    const depositTokenMint = await this.getDepositTokenMint()
-    const { pubkey: withdrawAccount } = await this.getWithdrawTokenAccount()
-
-    const [asset] = await PublicKey.findProgramAddress(
-      [Buffer.from('asset'), passbook.toBuffer(), depositTokenMint.toBuffer()],
-      this.program.programId
-    )
-
-    const { stakingAccount, stakingSigner } = await this.program.account.asset.fetch(asset)
+    if (claim) {
+      tx.add(await this._buildClaimInstruction())
+    }
+    tx.add(await this._buildWithdrawInstruction(amount))
     callback?.['onTransactionBuilt']?.()
 
-    const signature = await this.program.rpc.withdraw(withdrawAmount, {
-      accounts: {
-        pool: this.pool,
-        passbook,
-        asset,
-        withdrawAccount,
-        stakingSigner,
-        stakingAccount,
-        user: this.user,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        clock: SYSVAR_CLOCK_PUBKEY
-      }
-    })
+    const signature = await this.program.provider.send(tx)
     callback?.['onSent']?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
@@ -182,40 +157,10 @@ export class TokenStaker {
   }
 
   async claim(callback?: EventCallback): Promise<void> {
-    const decimals = await this.getRewardTokenDecimals()
-    const availableRewards = await this.getAvailableRewards()
+    const instruction = await this._buildClaimInstruction()
+    callback?.onTransactionBuilt?.()
 
-    const poolAccount = await this.getPoolAccount(true)
-
-    const [rewardSigner] = await PublicKey.findProgramAddress(
-      [Buffer.from('reward_signer'), this.pool.toBuffer()],
-      this.program.programId
-    )
-
-    const passbook = await getPassbook({
-      pool: this.pool,
-      user: this.user,
-      program: this.program
-    })
-
-    const claimAccount = (
-      await this.program.provider.connection.getTokenAccountsByOwner(this.user, { mint: poolAccount.rewardMint })
-    ).value[0].pubkey
-
-    callback?.['onTransactionBuilt']?.()
-
-    const signature = await this.program.rpc.claim(new BN(availableRewards.shiftedBy(decimals).toString()), {
-      accounts: {
-        passbook: passbook.address,
-        pool: this.pool,
-        claimAccount,
-        rewardSigner,
-        rewardAccount: poolAccount.rewardAccount,
-        user: this.user,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        clock: SYSVAR_CLOCK_PUBKEY
-      }
-    })
+    const signature = await this.program.provider.send(new Transaction().add(instruction))
     callback?.['onSent']?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
@@ -410,5 +355,77 @@ export class TokenStaker {
     const decimals = await this.depositTokenDecimals()
 
     return new BigNumber(poolAccount.totalStakingAmount.toString()).shiftedBy(-decimals)
+  }
+
+  async _buildClaimInstruction() {
+    const decimals = await this.getRewardTokenDecimals()
+    const availableRewards = await this.getAvailableRewards()
+
+    const poolAccount = await this.getPoolAccount(true)
+
+    const [rewardSigner] = await PublicKey.findProgramAddress(
+      [Buffer.from('reward_signer'), this.pool.toBuffer()],
+      this.program.programId
+    )
+
+    const passbook = await getPassbook({
+      pool: this.pool,
+      user: this.user,
+      program: this.program
+    })
+
+    const claimAccount = (
+      await this.program.provider.connection.getTokenAccountsByOwner(this.user, { mint: poolAccount.rewardMint })
+    ).value[0].pubkey
+
+    return this.program.instruction.claim(new BN(availableRewards.shiftedBy(decimals).toString()), {
+      accounts: {
+        passbook: passbook.address,
+        pool: this.pool,
+        claimAccount,
+        rewardSigner,
+        rewardAccount: poolAccount.rewardAccount,
+        user: this.user,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        clock: SYSVAR_CLOCK_PUBKEY
+      }
+    })
+  }
+
+  async _buildWithdrawInstruction(amount: BigNumber) {
+    const decimals = await this.depositTokenDecimals()
+    const withdrawAmount: BN = new BN(amount.shiftedBy(decimals).toString())
+
+    const { address: passbook } = await getPassbook({
+      pool: this.pool,
+      user: this.user,
+      program: this.program
+    }).catch(e => {
+      throw e
+    })
+
+    const depositTokenMint = await this.getDepositTokenMint()
+    const { pubkey: withdrawAccount } = await this.getWithdrawTokenAccount()
+
+    const [asset] = await PublicKey.findProgramAddress(
+      [Buffer.from('asset'), passbook.toBuffer(), depositTokenMint.toBuffer()],
+      this.program.programId
+    )
+
+    const { stakingAccount, stakingSigner } = await this.program.account.asset.fetch(asset)
+
+    return this.program.instruction.withdraw(withdrawAmount, {
+      accounts: {
+        pool: this.pool,
+        passbook,
+        asset,
+        withdrawAccount,
+        stakingSigner,
+        stakingAccount,
+        user: this.user,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        clock: SYSVAR_CLOCK_PUBKEY
+      }
+    })
   }
 }

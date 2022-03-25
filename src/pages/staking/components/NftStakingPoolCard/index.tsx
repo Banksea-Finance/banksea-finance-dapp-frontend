@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import Flex from '@react-css/flex'
-import { Button, Card, Text } from '@/contexts/theme/components'
+import { Button, Card, Tabs, Text } from '@/contexts/theme/components'
 import {
   GridContainer,
   NftCollectionImage,
   StyledNftStakingPoolCard
 } from '@/pages/staking/components/NftStakingPoolCard/index.styles'
-import Tabs from '@/contexts/theme/components/Tabs/Tabs'
 import NFTsGridView from '@/pages/staking/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
