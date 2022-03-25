@@ -19,7 +19,7 @@ import { waitTransactionConfirm } from '@/utils'
 
 export class TokenStaker {
   poolName: string
-  user: PublicKey
+  user?: PublicKey
   program: Program<StakingProgramIdlType>
   pool: PublicKey
   whitelist: PublicKey
@@ -32,7 +32,7 @@ export class TokenStaker {
     program: Program<StakingProgramIdlType>
     poolName: string
     poolAddress: PublicKey
-    user: PublicKey
+    user?: PublicKey
     whitelist: PublicKey
   }) {
     const { poolAddress, program, whitelist, user, poolName } = props
@@ -49,17 +49,19 @@ export class TokenStaker {
    * @param callback
    */
   async deposit(amount: BigNumber, callback?: EventCallback): Promise<void> {
+    if (!this.user) return
+
     const decimals = await this.depositTokenDecimals()
     const depositAmount: BN = new BN(amount.shiftedBy(decimals).toString())
 
     const tokenMint = await this.getDepositTokenMint()
-    const depositAccount = await this.findBalanceEnoughDepositAccount(depositAmount)
+    const depositAccount = (await this.findBalanceEnoughDepositAccount(depositAmount))!
 
     const newStakingAccount = Keypair.generate()
     const tx = new Transaction()
 
     // check passbook or register
-    const passbook = await this.getPassbook()
+    const passbook = (await this.getPassbook())!
 
     if (!passbook.account) {
       tx.add(
@@ -141,12 +143,14 @@ export class TokenStaker {
    * @param callback
    */
   async withdraw(amount: BigNumber, claim?: boolean, callback?: EventCallback): Promise<void> {
+    if (!this.user) return
+
     const tx = new Transaction()
 
     if (claim) {
-      tx.add(await this._buildClaimInstruction())
+      tx.add((await this._buildClaimInstruction())!)
     }
-    tx.add(await this._buildWithdrawInstruction(amount))
+    tx.add((await this._buildWithdrawInstruction(amount))!)
     callback?.['onTransactionBuilt']?.()
 
     const signature = await this.program.provider.send(tx)
@@ -157,7 +161,9 @@ export class TokenStaker {
   }
 
   async claim(callback?: EventCallback): Promise<void> {
-    const instruction = await this._buildClaimInstruction()
+    if (!this.user) return
+
+    const instruction = (await this._buildClaimInstruction())!
     callback?.onTransactionBuilt?.()
 
     const signature = await this.program.provider.send(new Transaction().add(instruction))
@@ -167,7 +173,9 @@ export class TokenStaker {
     callback?.['onConfirm']?.(signature)
   }
 
-  async getHistoryTotalRewards(): Promise<BigNumber> {
+  async getHistoryTotalRewards(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
+
     const passbook = await getPassbook({
       pool: this.pool,
       user: this.user,
@@ -212,7 +220,9 @@ export class TokenStaker {
     return new BigNumber(passbook.account.rewardAmount.add(IncRewardAmount).toString()).shiftedBy(-decimals)
   }
 
-  async getClaimedRewards(): Promise<BigNumber> {
+  async getClaimedRewards(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
+
     const passbook = await getPassbook({
       pool: this.pool,
       user: this.user,
@@ -230,10 +240,12 @@ export class TokenStaker {
     return new BigNumber(passbook.account.claimedAmount.toString()).shiftedBy(-decimals)
   }
 
-  async getAvailableRewards(): Promise<BigNumber> {
-    const historyTotalReward = await this.getHistoryTotalRewards()
+  async getAvailableRewards(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
 
-    const claimedReward = await this.getClaimedRewards()
+    const historyTotalReward = (await this.getHistoryTotalRewards())!
+
+    const claimedReward = (await this.getClaimedRewards())!
 
     return new BigNumber(historyTotalReward.minus(claimedReward).toString())
   }
@@ -253,8 +265,10 @@ export class TokenStaker {
 
   async findBalanceEnoughDepositAccount(
     amount: BN
-  ): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> {
-    const accounts = await this.getTokenAccounts()
+  ): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> } | undefined> {
+    if (!this.user) return undefined
+
+    const accounts = (await this.getTokenAccounts())!
 
     if (!accounts.length) {
       throw new Error('')
@@ -271,14 +285,18 @@ export class TokenStaker {
     )
   }
 
-  async getPassbook(): Promise<Passbook> {
+  async getPassbook(): Promise<Passbook | undefined> {
+    if (!this.user) return undefined
+
     const { pool, user, program } = this
 
     return getPassbook({ pool, user, program })
   }
 
-  async getUserDeposited(): Promise<BigNumber> {
-    const passbook = await this.getPassbook()
+  async getUserDeposited(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
+
+    const passbook = (await this.getPassbook())!
 
     const amount = passbook.account?.stakingAmount
 
@@ -291,7 +309,9 @@ export class TokenStaker {
     return new BigNumber(amount.toString()).shiftedBy(-decimals)
   }
 
-  async getTokenAccounts(): Promise<Array<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }>> {
+  async getTokenAccounts(): Promise<Array<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> | undefined> {
+    if (!this.user) return undefined
+
     if (!this._tokenAccounts) {
       const tokenMint = await this.getDepositTokenMint()
 
@@ -319,11 +339,15 @@ export class TokenStaker {
     return this._depositTokenMint
   }
 
-  async getWithdrawTokenAccount(): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> {
-    return (await this.getTokenAccounts())[0]
+  async getWithdrawTokenAccount(): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> } | undefined> {
+    if (!this.user) return undefined
+
+    return (await this.getTokenAccounts())![0]
   }
 
-  async getPoolBalance(): Promise<BigNumber> {
+  async getPoolBalance(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
+
     const account = await this.program.account.whitelist.fetchNullable(this.whitelist).catch(e => {
       throw new Error(`Failed to fetch whitelist account of public key: ${this.whitelist}. (${e.toString()})`)
     })
@@ -358,8 +382,10 @@ export class TokenStaker {
   }
 
   async _buildClaimInstruction() {
+    if (!this.user) return undefined
+
     const decimals = await this.getRewardTokenDecimals()
-    const availableRewards = await this.getAvailableRewards()
+    const availableRewards = (await this.getAvailableRewards())!
 
     const poolAccount = await this.getPoolAccount(true)
 
@@ -393,6 +419,8 @@ export class TokenStaker {
   }
 
   async _buildWithdrawInstruction(amount: BigNumber) {
+    if (!this.user) return undefined
+
     const decimals = await this.depositTokenDecimals()
     const withdrawAmount: BN = new BN(amount.shiftedBy(decimals).toString())
 
@@ -405,7 +433,7 @@ export class TokenStaker {
     })
 
     const depositTokenMint = await this.getDepositTokenMint()
-    const { pubkey: withdrawAccount } = await this.getWithdrawTokenAccount()
+    const { pubkey: withdrawAccount } = (await this.getWithdrawTokenAccount())!
 
     const [asset] = await PublicKey.findProgramAddress(
       [Buffer.from('asset'), passbook.toBuffer(), depositTokenMint.toBuffer()],

@@ -19,7 +19,7 @@ import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 
 export class NFTStaker {
   poolName: string
-  user: PublicKey
+  user?: PublicKey
   program: Program<StakingProgramIdlType>
   pool: PublicKey
   whitelist: PublicKey
@@ -32,7 +32,7 @@ export class NFTStaker {
     program: Program<StakingProgramIdlType>
     poolName: string
     poolAddress: PublicKey
-    user: PublicKey
+    user?: PublicKey
     whitelist: PublicKey
     rewardTokenName: string
   }) {
@@ -47,15 +47,15 @@ export class NFTStaker {
   }
 
   async deposit(tokenMint: PublicKey, metadata: PublicKey, callback?: EventCallback): Promise<void> {
-    callback?.['onTransactionBuilt']?.()
+    if (!this.user) return
 
-    const depositAccount = await this.getTokenAccount(tokenMint)
+    const depositAccount = (await this.getTokenAccount(tokenMint))!
 
     const newStakingAccount = Keypair.generate()
     const tx = new Transaction()
 
     // check passbook or register
-    const passbook = await this.getPassbook()
+    const passbook = (await this.getPassbook())!
 
     if (!passbook.account) {
       tx.add(
@@ -131,6 +131,7 @@ export class NFTStaker {
     })
 
     tx.add(depositInstruction)
+    callback?.['onTransactionBuilt']?.()
 
     const signature = await this.program.provider.send(tx, assetAccount ? [] : [newStakingAccount])
     callback?.['onSent']?.()
@@ -146,12 +147,14 @@ export class NFTStaker {
    * @param callback
    */
   async withdraw(tokenMint: PublicKey, claim?: boolean, callback?: EventCallback): Promise<void> {
+    if (!this.user) return
+
     const tx = new Transaction()
 
     if (claim) {
-      tx.add(await this._buildClaimInstruction())
+      tx.add((await this._buildClaimInstruction())!)
     }
-    tx.add(await this._buildWithdrawInstruction(tokenMint))
+    tx.add((await this._buildWithdrawInstruction(tokenMint))!)
     callback?.['onTransactionBuilt']?.()
 
     const signature = await this.program.provider.send(tx)
@@ -162,7 +165,9 @@ export class NFTStaker {
   }
 
   async claim(callback?: EventCallback): Promise<void> {
-    const tx = new Transaction().add(await this._buildClaimInstruction())
+    if (!this.user) return
+
+    const tx = new Transaction().add((await this._buildClaimInstruction())!)
     callback?.['onTransactionBuilt']?.()
 
     const signature = await this.program.provider.send(tx)
@@ -172,7 +177,9 @@ export class NFTStaker {
     callback?.['onConfirm']?.()
   }
 
-  async getHistoryTotalRewards(): Promise<BigNumber> {
+  async getHistoryTotalRewards(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
+
     const passbook = await getPassbook({
       pool: this.pool,
       user: this.user,
@@ -217,7 +224,9 @@ export class NFTStaker {
     return new BigNumber(passbook.account.rewardAmount.add(IncRewardAmount).toString()).shiftedBy(-decimals)
   }
 
-  async getClaimedRewards(): Promise<BigNumber> {
+  async getClaimedRewards(): Promise<BigNumber | undefined> {
+    if (!this.user) return undefined
+
     const passbook = await getPassbook({
       pool: this.pool,
       user: this.user,
@@ -233,10 +242,12 @@ export class NFTStaker {
     return new BigNumber(passbook.account.claimedAmount.toString()).shiftedBy(-decimals)
   }
 
-  async getAvailableRewards(): Promise<BigNumber> {
-    const historyTotalReward = await this.getHistoryTotalRewards()
+  async getAvailableRewards(): Promise<BigNumber | undefined> {
+    if (!this.user) return
 
-    const claimedReward = await this.getClaimedRewards()
+    const historyTotalReward = (await this.getHistoryTotalRewards())!
+
+    const claimedReward = (await this.getClaimedRewards())!
 
     return new BigNumber(historyTotalReward.minus(claimedReward).toString())
   }
@@ -252,13 +263,19 @@ export class NFTStaker {
     return this._rewardTokenDecimals
   }
 
-  async getPassbook(): Promise<Passbook> {
+  async getPassbook(): Promise<Passbook | undefined> {
+    if (!this.user) return undefined
+
     const { pool, user, program } = this
 
     return getPassbook({ pool, user, program })
   }
 
-  async getTokenAccount(tokenMint: PublicKey): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> {
+  async getTokenAccount(
+    tokenMint: PublicKey
+  ): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> } | undefined> {
+    if (!this.user) return undefined
+
     return (await this.program.provider.connection.getParsedTokenAccountsByOwner(this.user, { mint: tokenMint }))
       .value[0]
   }
@@ -271,8 +288,10 @@ export class NFTStaker {
     return this._poolAccount
   }
 
-  async getDepositedNFTs(): Promise<Array<ProgramAccount<AccountFromIDL<StakingProgramIdlType, 'asset'>>>> {
-    const passbook = await this.getPassbook()
+  async getDepositedNFTs(): Promise<Array<ProgramAccount<AccountFromIDL<StakingProgramIdlType, 'asset'>>> | undefined> {
+    if (!this.user) return undefined
+
+    const passbook = (await this.getPassbook())!
 
     const filter = [
       {
@@ -287,13 +306,15 @@ export class NFTStaker {
   }
 
   async _buildWithdrawInstruction(tokenMint: PublicKey) {
+    if (!this.user) return undefined
+
     const { address: passbook } = await getPassbook({
       pool: this.pool,
       user: this.user,
       program: this.program
     })
 
-    const { pubkey: withdrawAccount } = await this.getTokenAccount(tokenMint)
+    const { pubkey: withdrawAccount } = (await this.getTokenAccount(tokenMint))!
 
     const [asset] = await PublicKey.findProgramAddress(
       [Buffer.from('asset'), passbook.toBuffer(), tokenMint.toBuffer()],
@@ -318,8 +339,10 @@ export class NFTStaker {
   }
 
   async _buildClaimInstruction() {
+    if (!this.user) return undefined
+
     const decimals = await this.getRewardTokenDecimals()
-    const availableRewards = await this.getAvailableRewards()
+    const availableRewards = (await this.getAvailableRewards())!
 
     const poolAccount = await this.getPoolAccount(true)
 

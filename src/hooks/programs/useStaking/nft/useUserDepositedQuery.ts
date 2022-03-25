@@ -12,6 +12,9 @@ const useUserDepositedQuery = (staker?: NFTStaker): UseQueryResult<MetadataResul
       if (!staker) return undefined
 
       const allAssets = await staker.getDepositedNFTs()
+
+      if (!allAssets) return undefined
+
       const tokenMints = allAssets.map(o => o.account.mint)
 
       const connection = staker.program.provider.connection

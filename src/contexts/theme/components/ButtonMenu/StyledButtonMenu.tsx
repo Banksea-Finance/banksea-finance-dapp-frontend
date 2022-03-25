@@ -12,15 +12,14 @@ const getBackgroundColor = (props: StyledButtonMenuProps) => {
   return getButtonMenuTheme(props).backgroundColor
 }
 
-const StyledButtonMenu = styled.div<{ variant: Variant }>`
+const StyledButtonMenu = styled.div<StyledButtonMenuProps>`
   background-color: ${getBackgroundColor};
   border-radius: 40px;
   display: inline-flex;
-  border: 2px ${p => getButtonMenuTheme(p).borderColor} solid;
 
   & > button + button,
   & > a + a {
-    margin-left: 2px; // To avoid focus shadow overlap
+    margin-left: 2px;
   }
   
   ${space}

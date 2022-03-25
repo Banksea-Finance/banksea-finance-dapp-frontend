@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Flex from '@react-css/flex'
-import { Button, Card, Tabs, Text } from '@/contexts/theme/components'
+import { Card, Tabs, Text } from '@/contexts/theme/components'
 import {
   GridContainer,
   NftCollectionImage,
@@ -12,6 +12,7 @@ import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { useNFTStaking } from '@/hooks/programs/useStaking'
 import { ClipLoader } from 'react-spinners'
 import { DataItem } from '@/pages/staking/components/DataItem'
+import { WalletRequiredButton } from '@/components/wallet-required-button'
 
 export type NFTStatus = 'deposited' | 'hold'
 
@@ -47,7 +48,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                   )
               }
             </Text>
-            <Button scale={'sm'} onClick={claim} variant={'primaryContrary'}>Harvest</Button>
+            <WalletRequiredButton scale={'sm'} onClick={claim} variant={'primaryContrary'}>Harvest</WalletRequiredButton>
           </Flex>
         </Card>
       </Flex>

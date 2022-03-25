@@ -1,6 +1,7 @@
 import { BaseButtonProps, Scale, variants } from '../Button/types'
 import React, { HTMLAttributes } from 'react'
 import { SpaceProps } from 'styled-system'
+import { CSSProperties } from 'styled-components'
 
 export interface ButtonMenuItemProps extends BaseButtonProps {
   isActive?: boolean
@@ -17,8 +18,9 @@ export interface ButtonMenuProps extends HTMLAttributes<HTMLDivElement>, SpacePr
 }
 
 export interface ButtonMenuTheme {
-  width: string
-  borderColor: string
-  activeBackground: string
-  backgroundColor: string
+  width: CSSProperties['width']
+  borderColor: CSSProperties['color']
+  activeBackground: CSSProperties['color']
+  backgroundColor: CSSProperties['color']
+  inactiveTextColor: CSSProperties['color']
 }

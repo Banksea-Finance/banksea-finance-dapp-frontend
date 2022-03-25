@@ -5,12 +5,13 @@ import {
   StyledTokenStakingPoolCard
 } from '@/pages/staking/components/TokenStakingPoolCard/index.styles'
 import Flex from '@react-css/flex'
-import { Button, Card, Text } from '@/contexts/theme/components'
+import { Card, Text } from '@/contexts/theme/components'
 import { useTokenStaking } from '@/hooks/programs/useStaking'
 import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
 import { Grid } from '@react-css/grid'
 import { DataItem } from '../DataItem'
 import { ClipLoader } from 'react-spinners'
+import { WalletRequiredButton } from '@/components/wallet-required-button'
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
@@ -52,9 +53,9 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
                 '-'
               )}
             </Text>
-            <Button scale={'sm'} onClick={claim} variant={'primaryContrary'}>
+            <WalletRequiredButton scale={'sm'} onClick={claim} variant={'primaryContrary'}>
               Harvest
-            </Button>
+            </WalletRequiredButton>
           </Flex>
         </Card>
       </Flex>
@@ -89,12 +90,12 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
 
       <Flex row justifyCenter>
         <Grid gap={'20px'} columns={'repeat(2, 1fr)'}>
-          <Button onClick={deposit} scale={'sm'}>
+          <WalletRequiredButton onClick={deposit} scale={'sm'}>
             Deposit
-          </Button>
-          <Button onClick={withdraw} scale={'sm'}>
+          </WalletRequiredButton>
+          <WalletRequiredButton onClick={withdraw} scale={'sm'}>
             Withdraw
-          </Button>
+          </WalletRequiredButton>
         </Grid>
       </Flex>
     </StyledTokenStakingPoolCard>

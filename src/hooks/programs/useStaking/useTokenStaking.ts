@@ -20,7 +20,7 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const { account } = useSolanaWeb3()
 
   const staker = useMemo(() => {
-    if (!program || !account) return undefined
+    if (!program) return undefined
 
     return new TokenStaker({
       ...props,

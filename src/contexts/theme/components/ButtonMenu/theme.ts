@@ -10,14 +10,16 @@ const dark: ButtonMenuTheme = {
   ...base,
   borderColor: 'transparent',
   backgroundColor: themes.dark.colors.primaryContrary,
-  activeBackground: 'rgb(28,182,235)'
+  activeBackground: 'rgb(28,182,235)',
+  inactiveTextColor: 'white',
 }
 
 const light: ButtonMenuTheme = {
   ...base,
   borderColor: '#70C0FE',
-  backgroundColor: 'rgb(255,245,255)',
-  activeBackground: 'rgb(28,182,235)'
+  backgroundColor: 'rgb(230,241,243)',
+  activeBackground: 'rgb(28,182,235)',
+  inactiveTextColor: 'rgb(28,182,235)'
 }
 
 export const getButtonMenuTheme = ({ theme }: { theme: DefaultTheme}) => {

@@ -5,10 +5,10 @@ import { Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
-import { useQuery } from 'react-query'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 import { ClipLoader } from 'react-spinners'
+import usePoolBalanceQuery from '@/hooks/programs/useStaking/token/usePoolBalanceQuery'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -18,6 +18,7 @@ export type UseTokenDepositProps = {
 const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const { forceRefresh } = useRefreshController()
   const [value, setValue] = useState('')
+  const { data: poolBalance } = usePoolBalanceQuery(staker)
 
   const inputInvalidError = useMemo(() => {
     if (!value) {
@@ -33,9 +34,6 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
   }, [value])
 
-  const { data: poolBalance } = useQuery<BigNumber>(['pool-balance', staker.pool], () => {
-    return staker.getPoolBalance()
-  }, { refetchInterval: false, refetchOnWindowFocus: false })
 
   const onChange = useCallback((v: any) => {
     const value = v.target.value

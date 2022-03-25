@@ -11,6 +11,7 @@ const MenuItemButton = styled(Button)`
   padding: 8px 40px;
   height: 100%;
   box-shadow: none;
+  color: ${({ theme }) => theme.colors.textContrary};
 
   ${({ theme }) => theme.mediaQueries.xl} {
     padding-left: 20px;
@@ -19,13 +20,13 @@ const MenuItemButton = styled(Button)`
 
   &.active {
     background-color: ${p => getButtonMenuTheme(p).activeBackground};
-    color: ${({ theme }) => theme.colors.textContrary};
     transition: all ease-out 0.38s;
+    box-shadow: rgb(98 98 98 / 40%) 0 -2px 0px 0px inset;
   }
 
   &.inactive {
     background-color: transparent;
-    color: ${({ theme }) => theme.colors.textSubtle};
+    color: ${p => getButtonMenuTheme(p).inactiveTextColor};
     transition: all 0s;
     box-shadow: none;
 

@@ -4,7 +4,7 @@ import { StakingProgramAddress, StakingProgramIdl } from '@/hooks/programs/useSt
 import useAnchorProvider from '@/hooks/useAnchorProvider'
 
 const useStakingProgram = () => {
-  const provider = useAnchorProvider()
+  const { provider } = useAnchorProvider()
 
   const program = useMemo(() => {
     if (!provider) {
