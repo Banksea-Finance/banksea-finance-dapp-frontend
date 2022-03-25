@@ -2,15 +2,38 @@ import React, { useEffect, useState } from 'react'
 import { NavbarContainer, NavbarWrapper, NavItemsContainer, NavLink, NavLinkText } from './index.style'
 import Logo from '../BankseaLogo'
 import { Link, useLocation } from 'react-router-dom'
-import { Wallet } from '@/contexts/theme/components'
+import { Text, Wallet } from '@/contexts/theme/components'
+import { useResponsive } from '@/contexts/theme/hooks'
 
 import throttle from 'lodash/throttle'
+import ReactTooltip from 'react-tooltip'
 
 const NavItems = [
   { name: 'Staking', path: '/staking' },
-  { name: 'Airdrop', path: '/airdrop' },
-  { name: 'IDO', path: '/ido' },
+  { name: 'Airdrop', path: '/airdrop', disabled: true },
+  { name: 'IDO', path: '/ido', disabled: true },
 ]
+
+const DisabledNavLink: React.FC<{ name: string }> = ({ name }) => {
+  return (
+    <div style={{ cursor: 'not-allowed' }}>
+      <a data-for={'DisabledNavLink'} data-tip={true}>
+        <NavLinkText
+          className={'disabled'}
+          color={'textDisabled'}
+          fontSize={'22px'}
+          important
+          bold
+        >
+          {name}
+        </NavLinkText>
+      </a>
+      <ReactTooltip id={'DisabledNavLink'} place="top" type="dark" effect="solid">
+        <Text color={'textContrary'}>Under constructing...</Text>
+      </ReactTooltip>
+    </div>
+  )
+}
 
 const Navbar: React.FC = () => {
   const { pathname } = useLocation()
@@ -50,19 +73,23 @@ const Navbar: React.FC = () => {
         </Link>
         <NavItemsContainer itemCount={NavItems.length}>
           {
-            NavItems.map(({ name, path }, index) => (
-              <NavLink key={`nav-link-${index}`} to={path}>
-                <NavLinkText
-                  color={pathname === path ? 'primaryContrary' : 'text'}
-                  className={pathname === path ? 'active' : ''}
-                  fontSize={'22px'}
-                  important
-                  bold
-                >
-                  {name}
-                </NavLinkText>
-              </NavLink>
-            ))
+            NavItems.map(({ name, path, disabled }, index) => {
+              return disabled
+                ? <DisabledNavLink name={name} />
+                : (
+                  <NavLink key={index} to={path}>
+                    <NavLinkText
+                      color={pathname === path ? 'primaryContrary' : 'text'}
+                      className={pathname === path ? 'active' : ''}
+                      fontSize={'22px'}
+                      important
+                      bold
+                    >
+                      {name}
+                    </NavLinkText>
+                  </NavLink>
+                )
+            })
           }
         </NavItemsContainer>
         <Wallet />

@@ -34,8 +34,7 @@ const App: React.FC = () => {
           <Routes location={location}>
             <Route path={'/'} element={<Redirect to={'/staking'} />} />
             <Route path={'staking'} element={<StakingPage />} />
-            <Route path={'airdrop'} element={<AirdropPage />} />
-            <Route path={'ido'} element={<IdoPage />} />
+            <Route path={'*'} element={<Redirect to={'/'} />} />
           </Routes>
         </CSSTransition>
       </TransitionGroup>
