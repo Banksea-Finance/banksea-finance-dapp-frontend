@@ -59,7 +59,7 @@ export const NavLink = styled(Link)`
 export const NavLinkText = styled(Text)`
   transition: color 0.38s;
   
-  :hover:not(.active) {
+  :hover:not(.active):not(.disabled) {
     color: ${({ theme }) => theme.colors.secondary};
   }
 `
