@@ -12,9 +12,13 @@ const WalletRequiredButton: React.FC<ButtonProps> = props => {
       <a data-for={'a'} data-tip={true}>
         <Button {...props} disabled={!account} />
       </a>
-      <ReactTooltip id={'a'} place="top" type="dark" effect="solid">
-        <Text color={'textContrary'}>Need wallet connecting</Text>
-      </ReactTooltip>
+      {
+        !account && (
+          <ReactTooltip id={'a'} place="top" type="dark" effect="solid">
+            <Text color={'textContrary'}>Need wallet connecting</Text>
+          </ReactTooltip>
+        )
+      }
     </div>
   )
 }
