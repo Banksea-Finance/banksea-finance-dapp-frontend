@@ -2,7 +2,7 @@ import { PublicKey } from '@solana/web3.js'
 
 const CURRENCY_KSE: Currency = {
   name: 'KSE',
-  icon: 'https://pbs.twimg.com/profile_images/1483882473688043521/fpWDvR9k_400x400.jpg'
+  icon: require('@/assets/images/banksea.jpg'),
 }
 
 // const CURRENCY_ETH: Currency = {
