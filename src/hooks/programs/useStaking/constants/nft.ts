@@ -16,7 +16,7 @@ export const NFT_STAKING_POOLS: NFTStakingPoolConfig[] = [
     whitelist: new PublicKey('8MzoFXt7P3phCUDWLpxdxjpJu4Mo4nTy54CFhihnFW3P'),
     creator: new PublicKey('A7aksxoZFvnMy58ing8M4Wbuu8XweaRonf6PGqZ7Fyso'),
     name: 'Citizenone-dev',
-    logo: 'https://hn52zxyctuoztwo2oxnt3pxqmmcdhwkbqensvb2mbuswf7oxpm.arweave.net/O3us3wKdHZnZ2nXbPb7w_YwQz2UGBGyqHTA0lYv3Xe8?ext=png',
+    logo: 'https://content.solsea.io/files/thumbnail/1643474033004-292668735.png'',
     rewardTokenName: 'KSE'
   }
 ]
