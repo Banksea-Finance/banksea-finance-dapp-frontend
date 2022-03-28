@@ -15,7 +15,7 @@ import { createTokenAccountInstrs } from '@project-serum/common'
 import BigNumber from 'bignumber.js'
 import { AccountFromIDL } from '@/utils/types'
 import { waitTransactionConfirm } from '@/utils'
-import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
+import { TransactionEventCallback } from '@/components/transactional-dialog'
 
 export class NFTStaker {
   poolName: string
@@ -46,7 +46,7 @@ export class NFTStaker {
     this.rewardTokenName = rewardTokenName
   }
 
-  async deposit(tokenMint: PublicKey, metadata: PublicKey, callback?: EventCallback): Promise<void> {
+  async deposit(tokenMint: PublicKey, metadata: PublicKey, callback?: TransactionEventCallback): Promise<void> {
     if (!this.user) return
 
     const depositAccount = (await this.getTokenAccount(tokenMint))!
@@ -131,13 +131,13 @@ export class NFTStaker {
     })
 
     tx.add(depositInstruction)
-    callback?.['onTransactionBuilt']?.()
+    callback?.onTransactionBuilt?.()
 
     const signature = await this.program.provider.send(tx, assetAccount ? [] : [newStakingAccount])
-    callback?.['onSent']?.()
+    callback?.onSent?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.()
+    callback?.onConfirm?.(signature)
   }
 
   /**
@@ -146,7 +146,7 @@ export class NFTStaker {
    * @param claim If claim the rewards at the same or not
    * @param callback
    */
-  async withdraw(tokenMint: PublicKey, claim?: boolean, callback?: EventCallback): Promise<void> {
+  async withdraw(tokenMint: PublicKey, claim?: boolean, callback?: TransactionEventCallback): Promise<void> {
     if (!this.user) return
 
     const tx = new Transaction()
@@ -155,26 +155,26 @@ export class NFTStaker {
       tx.add((await this._buildClaimInstruction())!)
     }
     tx.add((await this._buildWithdrawInstruction(tokenMint))!)
-    callback?.['onTransactionBuilt']?.()
+    callback?.onTransactionBuilt?.()
 
     const signature = await this.program.provider.send(tx)
-    callback?.['onSent']?.()
+    callback?.onSent?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.()
+    callback?.onConfirm?.(signature)
   }
 
-  async claim(callback?: EventCallback): Promise<void> {
+  async claim(callback?: TransactionEventCallback): Promise<void> {
     if (!this.user) return
 
     const tx = new Transaction().add((await this._buildClaimInstruction())!)
-    callback?.['onTransactionBuilt']?.()
+    callback?.onTransactionBuilt?.()
 
     const signature = await this.program.provider.send(tx)
-    callback?.['onSent']?.()
+    callback?.onSent?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.()
+    callback?.onConfirm?.(signature)
   }
 
   async getHistoryTotalRewards(): Promise<BigNumber | undefined> {

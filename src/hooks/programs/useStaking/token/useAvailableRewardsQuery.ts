@@ -6,13 +6,12 @@ const useAvailableRewardsQuery = (staker?: TokenStaker) => {
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['TOKEN_AvailableRewards', staker?.pool, staker?.user, intermediateRefreshFlag],
+    ['TOKEN_AVAILABLE_REWARDS', staker?.pool, staker?.user, intermediateRefreshFlag],
     () => {
       if (!staker) return undefined
 
       return staker.getAvailableRewards()
     },
-    { keepPreviousData: true, refetchInterval: false }
   )
 }
 

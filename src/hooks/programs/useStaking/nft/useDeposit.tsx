@@ -13,6 +13,7 @@ const NFTDepositDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataRe
 
   return (
     <TransactionalDialog
+      transactionName={`Deposit ${staker.poolName}`}
       title={`Deposit ${staker.poolName}`}
       width={'600px'}
       onSendTransaction={callbacks =>

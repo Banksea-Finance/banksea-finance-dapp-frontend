@@ -1,13 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useModal, useRefreshController } from '@/contexts'
-import { Checkbox, Input, Text } from '@/contexts/theme/components'
+import { Button, Checkbox, Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import useUserDepositedQuery from './useUserDepositedQuery'
-import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
-import TransactionalDialog from '@/components/transactional-dialog'
+import TransactionalDialog, { TransactionEventCallback } from '@/components/transactional-dialog'
 import { ClipLoader } from 'react-spinners'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
 import { Grid } from '@react-css/grid'
@@ -58,20 +57,23 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
-      onSendTransaction={(callbacks: EventCallback) => staker?.withdraw(new BigNumber(value), checked, callbacks).then(forceRefresh)}
+      transactionName={`Withdraw ${staker.poolName}`}
+      onSendTransaction={(callbacks: TransactionEventCallback) => staker?.withdraw(new BigNumber(value), checked, callbacks).then(forceRefresh)}
       title={`Withdraw ${staker.poolName}`}
       confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
       width={'580px'}
     >
-      <Grid gap={'16px 24px'} columns={'max-content max-content'} style={{ marginBottom: '16px', width: 'fit-content' }} alignItems={'center'}>
-        <Text fontSize={'18px'}>You have deposited</Text>
+      <Grid gap={'16px 16px'} columns={'max-content max-content'} style={{ marginBottom: '16px', width: 'fit-content' }} alignItems={'center'}>
+        <Text fontSize={'16px'}>You have deposited</Text>
         <Text fontSize={'18px'} color={'primary'} bold>
           {
             userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
           }
+          {' '}
+          {staker.poolName}
         </Text>
 
-        <Text fontSize={'18px'}>You want to withdraw</Text>
+        <Text fontSize={'16px'}>You want to withdraw</Text>
         <Flex alignItemsCenter>
           <Input
             scale={'sm'}
@@ -79,19 +81,28 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
             allowClear
             autoFocus
             onChange={onChange}
-            style={{ width: 128, marginRight: 8 }}
+            mr={'8px'}
+            suffix={
+              <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
+            }
           />
-          <Text color={'orangered'} bold>
-            {inputInvalidError}
-          </Text>
+          <Button
+            scale={'xs'}
+            variant={'primary'}
+            onClick={() => userDeposits && setValue(userDeposits.toString())}
+          >
+            Max
+          </Button>
         </Flex>
 
       </Grid>
-
+      <Text color={'orangered'} bold>
+        {inputInvalidError}
+      </Text>
       {
         availableRewards?.gt(0) && (
           <Flex alignItemsCenter>
-            <Text fontSize={'18px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+            <Text fontSize={'16px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
             <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
           </Flex>
         )

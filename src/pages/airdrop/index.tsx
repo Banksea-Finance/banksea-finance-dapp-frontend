@@ -42,7 +42,6 @@ const AirdropPage: React.FC = () => {
           ? (
             <StyledCard p={'24px'}>
               <UserVotedGrants />
-              <UserHoldNFTs />
             </StyledCard>
           ) : <></>
       }

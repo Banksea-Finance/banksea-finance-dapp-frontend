@@ -4,8 +4,7 @@ import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { Text } from '@/contexts/theme/components'
 import { useModal, useRefreshController } from '@/contexts'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
-import TransactionalDialog from '@/components/transactional-dialog'
-import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
+import TransactionalDialog, { TransactionEventCallback } from '@/components/transactional-dialog'
 import { BeatLoader } from 'react-spinners'
 
 export type UseTokenDepositProps = {
@@ -19,7 +18,8 @@ const ClaimDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
-      onSendTransaction={(callbacks: EventCallback) => staker?.claim(callbacks).then(forceRefresh)}
+      transactionName={`Harvest rewards from ${staker.poolName}`}
+      onSendTransaction={(callbacks: TransactionEventCallback) => staker?.claim(callbacks).then(forceRefresh)}
       title={`Harvest from ${staker.poolName} pool`}
       confirmButtonProps={{ children: 'Harvest now', disabled: isLoading || !availableRewards?.gt(0) }}
     >

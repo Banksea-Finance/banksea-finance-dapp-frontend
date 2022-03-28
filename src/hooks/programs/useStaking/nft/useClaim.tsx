@@ -12,6 +12,7 @@ const NFTClaimDialog: React.FC<{ staker: NFTStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
+      transactionName={`Harvest rewards from ${staker.poolName}`}
       title={`Harvest from ${staker.poolName} pool`}
       width={'550px'}
       onSendTransaction={callbacks => staker?.claim(callbacks).then(forceRefresh)}

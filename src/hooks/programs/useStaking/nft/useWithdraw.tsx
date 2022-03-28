@@ -18,6 +18,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
 
   return (
     <TransactionalDialog
+      transactionName={`Withdraw ${staker.poolName}`}
       title={`Withdraw ${staker.poolName}`}
       width={'600px'}
       onCancel={closeModal}
@@ -29,7 +30,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
 
       {availableRewards?.gt(0) && (
         <Flex alignItemsCenter>
-          <Text fontSize={'18px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+          <Text fontSize={'16px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
           <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
         </Flex>
       )}

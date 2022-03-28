@@ -30,7 +30,6 @@ export const styleVariants: Record<Variant, any> = {
   [variants.SECONDARY]: {
     backgroundColor: 'secondary',
     borderColor: 'primary',
-    boxShadow: 'none',
     color: 'textContrary',
     ':disabled': {
       backgroundColor: 'transparent',

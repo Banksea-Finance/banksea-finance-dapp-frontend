@@ -14,8 +14,8 @@ import { getAsset, getPassbook, Passbook } from '@/hooks/programs/useStaking/hel
 import { createTokenAccountInstrs } from '@project-serum/common'
 import BigNumber from 'bignumber.js'
 import { AccountFromIDL } from '@/utils/types'
-import { EventCallback } from '@/hooks/programs/useStaking/helpers/events'
 import { waitTransactionConfirm } from '@/utils'
+import { TransactionEventCallback } from '@/components/transactional-dialog'
 
 export class TokenStaker {
   poolName: string
@@ -48,7 +48,7 @@ export class TokenStaker {
    * @param amount original number, not lamport
    * @param callback
    */
-  async deposit(amount: BigNumber, callback?: EventCallback): Promise<void> {
+  async deposit(amount: BigNumber, callback?: TransactionEventCallback): Promise<void> {
     if (!this.user) return
 
     const decimals = await this.depositTokenDecimals()
@@ -128,13 +128,13 @@ export class TokenStaker {
     })
 
     tx.add(depositInstruction)
-    callback?.['onTransactionBuilt']?.()
+    callback?.onTransactionBuilt?.()
 
     const signature = await this.program.provider.send(tx, assetAccount ? [] : [newStakingAccount])
-    callback?.['onSent']?.()
+    callback?.onSent?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.(signature)
+    callback?.onConfirm?.(signature)
   }
 
   /**
@@ -142,7 +142,7 @@ export class TokenStaker {
    * @param claim if claim the rewards at the same time or not
    * @param callback
    */
-  async withdraw(amount: BigNumber, claim?: boolean, callback?: EventCallback): Promise<void> {
+  async withdraw(amount: BigNumber, claim?: boolean, callback?: TransactionEventCallback): Promise<void> {
     if (!this.user) return
 
     const tx = new Transaction()
@@ -151,26 +151,27 @@ export class TokenStaker {
       tx.add((await this._buildClaimInstruction())!)
     }
     tx.add((await this._buildWithdrawInstruction(amount))!)
-    callback?.['onTransactionBuilt']?.()
+    callback?.onTransactionBuilt?.()
 
     const signature = await this.program.provider.send(tx)
-    callback?.['onSent']?.()
+    callback?.onSent?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.(signature)
+    callback?.onConfirm?.(signature)
   }
 
-  async claim(callback?: EventCallback): Promise<void> {
+  async claim(callback?: TransactionEventCallback): Promise<void> {
     if (!this.user) return
 
     const instruction = (await this._buildClaimInstruction())!
+    const tx = new Transaction().add(instruction)
     callback?.onTransactionBuilt?.()
 
-    const signature = await this.program.provider.send(new Transaction().add(instruction))
-    callback?.['onSent']?.()
+    const signature = await this.program.provider.send(tx)
+    callback?.onSent?.()
 
     await waitTransactionConfirm(this.program.provider.connection, signature)
-    callback?.['onConfirm']?.(signature)
+    callback?.onConfirm?.(signature)
   }
 
   async getHistoryTotalRewards(): Promise<BigNumber | undefined> {
@@ -232,7 +233,7 @@ export class TokenStaker {
     })
 
     if (!passbook.account) {
-      throw new Error('Passbook account not found, maybe you have not deposit yet?')
+      return new BigNumber(0)
     }
 
     const decimals = await this.getRewardTokenDecimals()
@@ -271,7 +272,7 @@ export class TokenStaker {
     const accounts = (await this.getTokenAccounts())!
 
     if (!accounts.length) {
-      throw new Error('')
+      throw new Error('insufficient balance')
     }
 
     for (const element of accounts) {

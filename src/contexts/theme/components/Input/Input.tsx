@@ -68,13 +68,17 @@ const StyledInput = styled(Input)<InputProps>`
     background: transparent;
     border: none;
     color: ${({ theme }) => theme.colors.primary};
+    flex-grow: 1;
+    font-weight: 600;
     
     &:focus-visible {
       outline: none;
     }
 
     &-suffix {
-      width: 16px;
+      width: fit-content;
+      display: flex;
+      align-items: center;
       
       .rc-input-clear-icon {
         width: 8px;
