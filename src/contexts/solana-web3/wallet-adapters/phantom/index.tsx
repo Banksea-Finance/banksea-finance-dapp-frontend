@@ -73,9 +73,10 @@ export class PhantomWalletAdapter extends EventEmitter implements WalletAdapter 
   async connect() {
     const provider = this._provider
 
-    if (!provider || !provider.isPhantom) {
+    if (!(provider?.isPhantom)) {
       notify({
         title: 'Phantom Not Found!',
+        type: 'error',
         message: (
           <p>
             Please install Phantom wallet from&nbsp;
@@ -88,10 +89,14 @@ export class PhantomWalletAdapter extends EventEmitter implements WalletAdapter 
       return Promise.reject()
     }
 
-    return await provider.connect()
+    await provider.connect()
+    this.emit('connect')
+
   }
 
-  disconnect() {
-    this._provider?.disconnect()
+  async disconnect() {
+    await this._provider?.disconnect()
+
+    this.emit('disconnect')
   }
 }

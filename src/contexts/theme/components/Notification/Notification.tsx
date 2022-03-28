@@ -15,40 +15,51 @@ export type NotifyProps = {
   duration?: number
 }
 
-function notify({ title = '', message = '', type = 'info', duration = 3 }: NotifyProps) {
+async function notify({ title = '', message = '', type = 'info', duration = 3 }: NotifyProps) {
   if (!notification) {
-    Notification.newInstance(
-      {
-        maxCount: 5,
-        getContainer: () => document.getElementById('app')!,
-        style: { position: 'fixed' }
-      },
-      instance => {
-        notification = instance
-      }
-    )
+    await new Promise<void>(resolve => {
+      Notification.newInstance(
+        {
+          maxCount: 5,
+          getContainer: () => document.getElementById('app')!,
+          style: {
+            position: 'fixed',
+            right: '2%',
+            top: '100px',
+            zIndex: 19,
+            minWidth: 300,
+
+          }
+        },
+        instance => {
+          notification = instance
+          resolve()
+        }
+      )
+    })
   }
 
+  const key = `Notification-${Date.now()}`
+
   notification.notice({
+    key,
     content: (
       <Flex alignItems={'center'}>
         <NotifyTypeIcon className={type} />
         <div>
           <NoticeTitle>{title}</NoticeTitle>
-          <div style={{ color: 'white', opacity: 0.5 }}>{message}</div>
+          <div style={{ color: '#FFFFFF7F' }}>{message}</div>
         </div>
       </Flex>
     ),
     style: {
-      left: '2%',
-      bottom: '2%',
-      position: 'fixed',
       minWidth: 300,
-      zIndex: 19
     },
     closable: true,
     duration
   })
+
+  return key
 }
 
 export default notify

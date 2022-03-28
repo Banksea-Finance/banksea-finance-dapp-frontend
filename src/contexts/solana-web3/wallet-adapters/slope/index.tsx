@@ -14,46 +14,47 @@ import {
   WalletSignTransactionError
 } from '@solana/wallet-adapter-base'
 import bs58 from 'bs58'
+import { notify } from '@/contexts/theme/components'
+import React from 'react'
 
 interface SlopeWallet {
   connect(): Promise<{
-    msg: string;
+    msg: string
     data: {
-      publicKey?: string;
-    };
-  }>;
+      publicKey?: string
+    }
+  }>
 
-  disconnect(): Promise<{ msg: string }>;
+  disconnect(): Promise<{ msg: string }>
 
   signTransaction(message: string): Promise<{
-    msg: string;
+    msg: string
     data: {
-      publicKey?: string;
-      signature?: string;
-    };
-  }>;
+      publicKey?: string
+      signature?: string
+    }
+  }>
 
   signAllTransactions(messages: string[]): Promise<{
-    msg: string;
+    msg: string
     data: {
-      publicKey?: string;
-      signatures?: string[];
-    };
-  }>;
+      publicKey?: string
+      signatures?: string[]
+    }
+  }>
 
-  signMessage(message: Uint8Array): Promise<{ data: { signature: string } }>;
+  signMessage(message: Uint8Array): Promise<{ data: { signature: string } }>
 }
 
 interface WindowWithSlope extends Window {
   Slope?: {
-    new(): SlopeWallet;
-  };
+    new (): SlopeWallet
+  }
 }
 
 declare const window: WindowWithSlope
 
 export class SlopeWalletAdapter extends EventEmitter implements WalletAdapter {
-
   private _wallet?: SlopeWallet
   private _connecting: boolean
   private _publicKey?: PublicKey
@@ -92,7 +93,24 @@ export class SlopeWalletAdapter extends EventEmitter implements WalletAdapter {
 
   async connect() {
     try {
+      if (this._readyState === WalletReadyState.NotDetected) {
+        notify({
+          title: 'Slope Not Found!',
+          type: 'error',
+          message: (
+            <p>
+              Please install Slope wallet from&nbsp;
+              <a href="https://chrome.google.com/webstore/detail/slope-wallet/pocmplpaccanhmnllbbkpgfliimjljgo">
+                Chrome Web Store
+              </a>
+            </p>
+          )
+        })
+        return Promise.reject()
+      }
+
       if (this.connected || this.connecting) return
+
       if (this._readyState !== WalletReadyState.Installed) throw new WalletNotReadyError()
 
       this._connecting = true
@@ -144,8 +162,6 @@ export class SlopeWalletAdapter extends EventEmitter implements WalletAdapter {
         this.emit('error', error)
       }
     }
-
-    this.emit('disconnect')
   }
 
   async signTransaction(transaction: Transaction): Promise<Transaction> {
@@ -202,5 +218,4 @@ export class SlopeWalletAdapter extends EventEmitter implements WalletAdapter {
       throw error
     }
   }
-
 }

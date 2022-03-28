@@ -60,7 +60,8 @@ const ResetDefaultStyles = css`
   }
 
   a {
-    color: inherit;
+    color: rgb(61,153,203);
+    font-weight: 500;
     text-decoration: none;
   }
 

@@ -104,9 +104,15 @@ export const SolanaWeb3Provider: React.FC = ({ children }) => {
 
   const disconnect = useCallback(() => {
     adapter?.disconnect()
+    notify({
+      title: 'Wallet disconnect',
+      message: `Disconnected from ${wallet!.name} wallet`
+    })
+
     setWallet(undefined)
+    setConnected(false)
     setLocalStoredWallet(undefined)
-  }, [adapter])
+  }, [adapter, wallet])
 
   useEffect(() => {
     if (adapter) {
@@ -123,14 +129,6 @@ export const SolanaWeb3Provider: React.FC = ({ children }) => {
         notify({
           title: 'Wallet update',
           message: 'Connected to wallet ' + keyToDisplay
-        })
-      })
-
-      adapter.on('disconnect', () => {
-        setConnected(false)
-        notify({
-          title: 'Wallet update',
-          message: 'Disconnected from wallet'
         })
       })
     }
