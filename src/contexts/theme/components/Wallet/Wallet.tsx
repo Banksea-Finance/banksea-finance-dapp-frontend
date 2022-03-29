@@ -8,10 +8,6 @@ import { Card, Dialog } from '@/contexts/theme/components'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
 import { Grid } from '@react-css/grid'
 
-const WalletButton = styled(Button)`
-  font-weight: bold;
-`
-
 const SCCurrentAccount = styled.div`
   display: flex;
   align-items: center;
@@ -44,6 +40,10 @@ export const WalletItemCard = styled(Card)`
     width: 48px;
     height: 48px;
   }
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 82vw;
+  }
 `
 
 export const WalletItem: React.FC<{ wallet: SolanaWallet; onClick: (name: SupportWalletNames) => void }> = ({
@@ -74,14 +74,14 @@ const CurrentAccount: React.FC = () => {
   }, [account, disconnect, openModal])
 
   return (
-    <WalletButton onClick={open}>
+    <Button onClick={open}>
       <SCCurrentAccount>
         <div className="icon">
           <img src={wallet?.icon} alt="" />
         </div>
         {account && <span>{`${account.toBase58().substring(0, 5)}...${account.toBase58().substring(-4, 4)}`}</span>}
       </SCCurrentAccount>
-    </WalletButton>
+    </Button>
   )
 }
 
@@ -110,7 +110,13 @@ export const WalletSelectDialog: React.FC = () => {
 const ConnectButton = () => {
   const { openModal } = useModal()
 
-  return <WalletButton onClick={() => openModal(<WalletSelectDialog />)}>Connect</WalletButton>
+  return (
+    <Button
+      onClick={() => openModal(<WalletSelectDialog />)}
+    >
+      Connect
+    </Button>
+  )
 }
 
 const Wallet: React.FC = () => {

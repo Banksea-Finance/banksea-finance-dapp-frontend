@@ -10,6 +10,9 @@ import TransactionalDialog, { TransactionEventCallback } from '@/components/tran
 import { ClipLoader } from 'react-spinners'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
 import { Grid } from '@react-css/grid'
+import { useQuery } from 'react-query'
+import { FormItem } from '@/components/form-item'
+import { useResponsive } from '@/contexts/theme'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -22,9 +25,11 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const { forceRefresh } = useRefreshController()
   const { data: userDeposits } = useUserDepositedQuery(staker)
   const { data: availableRewards } = useAvailableRewardsQuery(staker)
+  const { data: decimals } = useQuery(['DEPOSITED_TOKEN_DECIMALS', staker.user, staker.poolName, staker.pool], () => staker.depositTokenDecimals())
+  const { isMobile } = useResponsive()
 
   const inputInvalidError = useMemo(() => {
-    if (!value) {
+    if (!value || !decimals) {
       return undefined
     }
 
@@ -32,10 +37,10 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       return 'The input is not a number'
     }
 
-    if ((/\d+\.(\d+)/.exec(value)?.[1]?.length || 0) > 9) {
-      return 'Decimal places too large'
+    if ((/\d+\.(\d+)/.exec(value)?.[1]?.length || 0) > decimals) {
+      return `Decimal places too large (maximum: ${decimals})`
     }
-  }, [value])
+  }, [value, decimals])
 
   const onChange = useCallback(
     (v: any) => {
@@ -61,10 +66,8 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       onSendTransaction={(callbacks: TransactionEventCallback) => staker?.withdraw(new BigNumber(value), checked, callbacks).then(forceRefresh)}
       title={`Withdraw ${staker.poolName}`}
       confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
-      width={'580px'}
     >
-      <Grid gap={'16px 16px'} columns={'max-content max-content'} style={{ marginBottom: '16px', width: 'fit-content' }} alignItems={'center'}>
-        <Text fontSize={'16px'}>You have deposited</Text>
+      <FormItem label={'You have deposited'} labelWidth={isMobile ? undefined : '166px'} labelPosition={'left'} justifyContent={isMobile ? 'space-between' : undefined}>
         <Text fontSize={'18px'} color={'primary'} bold>
           {
             userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
@@ -72,8 +75,8 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
           {' '}
           {staker.poolName}
         </Text>
-
-        <Text fontSize={'16px'}>You want to withdraw</Text>
+      </FormItem>
+      <FormItem label={'You want to withdraw'} labelWidth={'166px'} labelPosition={isMobile ? 'top' : 'left'}>
         <Flex alignItemsCenter>
           <Input
             scale={'sm'}
@@ -94,15 +97,21 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
             Max
           </Button>
         </Flex>
+      </FormItem>
 
-      </Grid>
-      <Text color={'orangered'} bold>
-        {inputInvalidError}
-      </Text>
+      <Flex alignItemsCenter style={{ minHeight: '24px' }}>
+        <div style={{ width: isMobile? '4px' : '176px' }} />
+        <Flex.Item flex={16}>
+          <Text color={'failure'} bold>
+            {inputInvalidError || ' '}
+          </Text>
+        </Flex.Item>
+      </Flex>
+
       {
         availableRewards?.gt(0) && (
-          <Flex alignItemsCenter>
-            <Text fontSize={'16px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+          <Flex alignItemsCenter justifyContent={'space-between'} style={{ marginTop: '8px' }}>
+            <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
             <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
           </Flex>
         )

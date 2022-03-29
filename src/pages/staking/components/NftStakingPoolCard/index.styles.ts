@@ -4,15 +4,12 @@ import { Card } from '@/contexts/theme/components'
 export const StyledNftStakingPoolCard = styled(Card)`
   width: inherit;
   padding: 24px 24px 36px 24px;
-  transition: all 0.38s;
-`
 
-export const NftCollectionImage = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  
-  margin-right: 16px;
+  ${({ theme }) => theme.mediaQueries.xl} {
+    padding: 12px;
+    width: 100%;
+    border-radius: 10px;
+  }
 `
 
 export const GridContainer = styled.div`

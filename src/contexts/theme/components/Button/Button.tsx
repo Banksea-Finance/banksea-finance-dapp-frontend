@@ -1,20 +1,23 @@
 import React, { cloneElement, ElementType, isValidElement } from 'react'
 import getExternalLinkProps from '../../utils/getExternalLinkProps'
 import StyledButton from './StyledButton'
-import { ButtonProps, scales, variants } from './types'
+import { ButtonProps, variants } from './types'
 import { DotLoader } from 'react-spinners'
+import { useResponsive } from '@/contexts/theme'
 
 const Button = <E extends ElementType = 'button'>(props: ButtonProps<E>): JSX.Element => {
   const { startIcon, endIcon, external, className, isLoading, disabled, children, ...rest } = props
   const internalProps = external ? getExternalLinkProps() : {}
   const isDisabled = isLoading || disabled
   const classNames = className ? [className] : []
+  const scale = props.scale || (useResponsive().isMobile ? 'sm' : 'md')
 
   return (
     <StyledButton
       $isLoading={isLoading}
       className={classNames.join(' ')}
       disabled={isDisabled}
+      scale={scale}
       {...internalProps}
       {...rest}
     >
@@ -44,7 +47,6 @@ Button.defaultProps = {
   isLoading: false,
   external: false,
   variant: variants.PRIMARY,
-  scale: scales.MD,
   disabled: false,
 }
 

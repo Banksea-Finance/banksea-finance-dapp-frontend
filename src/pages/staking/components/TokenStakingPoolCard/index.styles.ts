@@ -2,8 +2,13 @@ import styled from 'styled-components'
 import { Card } from '@/contexts/theme/components'
 
 export const StyledTokenStakingPoolCard = styled(Card)`
-  width: inherit;
+  width: 100%;
   padding: 24px;
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    padding: 12px;
+    border-radius: 10px;
+  }
 `
 
 export const CurrencyIconImage = styled.img`
@@ -16,17 +21,3 @@ export const CurrencyIconImage = styled.img`
   }
 `
 
-export const InfoGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  gap: 16px 12.5%;
-  justify-content: center;
-  margin-bottom: 32px;
-  justify-items: center;
-  
-  ${({ theme }) => theme.mediaQueries.xl} {
-    grid-template-columns: max-content;
-    justify-items: start;
-  }
-}
-`

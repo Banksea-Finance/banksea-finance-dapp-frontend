@@ -6,6 +6,7 @@ import { CardProps } from '../Card'
 import { TextProps } from '../Text'
 import CloseIcon from '@/assets/images/close.svg'
 import { useModal } from '@/contexts'
+import { useResponsive } from '@/contexts/theme'
 
 export type DialogProps = CardProps & {
   title: string | JSX.Element
@@ -29,9 +30,11 @@ const Dialog: React.FC<DialogProps> = ({
   onConfirm,
   bottomMessage,
   children,
+  minWidth,
   ...rest
 }) => {
   const { closeModal } = useModal()
+  const { isMobile } = useResponsive()
 
   const hasBottomMessage = useMemo(() => {
     if (typeof bottomMessage === 'string') {
@@ -63,7 +66,7 @@ const Dialog: React.FC<DialogProps> = ({
   }, [closeable, onConfirm, confirmButtonProps])
 
   return (
-    <Card p={'24px'} minWidth={'448px'} {...rest} isActive>
+    <Card p={'24px'} minWidth={minWidth || (!isMobile ? '448px' : undefined)} {...rest} isActive>
       <Flex
         justifySpaceBetween
         alignItemsCenter

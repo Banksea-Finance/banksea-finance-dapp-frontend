@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { space, typography } from 'styled-system'
+import { layout, space, typography } from 'styled-system'
 import getThemeValue from '../../utils/getThemeValue'
 import { TextProps, ThemedProps } from './types'
 
@@ -28,6 +28,7 @@ const Text = styled.div<TextProps>`
   
   ${({ textTransform }) => textTransform && `text-transform: ${textTransform};`}
   ${space}
+  ${layout}
   ${typography}
 `
 

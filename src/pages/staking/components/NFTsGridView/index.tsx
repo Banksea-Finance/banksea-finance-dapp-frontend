@@ -14,7 +14,13 @@ const Grid = styled.div`
   display: grid;
   justify-content: center;
   grid-template-columns: repeat(auto-fit, 258px);
-  gap: 10px 48px;
+  gap: 24px 48px;
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    grid-template-columns: repeat(2, 42vw);
+    gap: 10px 0;
+    justify-content: space-between;
+  }
 `
 
 export type NFTsGridViewProps = NFTStakingPoolConfig & {

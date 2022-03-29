@@ -14,8 +14,7 @@ const MenuItemButton = styled(Button)`
   color: ${({ theme }) => theme.colors.textContrary};
 
   ${({ theme }) => theme.mediaQueries.xl} {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 8px 20px;
   }
 
   &.active {

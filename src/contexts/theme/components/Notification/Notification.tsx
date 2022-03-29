@@ -23,12 +23,8 @@ async function notify({ title = '', message = '', type = 'info', duration = 3 }:
           maxCount: 5,
           getContainer: () => document.getElementById('app')!,
           style: {
-            position: 'fixed',
-            right: '2%',
-            top: '100px',
-            zIndex: 19,
-            minWidth: 300,
-
+            top: undefined,
+            right: undefined
           }
         },
         instance => {

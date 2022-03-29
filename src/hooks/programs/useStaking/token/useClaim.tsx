@@ -6,6 +6,7 @@ import { useModal, useRefreshController } from '@/contexts'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
 import TransactionalDialog, { TransactionEventCallback } from '@/components/transactional-dialog'
 import { BeatLoader } from 'react-spinners'
+import { useResponsive } from '@/contexts/theme'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -23,34 +24,32 @@ const ClaimDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       title={`Harvest from ${staker.poolName} pool`}
       confirmButtonProps={{ children: 'Harvest now', disabled: isLoading || !availableRewards?.gt(0) }}
     >
-      <div style={{ width: '650px' }}>
-        {
-          isLoading
-            ? <Text textAlign={'center'} fontSize={'20px'}>Loading your rewards <BeatLoader size={12} /></Text>
-            : (
-              availableRewards?.gt(0)
-                ? (
-                  <div>
-                    <Text textAlign={'center'} fontSize={'20px'} mb={'16px'}>
-                      {'You have  '}
-                      <b className="primary">
-                        {
-                          `${availableRewards.toString()}${staker.poolName} `
-                        }
-                      </b>
-                      rewards available now. <br />
-                    </Text>
-                    <Text textAlign={'center'} fontSize={'20px'}>
-                      Would you like to harvest them all?
-                    </Text>
-                  </div>
-                )
-                : (
-                  <Text textAlign={'center'} fontSize={'20px'}>You have no any rewards now.</Text>
-                )
-            )
-        }
-      </div>
+      {
+        isLoading
+          ? <Text textAlign={'center'} fontSize={'20px'}>Loading your rewards <BeatLoader size={12} /></Text>
+          : (
+            availableRewards?.gt(0)
+              ? (
+                <div>
+                  <Text textAlign={'center'} fontSize={'20px'} mb={'16px'}>
+                    {'You have  '}
+                    <b className="primary">
+                      {
+                        `${availableRewards.toString()}${staker.poolName} `
+                      }
+                    </b>
+                    rewards available now. <br />
+                  </Text>
+                  <Text textAlign={'center'} fontSize={'20px'}>
+                    Would you like to harvest them all?
+                  </Text>
+                </div>
+              )
+              : (
+                <Text textAlign={'center'} fontSize={'20px'}>You have no any rewards now.</Text>
+              )
+          )
+      }
     </TransactionalDialog>
   )
 }

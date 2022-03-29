@@ -61,7 +61,7 @@ const responsiveDefaultContentStyle = (isDesktop: boolean) => {
 
   return {
     width: '90%',
-    margin: '10vh 0 0 0',
+    margin: '0',
     background: 'none',
     border: 'none',
     display: 'flex',

@@ -9,6 +9,8 @@ import TransactionalDialog, { TransactionEventCallback } from '@/components/tran
 import { ClipLoader } from 'react-spinners'
 import usePoolBalanceQuery from '@/hooks/programs/useStaking/token/usePoolBalanceQuery'
 import { useQuery } from 'react-query'
+import { useResponsive } from '@/contexts/theme'
+import { FormItem } from '@/components/form-item'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -19,6 +21,7 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const { forceRefresh } = useRefreshController()
   const [value, setValue] = useState('')
   const { data: poolBalance } = usePoolBalanceQuery(staker)
+  const { isMobile } = useResponsive()
 
   const { data: decimals } = useQuery(['DEPOSITED_TOKEN_DECIMALS', staker.user, staker.poolName, staker.pool], () => staker.depositTokenDecimals())
 
@@ -32,7 +35,7 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
 
     if ((/\d+\.(\d+)/.exec(value)?.[1]?.length || 0) > decimals) {
-      return 'Decimal places too large'
+      return `Decimal places too large (maximum: ${decimals})`
     }
   }, [value, decimals])
 
@@ -54,63 +57,50 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
 
   return (
     <TransactionalDialog
+      minWidth={isMobile ? undefined : '550px'}
       transactionName={`Deposit ${staker.poolName}`}
       onSendTransaction={(callbacks: TransactionEventCallback) => staker?.deposit(new BigNumber(value), callbacks).then(forceRefresh)}
       title={`Deposit ${staker.poolName}`}
       confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
     >
-      <div style={{ width: '550px' }}>
-        <Flex row alignItemsCenter style={{ marginBottom: '16px' }}>
-          <Flex.Item flex={10}>
-            <Text textAlign={'end'} fontSize={'16px'}>You have</Text>
-          </Flex.Item>
-          <Flex.Item flex={1} />
-          <Flex.Item flex={16}>
-            <Text fontSize={'18px'} bold color={'primary'}>
-              {
-                poolBalance?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
-              }
-              {' '}
-              { staker.poolName }
-            </Text>
-          </Flex.Item>
+      <FormItem label={'You have'} labelWidth={isMobile ? undefined : '178px'} labelPosition={isMobile ? 'left' : 'right'} justifyContent={isMobile ? 'space-between' : undefined}>
+        <Text fontSize={'18px'} bold color={'primary'}>
+          {
+            poolBalance?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
+          }
+          {' '}
+          { staker.poolName }
+        </Text>
+      </FormItem>
+      <FormItem label={'You want to deposit'} labelWidth={'178px'} labelPosition={isMobile ? 'top' : 'right'}>
+        <Flex alignItemsCenter>
+          <Input
+            autoFocus
+            value={value}
+            allowClear
+            onChange={onChange}
+            mr={'8px'}
+            suffix={
+              <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
+            }
+          />
+          <Button
+            scale={'xs'}
+            variant={'primary'}
+            onClick={() => poolBalance && setValue(poolBalance.toString())}
+          >
+            Max
+          </Button>
         </Flex>
-        <Flex row alignItemsCenter>
-          <Flex.Item flex={10}>
-            <Text textAlign={'end'} fontSize={'16px'}>You want to deposit</Text>
-          </Flex.Item>
-          <Flex.Item flex={1} />
-          <Flex.Item flex={16}>
-            <Flex alignItemsCenter>
-              <Input
-                autoFocus
-                value={value}
-                allowClear
-                onChange={onChange}
-                mr={'8px'}
-                suffix={
-                  <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
-                }
-              />
-              <Button
-                scale={'xs'}
-                variant={'primary'}
-                onClick={() => poolBalance && setValue(poolBalance.toString())}
-              >
-                Max
-              </Button>
-            </Flex>
-          </Flex.Item>
-        </Flex>
-        <Flex row alignItemsCenter style={{ height: '24px' }}>
-          <Flex.Item flex={13} />
-          <Flex.Item flex={16}>
-            <Text color={'orangered'} bold>
-              {inputInvalidError}
-            </Text>
-          </Flex.Item>
-        </Flex>
-      </div>
+      </FormItem>
+      <Flex row alignItemsCenter style={{ height: '24px' }}>
+        <Flex.Item flex={isMobile ? 0 : 10} />
+        <Flex.Item flex={16}>
+          <Text color={'failure'} bold>
+            {inputInvalidError}
+          </Text>
+        </Flex.Item>
+      </Flex>
     </TransactionalDialog>
   )
 }

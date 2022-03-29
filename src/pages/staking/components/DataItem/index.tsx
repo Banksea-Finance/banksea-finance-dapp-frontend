@@ -1,26 +1,53 @@
 import React from 'react'
-import Flex from '@react-css/flex'
 import { Text } from '@/contexts/theme/components'
 import { ClipLoader } from 'react-spinners'
 import { UseQueryResult } from 'react-query'
-import { CSSProperties } from 'styled-components'
+import styled, { CSSProperties } from 'styled-components'
 
 type Props<T> = {
-  label: string;
-  queryResult: UseQueryResult<T | undefined>,
+  label: string
+  queryResult: UseQueryResult<T | undefined>
   displayExpress?: (data: T) => string
   labelWidth?: CSSProperties['width']
 }
 
+const DataItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  
+  .label:after {
+    content: ':';
+    margin-right: 8px;
+  }
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    
+    .label {
+      font-size: 14px;
+      
+      &:after {
+        content: '';
+      }
+    }
+    
+    .value {
+      font-size: 16px;
+    }
+  }
+`
+
 const DataItem = <T,>({ label, queryResult, displayExpress, labelWidth }: Props<T>): JSX.Element => {
   return (
-    <Flex alignItemsCenter>
-      <Text mr={'8px'} fontWeight={500} style={{ width: labelWidth }}>
-        {label}:
+    <DataItemContainer>
+      <Text fontWeight={500} style={{ width: labelWidth }} className={'label'}>
+        {label}
       </Text>
       {
         queryResult.data ? (
-          <Text fontSize={'20px'} bold color={'primary'}>
+          <Text fontSize={'20px'} bold color={'primary'} className={'value'}>
             {
               displayExpress
                 ? displayExpress(queryResult.data)
@@ -35,7 +62,7 @@ const DataItem = <T,>({ label, queryResult, displayExpress, labelWidth }: Props<
             : '-'
         )
       }
-    </Flex>
+    </DataItemContainer>
   )
 }
 

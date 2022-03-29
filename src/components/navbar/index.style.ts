@@ -25,12 +25,9 @@ export const NavbarContainer = styled.div`
   justify-content: space-between;
   z-index: 3;
   
-  
-  
- 
-
   ${({ theme }) => theme.mediaQueries.xl} {
     padding: 10px;
+    width: 100vw;
   }
 `
 
@@ -41,9 +38,7 @@ export const NavItemsContainer = styled.div`
   gap: 0 32px;
   
   ${({ theme }) => theme.mediaQueries.xl} {
-    margin-top: 10px;
-    margin-left: 13vw;
-    width: 40vw;
+    display: none;
   }
 `
 

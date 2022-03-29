@@ -6,6 +6,7 @@ import { Checkbox, Text } from '@/contexts/theme/components'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { Flex } from '@react-css/flex'
 import useAvailableRewardsQuery from './useAvailableRewardsQuery'
+import { useResponsive } from '@/contexts/theme'
 
 const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataResult }> = ({
   staker,
@@ -15,22 +16,28 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
   const { data: availableRewards } = useAvailableRewardsQuery(staker)
+  const { isMobile } = useResponsive()
 
   return (
     <TransactionalDialog
       transactionName={`Withdraw ${staker.poolName}`}
       title={`Withdraw ${staker.poolName}`}
-      width={'600px'}
       onCancel={closeModal}
       onSendTransaction={callbacks => staker?.withdraw(metadataResult.mint, checked, callbacks).then(forceRefresh)}
     >
-      <Text fontSize={'18px'} mb={'8px'}>
+      <Text fontSize={'18px'} mb={'8px'} bold>
         Are you sure to withdraw {metadataResult.account?.data.data.name}?
       </Text>
 
       {availableRewards?.gt(0) && (
-        <Flex alignItemsCenter>
-          <Text fontSize={'16px'}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+        <Flex alignItemsCenter justifySpaceBetween>
+          <Text
+            fontSize={'16px'}
+            maxWidth={isMobile ? '85%' : undefined}
+            style={{ marginTop: '8px' }}
+          >
+            Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time
+          </Text>
           <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
         </Flex>
       )}

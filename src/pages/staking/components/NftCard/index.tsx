@@ -5,6 +5,7 @@ import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useNFTStaking } from '@/hooks/programs/useStaking'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { NFTStatus } from '@/pages/staking/components/NftStakingPoolCard'
+import { useResponsive } from '@/contexts/theme'
 
 const StyledNftCard = styled(Card)`
   display: flex;
@@ -34,11 +35,12 @@ const OperableNftCard: React.FC<OperableNftCardProps> = props => {
   const { data, account, type, ...rest } = props
 
   const { deposit, withdraw } = useNFTStaking(rest)
+  const { isMobile } = useResponsive()
 
   return (
-    <StyledNftCard isSuccess width={'258px'}>
+    <StyledNftCard isSuccess width={'100%'}>
       <NFTImage src={data?.image} alt="" />
-      <Text fontWeight={700} fontSize={'20px'} color={'primary'} m={'12px 0'}>{account?.data.data.name}</Text>
+      <Text fontWeight={700} fontSize={isMobile ? '16px' : '20px'} color={'primary'} m={'12px 0'}>{account?.data.data.name}</Text>
       <div style={{ position: 'absolute', right: '8px', top: '8px' }}>
         {
           type === 'deposited'

@@ -1,22 +1,17 @@
 import React, { useState } from 'react'
 import Flex from '@react-css/flex'
-import { Card, Tabs, Text } from '@/contexts/theme/components'
-import {
-  GridContainer,
-  NftCollectionImage,
-  StyledNftStakingPoolCard
-} from '@/pages/staking/components/NftStakingPoolCard/index.styles'
+import { Tabs } from '@/contexts/theme/components'
+import { StyledNftStakingPoolCard } from './index.styles'
 import NFTsGridView from '@/pages/staking/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { useNFTStaking } from '@/hooks/programs/useStaking'
-import { ClipLoader } from 'react-spinners'
 import { DataItem } from '@/pages/staking/components/DataItem'
-import { WalletRequiredButton } from '@/components/wallet-required-button'
+import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
+import { InfoGrid } from '@/pages/staking/components/common.styles'
+import { useResponsive } from '@/contexts/theme'
 
 export type NFTStatus = 'deposited' | 'hold'
-
-const Loader = () => <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
 
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
@@ -25,62 +20,36 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const holds = useOwnedNFTsQuery(creator)
   const { userDeposited, totalDeposited, userTotalRewards, rewardsPerDay, availableRewards, claim } = useNFTStaking(props)
 
+  const { isMobile } = useResponsive()
+
   return (
     <StyledNftStakingPoolCard>
-      <Flex justifySpaceBetween alignItemsCenter style={{ marginBottom: '32px' }}>
-        <Flex row alignItemsCenter>
-          <NftCollectionImage src={logo} />
-          <Text fontSize={'28px'} bold>
-            {name}
-          </Text>
-        </Flex>
+      <StakingPoolHead name={name} icon={logo} availableRewards={availableRewards} rewardTokenName={rewardTokenName} onHarvest={claim} />
 
-        <Card plain backgroundColor={'secondary'}>
-          <Flex alignItemsCenter style={{ padding: '8px 32px', borderRadius: '40px' }}>
-            <Text mr={'16px'} fontSize={'18px'} bold color={'textContrary'}>
-              {'Available rewards: '}
-              {
-                availableRewards.data
-                  ? `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
-                  : (availableRewards.isFetching
-                    ? <Loader />
-                    : '-'
-                  )
-              }
-            </Text>
-            <WalletRequiredButton scale={'sm'} onClick={claim} variant={'primaryContrary'}>Harvest</WalletRequiredButton>
-          </Flex>
-        </Card>
-      </Flex>
-
-      <GridContainer>
+      <InfoGrid>
         <DataItem
           label={'Total Deposited'}
           queryResult={totalDeposited}
-          // labelWidth={'121px'}
         />
         <DataItem
           label={'Rewards Per Staking'}
           queryResult={rewardsPerDay}
           displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
-          // labelWidth={'154px'}
         />
         <DataItem
           label={'Your Deposited'}
           queryResult={userDeposited}
           displayExpress={data => data?.length.toString()}
-          // labelWidth={'121px'}
         />
         <DataItem
           label={'Your History Total Rewards'}
           queryResult={userTotalRewards}
           displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
-          // labelWidth={'154px'}
         />
-      </GridContainer>
+      </InfoGrid>
 
       <Flex column alignItemsCenter>
-        <Tabs activeKey={key} onTabChange={setKey} width={'100%'}>
+        <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'xs' : 'sm'}>
           <Tabs.Pane title={'My Deposit'} tabKey={'deposit'}>
             <NFTsGridView {...props} queryResult={userDeposited} type={'deposited'} />
           </Tabs.Pane>

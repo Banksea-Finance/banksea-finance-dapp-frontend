@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-const FadeEffect = () => css`
+const FadeEffect = css`
   animation-duration: 0.3s;
   animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
@@ -8,9 +8,28 @@ const FadeEffect = () => css`
 
 export const NotificationStyleMixin = css`
   .rc-notification {
-    z-index: 1000;
+    z-index: 19;
     width: fit-content;
-    height: 200px;
+    height: fit-content;
+    position: fixed;
+    bottom: 0;
+    left: 16px;
+    min-width: 300px;
+
+    ${({ theme }) => theme.mediaQueries.xl} {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      left: initial;
+      top: initial;
+      bottom: 0;
+    }
+    
+    & > div {
+      display: flex;
+      flex-direction: column-reverse;
+      padding-bottom: 8px;
+    }
 
     &-notice {
       padding: 16px 32px 16px 16px;
@@ -22,7 +41,11 @@ export const NotificationStyleMixin = css`
       width: auto;
       line-height: 1.5;
       position: relative;
-      margin: 10px 0;
+      margin: 8px 0 0 0 ;
+      
+      ${({ theme }) => theme.mediaQueries.xl} {
+        margin: 4px 0 0 0;
+      }
 
       &-closable {
         padding-right: 20px;
@@ -44,6 +67,10 @@ export const NotificationStyleMixin = css`
 
         &-x:after {
           content: '×';
+          
+          ${({ theme }) => theme.mediaQueries.xl} {
+            font-size: 24px;
+          }
         }
 
         &:hover {
@@ -57,11 +84,11 @@ export const NotificationStyleMixin = css`
     &-fade-enter {
       opacity: 0;
       animation-play-state: paused;
-      ${FadeEffect()}
+      ${FadeEffect}
     }
 
     &-fade-leave {
-      ${FadeEffect()}
+      ${FadeEffect}
       animation-play-state: paused;
     }
 
