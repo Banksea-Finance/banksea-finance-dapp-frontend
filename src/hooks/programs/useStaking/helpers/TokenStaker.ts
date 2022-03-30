@@ -25,7 +25,6 @@ export class TokenStaker {
   whitelist: PublicKey
 
   _depositTokenMint?: PublicKey
-  _tokenAccounts?: Array<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }>
   _poolAccount?: AccountFromIDL<StakingProgramIdlType, 'pool'>
 
   constructor(props: {
@@ -313,15 +312,11 @@ export class TokenStaker {
   async getTokenAccounts(): Promise<Array<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> }> | undefined> {
     if (!this.user) return undefined
 
-    if (!this._tokenAccounts) {
-      const tokenMint = await this.getDepositTokenMint()
+    const tokenMint = await this.getDepositTokenMint()
 
-      this._tokenAccounts = (
-        await this.program.provider.connection.getParsedTokenAccountsByOwner(this.user, { mint: tokenMint })
-      ).value
-    }
-
-    return this._tokenAccounts
+    return (
+      await this.program.provider.connection.getParsedTokenAccountsByOwner(this.user, { mint: tokenMint })
+    ).value
   }
 
   async getDepositTokenMint(): Promise<PublicKey> {

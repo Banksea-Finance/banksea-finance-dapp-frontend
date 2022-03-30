@@ -39,7 +39,6 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
   }, [value, decimals])
 
-
   const onChange = useCallback((v: any) => {
     const value = v.target.value
 
