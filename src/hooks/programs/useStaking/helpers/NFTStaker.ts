@@ -52,7 +52,10 @@ export class NFTStaker {
     const depositAccount = (await this.getTokenAccount(tokenMint))!
 
     const newStakingAccount = Keypair.generate()
-    const tx = new Transaction()
+    const tx = new Transaction({
+      feePayer: this.user,
+      recentBlockhash: (await this.program.provider.connection.getLatestBlockhash()).blockhash
+    })
 
     // check passbook or register
     const passbook = (await this.getPassbook())!
@@ -91,14 +94,6 @@ export class NFTStaker {
         stakingSigner
       )
 
-      const remainingAccounts = [
-        {
-          pubkey: metadata,
-          isWritable: false,
-          isSigner: false
-        }
-      ]
-
       const addAssetInstruction = await this.program.instruction.addAsset(assetBump, stakingSignerBump, {
         accounts: {
           pool: this.pool,
@@ -111,7 +106,11 @@ export class NFTStaker {
           payer: this.program.provider.wallet.publicKey,
           systemProgram: SystemProgram.programId
         },
-        remainingAccounts
+        remainingAccounts: [{
+          pubkey: metadata,
+          isWritable: false,
+          isSigner: false
+        }]
       })
 
       tx.add(...createTokenAccountInstructions).add(addAssetInstruction)

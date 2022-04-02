@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useModal, useRefreshController } from '@/contexts'
-import { Button, Input, Text } from '@/contexts/theme/components'
+import { Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
@@ -9,97 +9,123 @@ import TransactionalDialog, { TransactionEventCallback } from '@/components/tran
 import { ClipLoader } from 'react-spinners'
 import usePoolBalanceQuery from '@/hooks/programs/useStaking/token/usePoolBalanceQuery'
 import { useQuery } from 'react-query'
-import { useResponsive } from '@/contexts/theme'
-import { FormItem } from '@/components/form-item'
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
   whitelistAddress?: PublicKey
 }
 
+const SliderWithTooltip = Slider.createSliderWithTooltip(Slider)
+
+const markNode = (number: number) => ({ style: { width: '8px' }, label: `${number}%` })
+const sliderMarks = {
+  0: markNode(0),
+  25: markNode(25),
+  50: markNode(50),
+  75: markNode(75),
+  100: markNode(100)
+}
+
 const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const { forceRefresh } = useRefreshController()
-  const [value, setValue] = useState('')
+  const [inputValue, setInputValue] = useState('0')
+  const [sliderValue, setSliderValue] = useState(0)
+
   const { data: poolBalance } = usePoolBalanceQuery(staker)
-  const { isMobile } = useResponsive()
 
   const { data: decimals } = useQuery(['DEPOSITED_TOKEN_DECIMALS', staker.user, staker.poolName, staker.pool], () => staker.depositTokenDecimals())
 
   const inputInvalidError = useMemo(() => {
-    if (!value || !decimals) {
+    if (!inputValue || !decimals) {
       return
     }
 
-    if (new BigNumber(value).isNaN()) {
+    if (new BigNumber(inputValue).isNaN()) {
       return 'The input is not a number'
     }
 
-    if ((/\d+\.(\d+)/.exec(value)?.[1]?.length || 0) > decimals) {
+    if ((/\d+\.(\d+)/.exec(inputValue)?.[1]?.length || 0) > decimals) {
       return `Decimal places too large (maximum: ${decimals})`
     }
-  }, [value, decimals])
+  }, [inputValue, decimals])
 
-  const onChange = useCallback((v: any) => {
-    const value = v.target.value
+  const onInputChange = useCallback((v: any) => {
+    const value: string = v.target.value
 
-    if (+value < 0) {
-      setValue('0')
+    if (+value < 0 || !poolBalance) {
+      setInputValue('0')
       return
     }
 
-    if (poolBalance && new BigNumber(value).gt(poolBalance)) {
-      setValue(poolBalance.toString())
+    if (new BigNumber(value).gt(poolBalance)) {
+      setInputValue(poolBalance.toString())
     } else {
-      setValue(value)
+      setInputValue(value)
     }
   }, [poolBalance])
 
+  const onSliderChange = useCallback((v: number) => {
+    if (poolBalance) {
+      if (v === 0) {
+        setInputValue('0')
+      } else if (v === 100) {
+        setInputValue(poolBalance.toString())
+      } else {
+        setInputValue(new BigNumber(v).div(100).multipliedBy(poolBalance).toFixed(6))
+      }
+    }
+  }, [poolBalance])
+
+  useEffect(() => {
+    if (poolBalance) {
+      setSliderValue(
+        new BigNumber(inputValue).div(poolBalance).multipliedBy(100).toNumber()
+      )
+    }
+  }, [inputValue, poolBalance])
+
   return (
     <TransactionalDialog
-      minWidth={isMobile ? undefined : '550px'}
       transactionName={`Deposit ${staker.poolName}`}
-      onSendTransaction={(callbacks: TransactionEventCallback) => staker?.deposit(new BigNumber(value), callbacks).then(forceRefresh)}
+      onSendTransaction={(callbacks: TransactionEventCallback) => staker?.deposit(new BigNumber(inputValue), callbacks).then(forceRefresh)}
       title={`Deposit ${staker.poolName}`}
-      confirmButtonProps={{ disabled: !!inputInvalidError || !value.length || +value <= 0 }}
+      bottomMessage={{
+        children: inputInvalidError,
+        color: 'failure'
+      }}
+      confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
-      <FormItem label={'You have'} labelWidth={isMobile ? undefined : '178px'} labelPosition={isMobile ? 'left' : 'right'} justifyContent={isMobile ? 'space-between' : undefined}>
-        <Text fontSize={'18px'} bold color={'primary'}>
+      <Text textAlign={'end'} mb={'8px'}>
+        {'Your Balance:'}
+        <b className="primary" style={{ fontSize: '20px', margin: '0 4px 0 8px' }}>
           {
             poolBalance?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
           }
-          {' '}
-          { staker.poolName }
-        </Text>
-      </FormItem>
-      <FormItem label={'You want to deposit'} labelWidth={'178px'} labelPosition={isMobile ? 'top' : 'right'}>
-        <Flex alignItemsCenter>
-          <Input
-            autoFocus
-            value={value}
-            allowClear
-            onChange={onChange}
-            mr={'8px'}
-            suffix={
-              <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
-            }
-          />
-          <Button
-            scale={'xs'}
-            variant={'primary'}
-            onClick={() => poolBalance && setValue(poolBalance.toString())}
-          >
-            Max
-          </Button>
-        </Flex>
-      </FormItem>
-      <Flex row alignItemsCenter style={{ height: '24px' }}>
-        <Flex.Item flex={isMobile ? 0 : 10} />
-        <Flex.Item flex={16}>
-          <Text color={'failure'} bold>
-            {inputInvalidError}
-          </Text>
-        </Flex.Item>
+        </b>
+        { staker.poolName }
+      </Text>
+      <Flex alignItemsCenter justifyCenter style={{ marginBottom: '8px' }}>
+        <Input
+          autoFocus
+          value={inputValue}
+          allowClear
+          onChange={onInputChange}
+          mr={'4px'}
+          style={{ flexGrow: 1 }}
+          suffix={
+            <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
+          }
+        />
       </Flex>
+
+      <SliderWithTooltip
+        value={sliderValue}
+        onChange={onSliderChange}
+        style={{ width: '80%', left: '10%', height: '32px' }}
+        marks={sliderMarks}
+      />
     </TransactionalDialog>
   )
 }

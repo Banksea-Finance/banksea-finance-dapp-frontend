@@ -94,7 +94,7 @@ const Dialog: React.FC<DialogProps> = ({
       >
         {
           onCancel && (
-            <Button style={{ flex: 8 }} {...cancelButtonProps} onClick={onCancel} variant={'danger'}>
+            <Button style={{ flex: 8 }} {...cancelButtonProps} onClick={onCancel} variant={'danger'} minWidth={'fit-content'}>
               {cancelButtonProps?.children || 'Cancel'}
             </Button>
           )
@@ -104,7 +104,7 @@ const Dialog: React.FC<DialogProps> = ({
         }
         {
           onConfirm && (
-            <Button style={{ flex: 8 }} {...confirmButtonProps} onClick={onConfirm}>
+            <Button style={{ flex: 8 }} {...confirmButtonProps} onClick={onConfirm} minWidth={'fit-content'}>
               {confirmButtonProps?.children || 'Confirm'}
             </Button>
           )

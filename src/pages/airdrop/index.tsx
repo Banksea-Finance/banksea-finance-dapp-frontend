@@ -1,7 +1,6 @@
 import React from 'react'
 import { AirdropPageContainer } from '@/pages/airdrop/index.styles'
 import { Introductions, PersonalInfo, UserVotedGrants } from '@/pages/airdrop/modules'
-import { UserHoldNFTs } from '@/pages/airdrop/modules/UserHoldNFTs'
 import styled from 'styled-components'
 import { Card } from '@/contexts/theme/components'
 import { COLUMN_LAYOUT_WIDTH_THRESHOLD } from './constant'

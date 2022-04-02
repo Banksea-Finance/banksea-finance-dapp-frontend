@@ -2,10 +2,8 @@ import React, { useCallback, useState } from 'react'
 import { SOLANA_CLUSTER, useModal, useRefreshController } from '@/contexts'
 import { Dialog, notify, Text } from '@/contexts/theme/components'
 import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
-import { Flex } from '@react-css/flex'
 import { BeatLoader } from 'react-spinners'
 import { TextProps } from '@/contexts/theme/components/Text'
-import { CSSTransition } from 'react-transition-group'
 
 export type TransactionEvents = 'onSent' | 'onConfirm' | 'onTransactionBuilt'
 
@@ -30,7 +28,7 @@ export type TransactionalDialogProps = DialogProps & {
   transactionName: string
 }
 
-const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransaction, children, confirmButtonProps, cancelButtonProps, onConfirm, onCancel, transactionName, ...rest }) => {
+const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransaction, children, confirmButtonProps, cancelButtonProps, onConfirm, onCancel, transactionName, bottomMessage, ...rest }) => {
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
   const [message, setMessage] = useState<string | JSX.Element>()
@@ -105,14 +103,14 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
       closeable={closable}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
-      bottomMessage={{ children: !(ongoing || done) ? message : undefined, color: messageType }}
+      bottomMessage={bottomMessage || { children: !(ongoing || done) ? message : undefined, color: messageType }}
       cancelButtonProps={{ ...cancelButtonProps, disabled: !closable, children: 'Close' }}
       confirmButtonProps={{
         ...confirmButtonProps,
         isLoading: ongoing,
         disabled: confirmButtonProps?.disabled,
         children: signature && 'View on Solscan',
-        color: signature && 'success'
+        color: signature && 'success',
       }}
     >
       {
