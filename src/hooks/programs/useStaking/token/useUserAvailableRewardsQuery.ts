@@ -2,11 +2,11 @@ import { useQuery } from 'react-query'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { useRefreshController } from '@/contexts'
 
-const useAvailableRewardsQuery = (staker?: TokenStaker) => {
+const useUserAvailableRewardsQuery = (staker?: TokenStaker) => {
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['TOKEN_AVAILABLE_REWARDS', staker?.pool, staker?.user, intermediateRefreshFlag],
+    ['TOKEN_USER_AVAILABLE_REWARDS', staker?.pool, staker?.user, intermediateRefreshFlag],
     () => {
       if (!staker) return undefined
 
@@ -15,4 +15,4 @@ const useAvailableRewardsQuery = (staker?: TokenStaker) => {
   )
 }
 
-export default useAvailableRewardsQuery
+export default useUserAvailableRewardsQuery

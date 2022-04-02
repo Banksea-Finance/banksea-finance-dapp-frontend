@@ -3,10 +3,9 @@ import React, { useCallback } from 'react'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { Text } from '@/contexts/theme/components'
 import { useModal, useRefreshController } from '@/contexts'
-import useAvailableRewardsQuery from './useAvailableRewardsQuery'
+import useUserAvailableRewardsQuery from './useUserAvailableRewardsQuery'
 import TransactionalDialog, { TransactionEventCallback } from '@/components/transactional-dialog'
 import { BeatLoader } from 'react-spinners'
-import { useResponsive } from '@/contexts/theme'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -14,7 +13,7 @@ export type UseTokenDepositProps = {
 }
 
 const ClaimDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
-  const { data: availableRewards, isLoading } = useAvailableRewardsQuery(staker)
+  const { data: availableRewards, isLoading } = useUserAvailableRewardsQuery(staker)
   const { forceRefresh } = useRefreshController()
 
   return (

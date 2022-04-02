@@ -4,16 +4,15 @@ import { useMemo } from 'react'
 import useStakingProgram from './useStakingProgram'
 import {
   useAPRQuery,
-  useAvailableRewardsQuery,
+  useUserAvailableRewardsQuery,
   useClaim,
   useDeposit,
   useTotalDepositedQuery,
+  useUserClaimedRewardsQuery,
   useUserDepositedQuery,
-  useUserHistoryRewards,
   useWithdraw
 } from './token'
-import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
-import useUserHistoryRewardsQuery from '@/hooks/programs/useStaking/token/useUserHistoryRewardsQuery'
+import { TokenStakingPoolConfig } from './constants/token'
 
 const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const { program } = useStakingProgram()
@@ -35,23 +34,20 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const claim = useClaim(staker)
 
   const APR = useAPRQuery(staker?.pool)
-  const userDeposited = useUserDepositedQuery(staker)
   const totalDeposited = useTotalDepositedQuery(staker)
-  const availableRewards = useAvailableRewardsQuery(staker)
-  const historyRewardsQuery = useUserHistoryRewardsQuery(staker)
-
-  const { data: totalRewards } = useUserHistoryRewards(staker)
+  const userDeposited = useUserDepositedQuery(staker)
+  const userAvailableRewards = useUserAvailableRewardsQuery(staker)
+  const userClaimedRewards = useUserClaimedRewardsQuery(staker)
 
   return {
     deposit,
     withdraw,
     claim,
     APR,
-    totalRewards,
     userDeposited,
     totalDeposited,
-    availableRewards,
-    historyRewardsQuery,
+    userAvailableRewards,
+    userClaimedRewards,
     program
   }
 }

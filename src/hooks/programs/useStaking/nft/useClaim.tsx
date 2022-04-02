@@ -2,12 +2,12 @@ import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
 import React, { useCallback } from 'react'
 import { useModal, useRefreshController } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
-import useAvailableRewardsQuery from '@/hooks/programs/useStaking/nft/useAvailableRewardsQuery'
+import useUserAvailableRewardsQuery from '@/hooks/programs/useStaking/nft/useUserAvailableRewardsQuery'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { BeatLoader } from 'react-spinners'
 
 const NFTClaimDialog: React.FC<{ staker: NFTStaker }> = ({ staker }) => {
-  const { data: availableRewards, isLoading } = useAvailableRewardsQuery(staker)
+  const { data: availableRewards, isLoading } = useUserAvailableRewardsQuery(staker)
   const { forceRefresh } = useRefreshController()
 
   return (

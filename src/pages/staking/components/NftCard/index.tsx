@@ -14,6 +14,8 @@ const StyledNftCard = styled(Card)`
   background: rgb(247, 247, 247);
   background-size: 100%;
   border-radius: 20px;
+
+  padding-bottom: 8px;
 `
 
 const NFTImage = styled.img`
@@ -26,11 +28,6 @@ export type OperableNftCardProps = NFTStakingPoolConfig & MetadataResult & {
   type: NFTStatus
 }
 
-const StyledButton = styled(Button)`
-  background: rgba(25, 214, 151, 0.82);
-  border-radius: 16px;
-`
-
 const OperableNftCard: React.FC<OperableNftCardProps> = props => {
   const { data, account, type, ...rest } = props
 
@@ -40,18 +37,15 @@ const OperableNftCard: React.FC<OperableNftCardProps> = props => {
   return (
     <StyledNftCard isSuccess width={'100%'}>
       <NFTImage src={data?.image} alt="" />
-      <Text fontWeight={700} fontSize={isMobile ? '16px' : '20px'} color={'primary'} m={'12px 0'}>{account?.data.data.name}</Text>
-      <div style={{ position: 'absolute', right: '8px', top: '8px' }}>
-        {
-          type === 'deposited'
-            ? (
-              <StyledButton scale={'xs'} variant={'primaryContrary'} onClick={() => withdraw(props)}>Withdraw</StyledButton>
-            ) : (
-              <StyledButton scale={'xs'} variant={'primaryContrary'} onClick={() => deposit(props)}>Deposit</StyledButton>
-            )
-        }
-      </div>
-
+      <Text fontWeight={600} fontSize={isMobile ? '16px' : '20px'} color={'primary'} m={'6px 0'}>{account?.data.data.name}</Text>
+      {
+        type === 'deposited'
+          ? (
+            <Button scale={'sm'} variant={'primaryContrary'} onClick={() => withdraw(props)}>Withdraw</Button>
+          ) : (
+            <Button scale={'sm'} variant={'primaryContrary'} onClick={() => deposit(props)}>Deposit</Button>
+          )
+      }
     </StyledNftCard>
   )
 }

@@ -5,7 +5,7 @@ import { useModal, useRefreshController } from '@/contexts'
 import { Checkbox, Text } from '@/contexts/theme/components'
 import TransactionalDialog from '@/components/transactional-dialog'
 import { Flex } from '@react-css/flex'
-import useAvailableRewardsQuery from './useAvailableRewardsQuery'
+import useUserAvailableRewardsQuery from './useUserAvailableRewardsQuery'
 import { useResponsive } from '@/contexts/theme'
 
 const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataResult }> = ({
@@ -15,7 +15,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
   const [checked, setChecked] = useState(false)
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
-  const { data: availableRewards } = useAvailableRewardsQuery(staker)
+  const { data: availableRewards } = useUserAvailableRewardsQuery(staker)
   const { isMobile } = useResponsive()
 
   return (

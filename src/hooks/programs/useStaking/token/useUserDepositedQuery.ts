@@ -6,7 +6,7 @@ const useUserDepositedQuery = (staker?: TokenStaker) => {
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['TOKEN_UserDeposits', staker?.pool, staker?.user, intermediateRefreshFlag],
+    ['TOKEN_USER_DEPOSITED', staker?.pool, staker?.user, intermediateRefreshFlag],
     () => {
       if (!staker) return undefined
 

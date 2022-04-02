@@ -7,7 +7,7 @@ const useUserDepositedQuery = (staker?: NFTStaker): UseQueryResult<MetadataResul
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['USER_DEPOSITED_NFTS', staker?.user, staker?.pool, intermediateRefreshFlag],
+    ['NFT_USER_DEPOSITED', staker?.user, staker?.pool, intermediateRefreshFlag],
     async () => {
       if (!staker) return undefined
 

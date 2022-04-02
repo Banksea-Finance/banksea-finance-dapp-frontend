@@ -18,13 +18,13 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
 
   const [key, setKey] = useState('hold')
   const holds = useOwnedNFTsQuery(creator)
-  const { userDeposited, totalDeposited, userTotalRewards, rewardsPerDay, availableRewards, claim } = useNFTStaking(props)
+  const { userDeposited, totalDeposited, userClaimedRewards, rewardsPerDay, userAvailableRewards, claim } = useNFTStaking(props)
 
   const { isMobile } = useResponsive()
 
   return (
     <StyledNftStakingPoolCard>
-      <StakingPoolHead name={name} icon={logo} availableRewards={availableRewards} rewardTokenName={rewardTokenName} onHarvest={claim} />
+      <StakingPoolHead name={name} icon={logo} availableRewards={userAvailableRewards} rewardTokenName={rewardTokenName} onHarvest={claim} />
 
       <InfoGrid>
         <DataItem
@@ -42,15 +42,15 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           displayExpress={data => data?.length.toString()}
         />
         <DataItem
-          label={'Your History Total Rewards'}
-          queryResult={userTotalRewards}
+          label={'Your History Harvest'}
+          queryResult={userClaimedRewards}
           displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
         />
       </InfoGrid>
 
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'xs' : 'sm'}>
-          <Tabs.Pane title={'My Deposit'} tabKey={'deposit'}>
+          <Tabs.Pane title={'My Stake'} tabKey={'deposit'}>
             <NFTsGridView {...props} queryResult={userDeposited} type={'deposited'} />
           </Tabs.Pane>
 

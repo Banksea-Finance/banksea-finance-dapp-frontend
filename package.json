@@ -33,6 +33,7 @@
     "rc-checkbox": "^2.3.2",
     "rc-input": "^0.0.1-alpha.2",
     "rc-notification": "^4.5.7",
+    "rc-slider": "^10.0.0-alpha.6",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-modal": "^3.14.4",

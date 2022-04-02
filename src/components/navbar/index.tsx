@@ -3,7 +3,6 @@ import { NavbarContainer, NavbarWrapper, NavItemsContainer, NavLink, NavLinkText
 import Logo from '../logo'
 import { Link, useLocation } from 'react-router-dom'
 import { Wallet } from '@/contexts/theme/components'
-import { useResponsive } from '@/contexts/theme/hooks'
 
 import throttle from 'lodash/throttle'
 
@@ -14,7 +13,6 @@ const NAV_ITEMS = [
 
 const Navbar: React.FC = () => {
   const { pathname } = useLocation()
-  const { isDesktop } = useResponsive()
 
   const [show, setShow] = useState(true)
 
@@ -49,7 +47,7 @@ const Navbar: React.FC = () => {
     <NavbarWrapper className={show ? 'show' : 'hide'}>
       <NavbarContainer>
         <Link to={'/'}>
-          <Logo width={isDesktop ? '144px' : '35vw'} />
+          <Logo />
         </Link>
         <NavItemsContainer>
           {NAV_ITEMS.map(({ name, path }, index) => (

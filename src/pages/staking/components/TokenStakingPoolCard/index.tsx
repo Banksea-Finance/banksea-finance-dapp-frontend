@@ -12,44 +12,41 @@ import { InfoGrid } from '../common.styles'
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
 
-  const { deposit, userDeposited, totalDeposited, availableRewards, historyRewardsQuery, APR, withdraw, claim } =
+  const poolName = currencies[0].name
+
+  const { deposit, userDeposited, totalDeposited, userAvailableRewards, userClaimedRewards, APR, withdraw, claim } =
     useTokenStaking(props)
 
   return (
     <StyledTokenStakingPoolCard>
       <StakingPoolHead
-        name={currencies[0].name}
+        name={poolName}
         icon={currencies[0].icon}
-        availableRewards={availableRewards}
+        availableRewards={userAvailableRewards}
         rewardTokenName={rewardTokenName}
         onHarvest={claim}
       />
 
       <InfoGrid>
         <DataItem
-          label={'Total Deposits'}
+          label={'Total Deposited'}
           queryResult={totalDeposited}
-          displayExpress={data => data.toFixed(6)}
-          // labelWidth={'108px'}
+          displayExpress={data => `${data.toFixed(6)} ${poolName}`}
         />
         <DataItem
           label={'APR'}
           queryResult={APR}
-          displayExpress={data =>
-            `${data.APR.multipliedBy(100)?.toFixed(2)}% (${data.totalRewardsPerDay.toFixed(6)}/day)`}
-          // labelWidth={'139px'}
+          displayExpress={data => `${data.APR.multipliedBy(100)?.toFixed(2)}%`}
         />
         <DataItem
-          label={'Your Deposits'}
+          label={'Your Deposited'}
           queryResult={userDeposited}
           displayExpress={data => data.toFixed(6)}
-          // labelWidth={'108px'}
         />
         <DataItem
-          label={'Your History Total Rewards'}
-          queryResult={historyRewardsQuery}
-          displayExpress={data => data.toFixed(6)}
-          // labelWidth={'139px'}
+          label={'Your History Harvest'}
+          queryResult={userClaimedRewards}
+          displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
         />
       </InfoGrid>
 

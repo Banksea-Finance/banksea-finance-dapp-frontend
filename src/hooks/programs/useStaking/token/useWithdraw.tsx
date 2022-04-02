@@ -8,8 +8,7 @@ import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import useUserDepositedQuery from './useUserDepositedQuery'
 import TransactionalDialog, { TransactionEventCallback } from '@/components/transactional-dialog'
 import { ClipLoader } from 'react-spinners'
-import useAvailableRewardsQuery from './useAvailableRewardsQuery'
-import { Grid } from '@react-css/grid'
+import useUserAvailableRewardsQuery from './useUserAvailableRewardsQuery'
 import { useQuery } from 'react-query'
 import { FormItem } from '@/components/form-item'
 import { useResponsive } from '@/contexts/theme'
@@ -24,7 +23,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const [checked, setChecked] = useState(false)
   const { forceRefresh } = useRefreshController()
   const { data: userDeposits } = useUserDepositedQuery(staker)
-  const { data: availableRewards } = useAvailableRewardsQuery(staker)
+  const { data: availableRewards } = useUserAvailableRewardsQuery(staker)
   const { data: decimals } = useQuery(['DEPOSITED_TOKEN_DECIMALS', staker.user, staker.poolName, staker.pool], () => staker.depositTokenDecimals())
   const { isMobile } = useResponsive()
 

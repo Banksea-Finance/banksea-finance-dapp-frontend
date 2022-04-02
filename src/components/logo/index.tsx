@@ -1,10 +1,13 @@
 import React from 'react'
+import styled from 'styled-components'
+
+const LogoContainer = styled.img`
+  width: 144px;
+`
 
 const Logo: React.FC<{ width?: string }> = ({ width }) => {
   return (
-    <div style={{ width: width || 'fit-content' }}>
-      <img src={require('@/assets/images/logo.png')} style={{ width: '100%' }} />
-    </div>
+    <LogoContainer src={require('@/assets/images/logo.png')} />
   )
 }
 

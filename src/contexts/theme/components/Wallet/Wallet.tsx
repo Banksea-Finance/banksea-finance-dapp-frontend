@@ -7,6 +7,7 @@ import { useModal } from '@/contexts'
 import { Card, Dialog } from '@/contexts/theme/components'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
 import { Grid } from '@react-css/grid'
+import { shortenAddress } from '@/utils'
 
 const SCCurrentAccount = styled.div`
   display: flex;
@@ -79,7 +80,7 @@ const CurrentAccount: React.FC = () => {
         <div className="icon">
           <img src={wallet?.icon} alt="" />
         </div>
-        {account && <span>{`${account.toBase58().substring(0, 5)}...${account.toBase58().substring(-4, 4)}`}</span>}
+        {account && <span>{`${shortenAddress(account.toBase58(), 4)}`}</span>}
       </SCCurrentAccount>
     </Button>
   )
