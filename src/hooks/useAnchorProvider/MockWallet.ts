@@ -8,11 +8,11 @@ export class MockWallet implements Wallet {
     return PublicKey.default
   }
 
-  signAllTransactions(txs: Transaction[]): Promise<Transaction[]> {
+  signAllTransactions(_txs: Transaction[]): Promise<Transaction[]> {
     throw new Error('MockWallet not support `signAllTransactions`')
   }
 
-  signTransaction(tx: Transaction): Promise<Transaction> {
+  signTransaction(_tx: Transaction): Promise<Transaction> {
     throw new Error('MockWallet not support `signAllTransactions`')
   }
 }

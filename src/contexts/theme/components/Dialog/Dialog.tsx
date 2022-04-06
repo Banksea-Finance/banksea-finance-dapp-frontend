@@ -31,6 +31,7 @@ const Dialog: React.FC<DialogProps> = ({
   bottomMessage,
   children,
   minWidth,
+  width,
   ...rest
 }) => {
   const { closeModal } = useModal()
@@ -66,7 +67,7 @@ const Dialog: React.FC<DialogProps> = ({
   }, [closeable, onConfirm, confirmButtonProps])
 
   return (
-    <Card p={'24px'} minWidth={minWidth || (!isMobile ? '448px' : undefined)} {...rest} isActive>
+    <Card p={'24px'} minWidth={minWidth || (!isMobile ? '448px' : undefined)} width={isMobile ? '95vw' : width} {...rest} isActive>
       <Flex
         justifySpaceBetween
         alignItemsCenter

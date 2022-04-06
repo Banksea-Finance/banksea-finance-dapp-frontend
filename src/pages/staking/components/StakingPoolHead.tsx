@@ -22,7 +22,7 @@ const StakingPoolHeadContainer = styled.div`
   align-items: center;
   margin-bottom: 32px;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: column;
     justify-content: start;
     align-items: start;
@@ -50,8 +50,8 @@ const RewardsCard = styled(Card)`
     }
   }
   
-  ${({ theme }) => theme.mediaQueries.xl} {
-    padding: 4px 16px;
+  ${({ theme }) => theme.mediaQueries.md} {
+    padding: 4px 24px;
     margin: 0 auto;
     border-radius: 32px;
    
@@ -60,9 +60,13 @@ const RewardsCard = styled(Card)`
       align-items: center;
 
       div {
-        font-size: 14px;
+        font-size: 16px;
       }
     }
+  }
+  
+  ${({ theme }) => theme.mediaQueries.xs} {
+    padding: 4px 16px;
   }
 `
 
@@ -70,7 +74,7 @@ const PoolName = styled(Text)`
   font-size: 28px;
   font-weight: bold;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.md} {
     font-size: 22px;
   }
 `
@@ -82,7 +86,7 @@ const PoolImage = styled.img`
   
   margin-right: 16px;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.md} {
     margin-right: 8px;
     width: 36px;
     height: 36px;

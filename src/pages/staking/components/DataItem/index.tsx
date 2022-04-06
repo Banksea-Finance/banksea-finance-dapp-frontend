@@ -20,7 +20,7 @@ const DataItemContainer = styled.div`
     margin-right: 8px;
   }
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.md} {
     flex-direction: column;
     align-items: center;
     width: 100%;

@@ -2,10 +2,10 @@ import useMatchBreakpoints from './useMatchBreakpoints'
 import { useMemo } from 'react'
 
 const useResponsive = () => {
-  const { isXl } = useMatchBreakpoints()
+  const { isXs, isSm } = useMatchBreakpoints()
 
-  const isDesktop = useMemo(() => isXl, [isXl])
-  const isMobile = useMemo(() => !isDesktop, [isDesktop])
+  const isMobile = useMemo(() => isXs || isSm, [isXs, isSm])
+  const isDesktop = useMemo(() => !isMobile, [isMobile])
 
   return {
     isDesktop,

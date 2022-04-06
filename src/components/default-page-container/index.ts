@@ -12,9 +12,7 @@ const DefaultPageContainer = styled.div`
   padding-bottom: 24px;
   
   ${({ theme }) => theme.mediaQueries.xl} {
-    max-width: initial;
-    padding: 24px 1.5vw;
-    width: 97vw;
+    padding: 16px 1.5vw;
   }
 `
 

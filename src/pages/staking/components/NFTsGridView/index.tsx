@@ -16,10 +16,19 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fit, 258px);
   gap: 24px 48px;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
-    grid-template-columns: repeat(2, 42vw);
-    gap: 10px 0;
-    justify-content: space-between;
+  ${({ theme }) => theme.mediaQueries.md} {
+    gap: 16px;
+    justify-content: center;
+
+    grid-template-columns: repeat(auto-fill, 232px);
+  }
+
+  ${({ theme }) => theme.mediaQueries.sm} {
+    grid-template-columns: repeat(2, minmax(42%, 258px));
+  }
+  
+  ${({ theme }) => theme.mediaQueries.xs} {
+    grid-template-columns: repeat(2, 48%);
   }
 `
 

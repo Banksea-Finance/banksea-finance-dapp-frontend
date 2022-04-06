@@ -5,7 +5,7 @@ const LogoContainer = styled.img`
   width: 144px;
 `
 
-const Logo: React.FC<{ width?: string }> = ({ width }) => {
+const Logo: React.FC<{ width?: string }> = () => {
   return (
     <LogoContainer src={require('@/assets/images/logo.png')} />
   )

@@ -13,9 +13,7 @@ const NAV_ITEMS = [
 
 const Navbar: React.FC = () => {
   const { pathname } = useLocation()
-
   const [show, setShow] = useState(true)
-
   const [, setScrollY] = useState<number>(0)
 
   useEffect(() => {

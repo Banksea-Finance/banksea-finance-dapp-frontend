@@ -10,14 +10,3 @@ export const StyledTokenStakingPoolCard = styled(Card)`
     border-radius: 10px;
   }
 `
-
-export const CurrencyIconImage = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-
-  & + & {
-    margin-left: 10px;
-  }
-`
-
