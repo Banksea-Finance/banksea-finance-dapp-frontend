@@ -8,14 +8,25 @@ import { DataItem } from '../DataItem'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
 import { InfoGrid } from '../common.styles'
+import { Text } from '@/contexts/theme/components'
+import QueriedData from '@/components/QueriedData'
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
 
   const poolName = currencies[0].name
 
-  const { deposit, userDeposited, totalDeposited, userAvailableRewards, userClaimedRewards, APR, withdraw, claim } =
-    useTokenStaking(props)
+  const {
+    deposit,
+    userDeposited,
+    totalDeposited,
+    userAvailableRewards,
+    userClaimedRewards,
+    APR,
+    withdraw,
+    claim,
+    poolBalance
+  } = useTokenStaking(props)
 
   return (
     <StyledTokenStakingPoolCard>
@@ -30,22 +41,22 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
       <InfoGrid>
         <DataItem
           label={'Total Deposited'}
-          queryResult={totalDeposited}
+          value={totalDeposited}
           displayExpress={data => `${data.toFixed(6)} ${poolName}`}
         />
         <DataItem
           label={'APR'}
-          queryResult={APR}
+          value={APR}
           displayExpress={data => `${data.APR.multipliedBy(100)?.toFixed(2)}%`}
         />
         <DataItem
           label={'Your Deposited'}
-          queryResult={userDeposited}
+          value={userDeposited}
           displayExpress={data => data.toFixed(6)}
         />
         <DataItem
           label={'Your History Harvest'}
-          queryResult={userClaimedRewards}
+          value={userClaimedRewards}
           displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
         />
       </InfoGrid>
@@ -60,6 +71,9 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           </WalletRequiredButton>
         </Grid>
       </Flex>
+      <Text textAlign={'center'} color={'textDisabled'} mt={'16px'}>
+        Your Balance: <QueriedData as={'span'} value={poolBalance} color={'textDisabled'} /> KSE
+      </Text>
     </StyledTokenStakingPoolCard>
   )
 }

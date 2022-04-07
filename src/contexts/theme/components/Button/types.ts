@@ -33,9 +33,8 @@ export type MergeProps<E extends ElementType> = AsProps<E> & Omit<ComponentProps
 
 export type PolymorphicComponentProps<E extends ElementType, P> = P & MergeProps<E>;
 
-export type PolymorphicComponent<P, D extends ElementType = 'button'> = <E extends ElementType = D>(
-  props: PolymorphicComponentProps<E, P>
-) => ReactElement | null;
+export type PolymorphicComponent<P, D extends ElementType = 'button'> =
+  <E extends ElementType = D>(props: PolymorphicComponentProps<E, P>) => ReactElement | null;
 
 export interface BaseButtonProps extends LayoutProps, SpaceProps {
   as?: 'a' | 'button' | typeof Link;

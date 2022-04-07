@@ -55,11 +55,11 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
       setMessageType('success')
 
       notify({
-        title: transactionName,
+        title: 'Transaction Success',
         type: 'success',
         message: (
           <div>
-            <span>Transaction completed! </span>
+            <span style={{ marginRight: '4px' }}>{transactionName}</span>
             <a style={{ color: '#49efba' }} href={`https://solscan.io/tx/${signature}?cluster=${SOLANA_CLUSTER}`} target={'_blank'} rel="noreferrer">
               View on Solscan
             </a>

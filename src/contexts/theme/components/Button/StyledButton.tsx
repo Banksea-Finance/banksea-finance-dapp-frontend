@@ -77,8 +77,6 @@ const StyledButton = styled.button<BaseButtonProps>`
     transform: scale(98%);
   }
   
-  
-  
   ${getDisabledStyles}
   ${variant({
     prop: 'scale',

@@ -13,9 +13,6 @@ import BigNumber from 'bignumber.js'
 import { ClipLoader } from 'react-spinners'
 import API from '@/api'
 import styled from 'styled-components'
-import { randomUUID } from 'crypto'
-import axios from 'axios'
-import { useLocationQuery } from '@/hooks/useLocationQuery'
 
 const GrantImage = styled.img`
   width: 550px;

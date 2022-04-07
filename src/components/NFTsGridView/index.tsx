@@ -1,15 +1,12 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useSolanaWeb3 } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
-import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
-import { NFTStatus } from '@/pages/staking/components/NftStakingPoolCard'
 import { UseQueryResult } from 'react-query'
 import { PropagateLoader } from 'react-spinners'
 import { Flex } from '@react-css/flex'
 import { NftCard, NftCardOperate } from '@/components/NftCard'
-import { useNFTStaking } from '@/hooks/programs/useStaking'
 
 const Grid = styled.div`
   display: grid;

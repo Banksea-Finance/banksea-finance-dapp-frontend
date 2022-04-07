@@ -10,7 +10,7 @@ import {
   useTotalDepositedQuery,
   useUserClaimedRewardsQuery,
   useUserDepositedQuery,
-  useWithdraw
+  useWithdraw, usePoolBalanceQuery
 } from './token'
 import { TokenStakingPoolConfig } from './constants/token'
 
@@ -38,12 +38,14 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const userDeposited = useUserDepositedQuery(staker)
   const userAvailableRewards = useUserAvailableRewardsQuery(staker)
   const userClaimedRewards = useUserClaimedRewardsQuery(staker)
+  const poolBalance = usePoolBalanceQuery(staker)
 
   return {
     deposit,
     withdraw,
     claim,
     APR,
+    poolBalance,
     userDeposited,
     totalDeposited,
     userAvailableRewards,

@@ -1,27 +1,23 @@
 import React from 'react'
 import { Text } from '@/contexts/theme/components'
-import { ClipLoader } from 'react-spinners'
-import { UseQueryResult } from 'react-query'
 import styled, { CSSProperties } from 'styled-components'
+import QueriedData, { QueriedDataProps } from '@/components/QueriedData'
 
-type Props<T> = {
+interface Props<T> extends QueriedDataProps<T> {
   label: string
-  queryResult: UseQueryResult<T | undefined>
-  displayExpress?: (data: T) => string
   labelWidth?: CSSProperties['width']
 }
 
 const DataItemContainer = styled.div`
   display: flex;
   align-items: center;
-  
+  flex-direction: column;
+
   .label:after {
-    content: ':';
     margin-right: 8px;
   }
   
   ${({ theme }) => theme.mediaQueries.md} {
-    flex-direction: column;
     align-items: center;
     width: 100%;
     
@@ -39,29 +35,19 @@ const DataItemContainer = styled.div`
   }
 `
 
-const DataItem = <T,>({ label, queryResult, displayExpress, labelWidth, ...rest }: Props<T>): JSX.Element => {
+const DataItem = <T,>({ label, value, displayExpress, labelWidth }: Props<T>): JSX.Element => {
   return (
     <DataItemContainer>
       <Text fontWeight={500} style={{ width: labelWidth }} className={'label'} color={'textDisabled'}>
         {label}
       </Text>
-      {
-        queryResult.data ? (
-          <Text fontSize={'20px'} bold color={'primary'} className={'value'}>
-            {
-              displayExpress
-                ? displayExpress(queryResult.data)
-                : (
-                  (queryResult.data as any).toString?.() || queryResult.data
-                )
-            }
-          </Text>
-        ) : (
-          queryResult.isFetching
-            ? <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
-            : '-'
-        )
-      }
+      <QueriedData
+        value={value}
+        displayExpress={displayExpress}
+        fontSize={'20px'}
+        bold
+        color={'primary'}
+      />
     </DataItemContainer>
   )
 }

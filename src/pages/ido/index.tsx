@@ -18,7 +18,7 @@ const BNTimeDataItem: React.FC<{ label: string, time?: BN }> = ({ label, time })
       <Text mr={'4px'} fontSize={'16px'} fontWeight={500} color={'textDisabled'}>
         {label}:
       </Text>
-      <Text fontSize={'22px'} color={'primary'} bold textAlign={'end'}>
+      <Text fontSize={'20px'} color={'primary'} bold textAlign={'end'}>
         {
           time ? (moment(time.toNumber() * 1000).format('LLL')) : '-'
         }
@@ -29,7 +29,7 @@ const BNTimeDataItem: React.FC<{ label: string, time?: BN }> = ({ label, time })
 
 export const IdoPage: React.FC = () => {
   const holds = useOwnedNFTsQuery(CitizenOneCollectionCreator)
-  const { deposit, userDeposited, poolAccount } = useCollectionStorage()
+  const { deposit, withdraw, userDeposited, poolAccount } = useCollectionStorage()
   const [key, setKey] = useState('hold')
   const { isMobile } = useResponsive()
 
@@ -50,7 +50,7 @@ export const IdoPage: React.FC = () => {
               queryResult={userDeposited}
               itemOperation={{
                 text: 'Withdraw',
-                callback: deposit
+                callback: withdraw
               }}
             />
           </Tabs.Pane>

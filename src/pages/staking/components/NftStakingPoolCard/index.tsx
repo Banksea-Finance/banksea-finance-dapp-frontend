@@ -42,20 +42,23 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       />
 
       <InfoGrid>
-        <DataItem label={'Total Deposited'} queryResult={totalDeposited} />
+        <DataItem
+          label={'Total Deposited'}
+          value={totalDeposited}
+        />
         <DataItem
           label={'Rewards Per Staking'}
-          queryResult={rewardsPerDay}
+          value={rewardsPerDay}
           displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
         />
         <DataItem
           label={'Your Deposited'}
-          queryResult={userDeposited}
+          value={userDeposited}
           displayExpress={data => data?.length.toString()}
         />
         <DataItem
           label={'Your History Harvest'}
-          queryResult={userClaimedRewards}
+          value={userClaimedRewards}
           displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
         />
       </InfoGrid>
