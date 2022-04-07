@@ -1,7 +1,7 @@
 import Flex from '@react-css/flex'
 import { Card, Text } from '@/contexts/theme/components'
 import { ClipLoader } from 'react-spinners'
-import { WalletRequiredButton } from '@/components/wallet-required-button'
+import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import React from 'react'
 import styled from 'styled-components'
 import { UseQueryResult } from 'react-query'

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useSolanaWeb3 } from '@/contexts'
@@ -8,14 +8,15 @@ import { NFTStatus } from '@/pages/staking/components/NftStakingPoolCard'
 import { UseQueryResult } from 'react-query'
 import { PropagateLoader } from 'react-spinners'
 import { Flex } from '@react-css/flex'
-import { OperableNftCard } from '@/pages/staking/components/NftCard'
+import { NftCard, NftCardOperate } from '@/components/NftCard'
+import { useNFTStaking } from '@/hooks/programs/useStaking'
 
 const Grid = styled.div`
   display: grid;
   justify-content: center;
   grid-template-columns: repeat(auto-fit, 258px);
   gap: 24px 48px;
-  
+
   ${({ theme }) => theme.mediaQueries.md} {
     gap: 16px;
     justify-content: center;
@@ -26,18 +27,18 @@ const Grid = styled.div`
   ${({ theme }) => theme.mediaQueries.sm} {
     grid-template-columns: repeat(2, minmax(42%, 258px));
   }
-  
+
   ${({ theme }) => theme.mediaQueries.xs} {
     grid-template-columns: repeat(2, 48%);
   }
 `
 
-export type NFTsGridViewProps = NFTStakingPoolConfig & {
+export type NFTsGridViewProps = {
   queryResult: UseQueryResult<MetadataResult[] | undefined>
-  type: NFTStatus
+  itemOperation?: NftCardOperate
 }
 
-const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, type, ...rest }) => {
+const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation }) => {
   const { account } = useSolanaWeb3()
 
   if (!account) {
@@ -66,9 +67,15 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, type, ...rest 
 
   return (
     <Grid>
-      {queryResult.data.map(o => (
-        <OperableNftCard type={type} {...rest} {...o} key={o.mint.toBase58()} />
-      ))}
+      {
+        queryResult.data.map(o => (
+          <NftCard
+            operate={itemOperation}
+            {...o}
+            key={o.mint.toBase58()}
+          />
+        ))
+      }
     </Grid>
   )
 }

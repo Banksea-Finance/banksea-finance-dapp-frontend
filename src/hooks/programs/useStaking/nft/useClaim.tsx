@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { useModal, useRefreshController } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
 import useUserAvailableRewardsQuery from '@/hooks/programs/useStaking/nft/useUserAvailableRewardsQuery'
-import TransactionalDialog from '@/components/transactional-dialog'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
 
 const NFTClaimDialog: React.FC<{ staker: NFTStaker }> = ({ staker }) => {

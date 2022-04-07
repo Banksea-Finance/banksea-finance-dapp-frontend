@@ -4,7 +4,7 @@ import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import { Text } from '@/contexts/theme/components'
 import { useModal, useRefreshController } from '@/contexts'
 import useUserAvailableRewardsQuery from './useUserAvailableRewardsQuery'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/transactional-dialog'
+import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
 
 export type UseTokenDepositProps = {

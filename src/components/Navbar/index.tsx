@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { NavbarContainer, NavbarWrapper, NavItemsContainer, NavLink, NavLinkText } from './index.style'
-import Logo from '../logo'
+import Logo from '../BankseaLogo'
 import { Link, useLocation } from 'react-router-dom'
 import { Wallet } from '@/contexts/theme/components'
 
 import throttle from 'lodash/throttle'
 
-const NAV_ITEMS = [
+const NavItems = [
   { name: 'Staking', path: '/staking' },
-  { name: 'Airdrop', path: '/airdrop' }
+  { name: 'Airdrop', path: '/airdrop' },
+  { name: 'IDO', path: '/ido' },
 ]
 
 const Navbar: React.FC = () => {
@@ -47,20 +48,22 @@ const Navbar: React.FC = () => {
         <Link to={'/'}>
           <Logo />
         </Link>
-        <NavItemsContainer>
-          {NAV_ITEMS.map(({ name, path }, index) => (
-            <NavLink key={index} to={path}>
-              <NavLinkText
-                color={pathname === path ? 'primaryContrary' : 'text'}
-                className={pathname === path ? 'active' : ''}
-                fontSize={'22px'}
-                important
-                bold
-              >
-                {name}
-              </NavLinkText>
-            </NavLink>
-          ))}
+        <NavItemsContainer itemCount={NavItems.length}>
+          {
+            NavItems.map(({ name, path }, index) => (
+              <NavLink key={`nav-link-${index}`} to={path}>
+                <NavLinkText
+                  color={pathname === path ? 'primaryContrary' : 'text'}
+                  className={pathname === path ? 'active' : ''}
+                  fontSize={'22px'}
+                  important
+                  bold
+                >
+                  {name}
+                </NavLinkText>
+              </NavLink>
+            ))
+          }
         </NavItemsContainer>
         <Wallet />
       </NavbarContainer>

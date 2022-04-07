@@ -89,6 +89,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
         setClosable(true)
         setMessage(e?.message || e.toString())
         setMessageType('failure')
+        console.error(e)
       })
   }, [onSendTransaction, onConfirm, signature])
 

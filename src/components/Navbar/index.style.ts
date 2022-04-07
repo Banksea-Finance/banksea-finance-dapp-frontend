@@ -31,9 +31,9 @@ export const NavbarContainer = styled.div`
   }
 `
 
-export const NavItemsContainer = styled.div`
+export const NavItemsContainer = styled.div<{ itemCount: number }>`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(${props => props.itemCount}, 1fr);
   width: fit-content;
   gap: 0 32px;
   

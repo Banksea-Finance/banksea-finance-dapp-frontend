@@ -16,7 +16,7 @@ export const useOwnedNFTsQuery = (creator: PublicKey): UseQueryResult<MetadataRe
   return useQuery(
     ['OWNED_NFTS', account, creator, intermediateRefreshFlag],
     async (): Promise<MetadataResult[] | undefined> => {
-      if (!account || !connection) {
+      if (!account) {
         return undefined
       }
 

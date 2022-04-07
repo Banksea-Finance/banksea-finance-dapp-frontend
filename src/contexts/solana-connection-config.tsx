@@ -48,7 +48,7 @@ const SolanaConnectionConfigContext = React.createContext<ConnectionConfig>({
 })
 
 export function SolanaConnectionConfigProvider({ children = undefined as any }) {
-  const [endpoint, setEndpoint] = useLocalStorage<string>('connectionEndpts', DEFAULT_ENDPOINT.rpcUrl)
+  const [endpoint, setEndpoint] = useLocalStorage<string>('connectionEndpts', SOLANA_END_POINT_URL || DEFAULT_ENDPOINT.rpcUrl)
 
   const connection = useMemo(() => new Connection(endpoint!, 'recent'), [endpoint])
 

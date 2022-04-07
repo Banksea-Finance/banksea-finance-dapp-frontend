@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import DefaultPageContainer from '@/components/default-page-container'
+import DefaultPageContainer from '@/components/DefaultPageContainer'
 import { TOKEN_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/token'
 import TokenStakingPoolCard from '@/pages/staking/components/TokenStakingPoolCard'
 import { NFT_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/nft'
@@ -19,7 +19,7 @@ const StakingPageContainer = styled(DefaultPageContainer)`
   }
 `
 
-const StakingPage: React.FC = () => {
+export const StakingPage: React.FC = () => {
   return (
     <StakingPageContainer className={'StakingPageContainer'}>
       {
@@ -36,5 +36,3 @@ const StakingPage: React.FC = () => {
     </StakingPageContainer>
   )
 }
-
-export default StakingPage

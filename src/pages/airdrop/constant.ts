@@ -5,12 +5,12 @@ export type GrantInfo = {
   image: string
 }
 
-export type GrantKeys = 'Polygon' | 'Filecoin' | 'OKExChain' | 'Solana-1' | 'Solana-2'
+export type GrantKeys = 'Polygon' | 'Filecoin' | 'OKExChain' | 'Solana-1' | 'Solana-2' | 'Gitcoin'
 
 export type RegisterGrantConfig = {
   grantKey: GrantKeys
   name: string
-  chainId: SupportedChainIds
+  chainId?: SupportedChainIds
   image: string
 }
 
@@ -34,6 +34,10 @@ export const GrantsInfoByKey: Record<GrantKeys, GrantInfo> = {
   'Solana-2': {
     name: 'Solana Ignition Hackathon Round-2',
     image: 'https://hackerlink.s3.amazonaws.com/static/files/Solana2_eJt96fb.jpg'
+  },
+  Gitcoin: {
+    name: 'Gitcoin Grants Round 13',
+    image: require('@/assets/images/grants/gitcoin.png')
   }
 }
 
@@ -55,6 +59,11 @@ export const GrantsCanBeRegister: RegisterGrantConfig[] = [
     name: 'OKExChain Grant',
     chainId: 66,
     image: require('@/assets/images/grants/okexchain.png')
+  },
+  {
+    grantKey: 'Gitcoin',
+    name: 'Gitcoin Grants Round 13',
+    image: require('@/assets/images/grants/gitcoin.png')
   },
 ]
 

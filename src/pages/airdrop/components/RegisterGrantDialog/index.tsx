@@ -13,6 +13,20 @@ import BigNumber from 'bignumber.js'
 import { ClipLoader } from 'react-spinners'
 import API from '@/api'
 import styled from 'styled-components'
+import { randomUUID } from 'crypto'
+import axios from 'axios'
+import { useLocationQuery } from '@/hooks/useLocationQuery'
+
+const GrantImage = styled.img`
+  width: 550px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  border-bottom: 1.5px solid #ccc;
+  
+  ${({ theme }) => theme.mediaQueries.xl} {
+    width: 80vw;
+  }
+`
 
 const Wallets: React.FC /*<{ chainId: SupportedChainIds }>*/ = (/*{ chainId }*/) => {
   const { activate } = useMultiChainsWeb3()
@@ -194,25 +208,54 @@ const SelectWallets: React.FC<{ grantName: string; chain: ChainConfig }> = ({ ch
   )
 }
 
-const GrantImage = styled.img`
-  width: 550px;
-  border-radius: 20px;
-  margin-bottom: 8px;
-  border-bottom: 1.5px solid #ccc;
-  
-  ${({ theme }) => theme.mediaQueries.xl} {
-    width: 80vw;
-  }
-`
+const LoginViaGithub: React.FC = () => {
+  const searchParams =  new URLSearchParams({
+    client_id: 'de2f3c6aaec4c5ccbc0c',
+    redirect_uri: '',
+    login: '',
+    scope: '',
+    state: Date.now().toString(),
+    allow_signup: 'true'
+  })
+
+  const url = `https://github.com/login/oauth/authorize?${searchParams.toString()}`
+
+  return (
+    <>
+      <Button as={'a'} href={url} target={'_blank'} rel={'noreferrer'}>Login via Github</Button>
+    </>
+  )
+}
 
 export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
-  const { name, chainId, image } = props
-
+  const { name, chainId, image, grantKey } = props
   const { openModal } = useModal()
-
-  const chain = CHAINS[chainId]
-
   const { account } = useMultiChainsWeb3()
+
+  if (grantKey === 'Gitcoin') {
+    return (
+      <Dialog
+        isActive
+        title={'Register Grant'}
+        titlePrefix={
+          <Button
+            scale={'sm'}
+            mr={'8px'}
+            variant={'danger'}
+            onClick={() => openModal(<AllGrantsDialog />)}
+          >
+            Go back
+          </Button>
+        }
+      >
+        <GrantImage src={image} alt="" />
+
+        {account ? <ConfirmRegister {...props} /> : <LoginViaGithub />}
+      </Dialog>
+    )
+  }
+
+  const chain = CHAINS[chainId!]
 
   return (
     <Dialog

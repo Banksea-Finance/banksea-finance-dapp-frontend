@@ -5,7 +5,7 @@ import { useTokenStaking } from '@/hooks/programs/useStaking'
 import { TokenStakingPoolConfig } from '@/hooks/programs/useStaking/constants/token'
 import { Grid } from '@react-css/grid'
 import { DataItem } from '../DataItem'
-import { WalletRequiredButton } from '@/components/wallet-required-button'
+import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
 import { InfoGrid } from '../common.styles'
 

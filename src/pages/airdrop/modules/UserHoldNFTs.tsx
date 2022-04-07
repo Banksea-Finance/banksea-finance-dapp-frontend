@@ -4,8 +4,8 @@ import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { NFT_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/nft'
 import styled from 'styled-components'
 import { Flex } from '@react-css/flex'
-import { InoperableNftCard } from '@/pages/staking/components/NftCard'
 import { COLUMN_LAYOUT_WIDTH_THRESHOLD } from '../constant'
+import { NftCard } from '@/components/NftCard'
 
 const Container = styled.div`
   width: ${208 * 3 + 16 * 2}px;
@@ -43,7 +43,7 @@ export const UserHoldNFTs: React.FC = () => {
         {
           isLoading
             ? new Array(3).fill(undefined).map((o, i) => <Skeleton width={208} height={272} borderRadius={'20px'} key={`UserHoldNFTs-Skeleton-${i}`} />)
-            : NFTs?.map(nft => <InoperableNftCard {...nft} key={nft.mint.toString()} />)
+            : NFTs?.map(nft => <NftCard {...nft} key={nft.mint.toString()} />)
         }
       </Grid>
     </Container>

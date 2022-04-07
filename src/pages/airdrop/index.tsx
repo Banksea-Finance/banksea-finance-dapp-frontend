@@ -24,7 +24,7 @@ const StyledCard = styled(Card)`
   }
 `
 
-const AirdropPage: React.FC = () => {
+export const AirdropPage: React.FC = () => {
   const { data: userByWallet } = useUserByWalletQuery()
 
   return (
@@ -47,5 +47,3 @@ const AirdropPage: React.FC = () => {
     </AirdropPageContainer>
   )
 }
-
-export default AirdropPage

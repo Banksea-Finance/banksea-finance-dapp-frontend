@@ -15,7 +15,7 @@ import { createTokenAccountInstrs } from '@project-serum/common'
 import BigNumber from 'bignumber.js'
 import { AccountFromIDL } from '@/utils/types'
 import { waitTransactionConfirm } from '@/utils'
-import { TransactionEventCallback } from '@/components/transactional-dialog'
+import { TransactionEventCallback } from '@/components/TransactionalDialog'
 
 export class TokenStaker {
   poolName: string

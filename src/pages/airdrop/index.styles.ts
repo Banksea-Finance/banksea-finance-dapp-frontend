@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import DefaultPageContainer from '@/components/default-page-container'
+import DefaultPageContainer from '@/components/DefaultPageContainer'
 
 export const AirdropPageContainer = styled(DefaultPageContainer)`
   align-items: start;

@@ -31,17 +31,21 @@ const getDisabledStyles = ({ isLoading, theme }: ThemedButtonProps) => {
 
 /**
  * This is to get around an issue where if you use a Link component
- * React will throw a invalid DOM attribute error
+ * React will throw an invalid DOM attribute error
  * @see https://github.com/styled-components/styled-components/issues/135
  */
 interface TransientButtonProps extends ThemedButtonProps {
-  $isLoading?: boolean;
+  $isLoading?: boolean
 }
 
 const getOpacity = ({ disabled, $isLoading }: TransientButtonProps) => {
   if ($isLoading) return '1'
 
   return disabled ? '.5' : '1'
+}
+
+function isTouchScreenDevice() {
+  return ('ontouchstart' in window || navigator.maxTouchPoints)
 }
 
 const StyledButton = styled.button<BaseButtonProps>`
@@ -52,11 +56,11 @@ const StyledButton = styled.button<BaseButtonProps>`
   border: 0;
   border-radius: 40px;
   box-shadow: ${({ theme }) => theme.shadows.inset};
-  
-  cursor: pointer;
+
+  cursor: ${isTouchScreenDevice() ? 'initial' : 'pointer'};
   user-select: none;
   font-family: inherit;
-  
+
   font-weight: 600;
   letter-spacing: 0.03em;
   line-height: 1;
@@ -73,13 +77,15 @@ const StyledButton = styled.button<BaseButtonProps>`
     transform: scale(98%);
   }
   
+  
+  
   ${getDisabledStyles}
   ${variant({
     prop: 'scale',
-    variants: scaleVariants,
+    variants: scaleVariants
   })}
   ${variant({
-    variants: styleVariants,
+    variants: styleVariants
   })}
   ${layout}
   ${space}
