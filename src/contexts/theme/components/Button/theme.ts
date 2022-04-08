@@ -39,11 +39,7 @@ export const styleVariants: Record<Variant, any> = {
     backgroundColor: 'tertiary',
     boxShadow: 'none',
     color: 'primary',
-    border: '1px transparent solid',
-    ':hover:not(:disabled):not(:active)': {
-      filter: 'brightness(102%)',
-      border: '1px #cdcdcd solid'
-    }
+    border: '1px #cdcdcd solid',
   },
   [variants.SUBTLE]: {
     backgroundColor: 'textSubtle',

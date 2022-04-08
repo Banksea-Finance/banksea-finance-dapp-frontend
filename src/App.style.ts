@@ -3,6 +3,10 @@ import styled from 'styled-components'
 export const AppContainer = styled.div`
   width: 100%;
   overflow-x: scroll;
+  padding: 0 32px;
+  
+  display: grid;
+  row-gap: 48px;
 
   background-color: ${({ theme }) => theme.colors.background};
   transition: background-color 0.38s;

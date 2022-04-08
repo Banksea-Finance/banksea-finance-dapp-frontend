@@ -6,13 +6,9 @@ import { MockWallet } from '@/hooks/useAnchorProvider/MockWallet'
 
 const useAnchorProvider = () => {
   const { connection } = useSolanaConnectionConfig()
-  const { adapter, connected } = useSolanaWeb3()
+  const { adapter } = useSolanaWeb3()
 
-  return useMemo<{ provider?: Provider; readOnly: boolean }>(() => {
-    if (!connection) {
-      return { readOnly: true }
-    }
-
+  return useMemo<{ provider: Provider; readOnly: boolean }>(() => {
     if (!adapter) {
       const mockWallet = new MockWallet()
 
@@ -26,7 +22,7 @@ const useAnchorProvider = () => {
       provider: new Provider(connection, adapter, {}),
       readOnly: false
     }
-  }, [connection, adapter, connected])
+  }, [connection, adapter])
 }
 
 export default useAnchorProvider

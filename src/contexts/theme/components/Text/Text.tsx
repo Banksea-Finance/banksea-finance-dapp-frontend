@@ -35,6 +35,8 @@ const Text = styled.div<TextProps>`
 Text.defaultProps = {
   color: 'text',
   small: false,
+  fontSize: '16px',
+  fontWeight: 500
 }
 
 export default Text
