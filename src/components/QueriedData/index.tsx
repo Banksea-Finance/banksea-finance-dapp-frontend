@@ -6,15 +6,15 @@ import { TextProps } from '@/contexts/theme/components/Text'
 
 export interface QueriedDataProps<T> extends TextProps {
   value: UseQueryResult<T | undefined>
-  displayExpress?: (data: T) => string
+  displayFunction?: (data: T) => string
 }
 
-const QueriedData = <T,>({ value, displayExpress, ...textProps }: QueriedDataProps<T>): JSX.Element => {
+const QueriedData = <T,>({ value, displayFunction, ...textProps }: QueriedDataProps<T>): JSX.Element => {
   return value.data ? (
     <Text {...textProps}>
       {
-        displayExpress
-          ? displayExpress(value.data)
+        displayFunction
+          ? displayFunction(value.data)
           : (
             (value.data as any).toString?.() || value.data
           )

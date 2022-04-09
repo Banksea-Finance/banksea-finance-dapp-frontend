@@ -36,7 +36,7 @@ export type NFTsGridViewProps = {
   emptyText?: string | React.ReactNode
 }
 
-const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation, emptyText = 'There is nothing here.' }) => {
+const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation, emptyText }) => {
   const { account } = useSolanaWeb3()
 
   if (!account) {

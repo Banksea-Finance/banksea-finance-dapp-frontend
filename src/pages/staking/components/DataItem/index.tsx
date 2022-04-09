@@ -35,7 +35,7 @@ const DataItemContainer = styled.div`
   }
 `
 
-const DataItem = <T,>({ label, value, displayExpress, labelWidth }: Props<T>): JSX.Element => {
+const DataItem = <T,>({ label, value, displayFunction, labelWidth }: Props<T>): JSX.Element => {
   return (
     <DataItemContainer>
       <Text fontWeight={500} style={{ width: labelWidth }} className={'label'} color={'textDisabled'}>
@@ -43,7 +43,7 @@ const DataItem = <T,>({ label, value, displayExpress, labelWidth }: Props<T>): J
       </Text>
       <QueriedData
         value={value}
-        displayExpress={displayExpress}
+        displayFunction={displayFunction}
         fontSize={'20px'}
         bold
         color={'primary'}

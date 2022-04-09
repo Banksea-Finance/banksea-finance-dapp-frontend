@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Flex from '@react-css/flex'
-import { Tabs } from '@/contexts/theme/components'
+import { Button, Tabs, Text } from '@/contexts/theme/components'
 import { StyledNftStakingPoolCard } from './index.styles'
 import NFTsGridView from '@/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
@@ -11,6 +11,8 @@ import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
 import { InfoGrid } from '@/pages/staking/components/common.styles'
 import { useResponsive } from '@/contexts/theme'
 import { MetadataResult } from '@/utils/metaplex/metadata'
+import QueriedData from '@/components/QueriedData'
+import { useSolanaWeb3 } from '@/contexts'
 
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
@@ -18,6 +20,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { isMobile } = useResponsive()
   const [key, setKey] = useState('hold')
   const holds = useOwnedNFTsQuery(creator)
+  const { account } = useSolanaWeb3()
   const {
     userDeposited,
     totalDeposited,
@@ -47,17 +50,17 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         <DataItem
           label={'Rewards Per Staking'}
           value={rewardsPerDay}
-          displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
+          displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
         />
         <DataItem
           label={'Your Deposited'}
           value={userDeposited}
-          displayExpress={data => data?.length.toString()}
+          displayFunction={data => data?.length.toString()}
         />
         <DataItem
           label={'Your History Harvest'}
           value={userClaimedRewards}
-          displayExpress={data => `${data.toFixed(6)} ${rewardTokenName}`}
+          displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
         />
       </InfoGrid>
 
@@ -75,20 +78,31 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           </Tabs.Pane>
 
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
-            <NFTsGridView
-              emptyText={
-                <>
-                  You hold nothing.
-                  <a
+            {
+              account && (
+                <Flex alignItemsCenter justifyCenter style={{ width: '100%', marginBottom: '8px' }}>
+                  <Text as={'span'} color={'textDisabled'} mr={'2px'}>
+                    NFTs you hold: <QueriedData as={'span'} value={holds} color={'textDisabled'} displayFunction={v => v.length.toString()} fontWeight={500} />
+                    {' | '}
+                  </Text>
+
+                  <Button
+                    scale={'xs'}
+                    p={'0'}
+                    ml={'4px'}
+                    variant={'text'}
+                    as={'a'}
                     href={'https://faucet.banksea.finance'}
                     target={'_blank'}
                     rel={'noreferrer'}
-                    style={{ marginLeft: '4px' }}
                   >
-                    Go to request airdrop
-                  </a>
-                </>
-              }
+                    Request airdrop
+                  </Button>
+                </Flex>
+              )
+            }
+
+            <NFTsGridView
               queryResult={holds}
               itemOperation={{
                 text: 'Deposit',
