@@ -33,9 +33,10 @@ const Grid = styled.div`
 export type NFTsGridViewProps = {
   queryResult: UseQueryResult<MetadataResult[] | undefined>
   itemOperation?: NftCardOperate
+  emptyText?: string | React.ReactNode
 }
 
-const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation }) => {
+const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation, emptyText = 'There is nothing here.' }) => {
   const { account } = useSolanaWeb3()
 
   if (!account) {
@@ -56,8 +57,8 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation 
 
   if (!queryResult.data?.length) {
     return (
-      <Text bold fontSize={'24px'} textAlign={'center'}>
-        There is nothing here.
+      <Text fontWeight={'600'} fontSize={'20px'} textAlign={'center'}>
+        {emptyText}
       </Text>
     )
   }

@@ -12,8 +12,6 @@ import { InfoGrid } from '@/pages/staking/components/common.styles'
 import { useResponsive } from '@/contexts/theme'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 
-export type NFTStatus = 'deposited' | 'hold'
-
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
 
@@ -67,6 +65,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'xs' : 'sm'}>
           <Tabs.Pane title={'My Stake'} tabKey={'deposit'}>
             <NFTsGridView
+              emptyText={'You have not deposited anything'}
               queryResult={userDeposited}
               itemOperation={{
                 text: 'Withdraw',
@@ -77,6 +76,19 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
 
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
             <NFTsGridView
+              emptyText={
+                <>
+                  You hold nothing.
+                  <a
+                    href={'https://faucet.banksea.finance'}
+                    target={'_blank'}
+                    rel={'noreferrer'}
+                    style={{ marginLeft: '4px' }}
+                  >
+                    Go to request airdrop
+                  </a>
+                </>
+              }
               queryResult={holds}
               itemOperation={{
                 text: 'Deposit',

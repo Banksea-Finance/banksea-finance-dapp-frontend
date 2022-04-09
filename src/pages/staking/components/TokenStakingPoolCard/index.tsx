@@ -8,11 +8,13 @@ import { DataItem } from '../DataItem'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
 import { InfoGrid } from '../common.styles'
-import { Text } from '@/contexts/theme/components'
+import { Button, Text } from '@/contexts/theme/components'
 import QueriedData from '@/components/QueriedData'
+import { useSolanaWeb3 } from '@/contexts'
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
+  const { account } = useSolanaWeb3()
 
   const poolName = currencies[0].name
 
@@ -71,9 +73,29 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           </WalletRequiredButton>
         </Grid>
       </Flex>
-      <Text textAlign={'center'} color={'textDisabled'} mt={'16px'}>
-        Your Balance: <QueriedData as={'span'} value={poolBalance} color={'textDisabled'} /> KSE
-      </Text>
+      {
+        account && (
+          <Flex alignItemsCenter justifyCenter style={{ width: '100%', marginTop: '16px' }}>
+            <Text as={'span'} textAlign={'center'} color={'textDisabled'}>
+              Your Balance: <QueriedData as={'span'} value={poolBalance} color={'textDisabled'} /> KSE
+              {' | '}
+            </Text>
+            <Button
+              scale={'xs'}
+              p={'0'}
+              ml={'4px'}
+              variant={'text'}
+              as={'a'}
+              href={'https://faucet.banksea.finance'}
+              target={'_blank'}
+              rel={'noreferrer'}
+            >
+              Request airdrop
+            </Button>
+          </Flex>
+        )
+      }
+
     </StyledTokenStakingPoolCard>
   )
 }
