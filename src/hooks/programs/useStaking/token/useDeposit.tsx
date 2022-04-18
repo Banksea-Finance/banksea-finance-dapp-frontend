@@ -88,10 +88,7 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       transactionName={`Deposit ${staker.poolName}`}
       onSendTransaction={(callbacks: TransactionEventCallback) => staker?.deposit(new BigNumber(inputValue), callbacks).then(forceRefresh)}
       title={`Deposit ${staker.poolName}`}
-      bottomMessage={{
-        children: inputInvalidError,
-        color: 'failure'
-      }}
+      error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
       <Text textAlign={'end'} mb={'8px'}>

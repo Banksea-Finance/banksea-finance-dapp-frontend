@@ -14,20 +14,18 @@ import {
 } from './token'
 import { TokenStakingPoolConfig } from './constants/token'
 
-const useTokenStaking = (props: TokenStakingPoolConfig) => {
+export const useTokenStaking = (props: TokenStakingPoolConfig) => {
   const { program } = useStakingProgram()
   const { account } = useSolanaWeb3()
 
   const staker = useMemo(() => {
-    if (!program) return undefined
-
     return new TokenStaker({
       ...props,
       poolName: props.currencies.map(c => c.name).join('/'),
       program,
       user: account
     })
-  }, [program, props])
+  }, [program, props, account])
 
   const deposit = useDeposit(staker)
   const withdraw = useWithdraw(staker)
@@ -53,5 +51,3 @@ const useTokenStaking = (props: TokenStakingPoolConfig) => {
     program
   }
 }
-
-export { useTokenStaking }

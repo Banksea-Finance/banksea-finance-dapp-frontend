@@ -1,7 +1,5 @@
 import { useCallback, useState } from 'react'
 
-export const LOCAL_STORAGE_WALLET_KEY = 'WALLET'
-
 function useLocalStorage<T>(key: string, defaultState?: T): [T | undefined, (arg?: T) => void] {
   const [state, setState] = useState<T | undefined>(() => {
     // NOTE: Not sure if this is ok

@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SOLANA_CLUSTER, useModal, useRefreshController } from '@/contexts'
 import { Dialog, notify, Text } from '@/contexts/theme/components'
 import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
 import { BeatLoader } from 'react-spinners'
 import { TextProps } from '@/contexts/theme/components/Text'
+import { WalletError } from '@solana/wallet-adapter-base/lib/esm/errors'
 
 export type TransactionEvents = 'onSent' | 'onConfirm' | 'onTransactionBuilt'
 
@@ -23,12 +24,13 @@ const TransactionStages = {
   error: (e: any) => `⚠️ Transaction failed: ${e.message || e.toString()}`
 }
 
-export type TransactionalDialogProps = DialogProps & {
+export interface TransactionalDialogProps extends Omit<DialogProps, 'bottomMessage'> {
   onSendTransaction: (callbacks: TransactionEventCallback) => Promise<any>
   transactionName: string
+  error?: string
 }
 
-const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransaction, children, confirmButtonProps, cancelButtonProps, onConfirm, onCancel, transactionName, bottomMessage, ...rest }) => {
+const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransaction, children, confirmButtonProps, cancelButtonProps, onConfirm, onCancel, transactionName, error, ...rest }) => {
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
   const [message, setMessage] = useState<string | JSX.Element>()
@@ -37,6 +39,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
   const [ongoing, setOngoing] = useState(false)
   const [done, setDone] = useState(false)
   const [signature, setSignature] = useState<string>()
+  const [innerError, setInnerError] = useState<string>()
 
   const TransactionEventsCallbacks: TransactionEventCallback = {
     onTransactionBuilt: () => {
@@ -79,17 +82,16 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
     onConfirm?.()
 
     setOngoing(true)
+    setInnerError(undefined)
     setClosable(false)
     setMessage(TransactionStages.building)
     setMessageType('text')
 
     onSendTransaction(TransactionEventsCallbacks)
-      .catch(e => {
+      .catch(({ error, message }: WalletError ) => {
         setOngoing(false)
         setClosable(true)
-        setMessage(e?.message || e.toString())
-        setMessageType('failure')
-        console.error(e)
+        setInnerError(message || error?.message || error?.toString() || 'Unknown Error')
       })
   }, [onSendTransaction, onConfirm, signature])
 
@@ -98,13 +100,17 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
     closeModal()
   }
 
+  useEffect(() => {
+    setInnerError(error)
+  }, [error])
+
   return (
     <Dialog
       {...rest}
       closeable={closable}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
-      bottomMessage={bottomMessage || { children: !(ongoing || done) ? message : undefined, color: messageType }}
+      bottomMessage={{ children: innerError, color: 'failure' }}
       cancelButtonProps={{ ...cancelButtonProps, disabled: !closable, children: 'Close' }}
       confirmButtonProps={{
         ...confirmButtonProps,

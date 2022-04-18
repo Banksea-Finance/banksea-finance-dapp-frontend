@@ -7,10 +7,6 @@ const useStakingProgram = () => {
   const { provider } = useAnchorProvider()
 
   const program = useMemo(() => {
-    if (!provider) {
-      return undefined
-    }
-
     return new Program(StakingProgramIdl, StakingProgramAddress, provider)
   }, [provider])
 

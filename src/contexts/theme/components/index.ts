@@ -1,3 +1,6 @@
+export { Box, Flex, Grid } from './Box'
+export type { FlexProps, GridProps, BoxProps } from './Box'
+
 export { Button } from './Button'
 export { ButtonMenu } from './ButtonMenu'
 export { Card, CardRibbon } from './Card'

@@ -6,7 +6,7 @@ import { useRefreshController } from '@/contexts'
 const usePoolBalanceQuery = (staker?: TokenStaker) => {
   const { intermediateRefreshFlag } = useRefreshController()
 
-  return useQuery<BigNumber | undefined>(['pool-balance', staker?.pool, intermediateRefreshFlag], () => {
+  return useQuery<BigNumber | undefined>(['pool-balance', staker?.user, staker?.pool, intermediateRefreshFlag], () => {
     return staker?.getPoolBalance()
   })
 }

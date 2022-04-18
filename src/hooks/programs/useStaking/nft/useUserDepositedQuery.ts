@@ -3,13 +3,13 @@ import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
 import { loadMetadata, MetadataResult } from '@/utils/metaplex/metadata'
 import { useRefreshController } from '@/contexts'
 
-const useUserDepositedQuery = (staker?: NFTStaker): UseQueryResult<MetadataResult[] | undefined> => {
+const useUserDepositedQuery = (staker: NFTStaker): UseQueryResult<MetadataResult[] | undefined> => {
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['NFT_USER_DEPOSITED', staker?.user, staker?.pool, intermediateRefreshFlag],
+    ['NFT_USER_DEPOSITED', staker.user, staker.pool, intermediateRefreshFlag],
     async () => {
-      if (!staker) return undefined
+      if (!staker.user) return undefined
 
       const allAssets = await staker.getDepositedNFTs()
 

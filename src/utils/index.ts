@@ -1,8 +1,10 @@
 import BigNumber from 'bignumber.js'
-import { Connection, SignatureResult } from '@solana/web3.js'
+import { Connection, PublicKey, SignatureResult } from '@solana/web3.js'
 
-export const shortenAddress = (address?: string, length = 6) => {
-  return address ? `${address.substring(0, length)}...${address.slice(-length)}` : '-'
+export const shortenAddress = (address?: string | PublicKey, length = 6) => {
+  const str = address?.toString()
+
+  return str ? `${str.substring(0, length)}...${str.slice(-length)}` : '-'
 }
 
 export function numberWithCommas(x?: string | number | BigNumber, decimalPlace = 2, showSign?: boolean): string {

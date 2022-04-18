@@ -11,9 +11,9 @@ const useAPRQuery = (
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['TOKEN_APR', program?.programId, pool, intermediateRefreshFlag],
+    ['TOKEN_APR', program.programId, pool, intermediateRefreshFlag],
     async (): Promise<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
-      if (!program || !pool) return undefined
+      if (!pool) return undefined
 
       const poolAccount = await program.account.pool.fetch(pool).catch(() => undefined)
 

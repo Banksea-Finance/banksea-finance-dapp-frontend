@@ -1,4 +1,3 @@
-
 import { useQuery } from 'react-query'
 import { useRefreshController, useSolanaWeb3 } from '@/contexts'
 import { getPassbookSigner } from '../utils'

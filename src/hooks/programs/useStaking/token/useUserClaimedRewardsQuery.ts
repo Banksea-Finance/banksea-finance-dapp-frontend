@@ -6,7 +6,7 @@ const useUserClaimedRewardsQuery = (staker?: TokenStaker) => {
   const { intermediateRefreshFlag } = useRefreshController()
 
   return useQuery(['TOKEN_USER_CLAIMED_REWARDS', staker?.user, staker?.pool, intermediateRefreshFlag], () => {
-    if (!staker) return undefined
+    if (!staker?.user) return undefined
 
     return staker.getClaimedRewards()
   })

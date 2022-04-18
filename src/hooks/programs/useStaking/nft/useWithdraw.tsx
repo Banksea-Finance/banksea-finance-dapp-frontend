@@ -1,4 +1,4 @@
-import { NFTStaker } from '@/hooks/programs/useStaking/helpers/NFTStaker'
+import { NFTStaker } from '../helpers/NFTStaker'
 import React, { useCallback, useState } from 'react'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useModal, useRefreshController } from '@/contexts'
@@ -31,11 +31,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
 
       {availableRewards?.gt(0) && (
         <Flex alignItemsCenter justifySpaceBetween>
-          <Text
-            fontSize={'16px'}
-            maxWidth={isMobile ? '85%' : undefined}
-            style={{ marginTop: '8px' }}
-          >
+          <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined} style={{ marginTop: '8px' }}>
             Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time
           </Text>
           <Checkbox checked={checked} onChange={() => setChecked(b => !b)} />
@@ -48,11 +44,14 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
 const useWithdraw = (staker?: NFTStaker) => {
   const { openModal } = useModal()
 
-  return useCallback((metadataResult: MetadataResult) => {
-    if (!staker) return
+  return useCallback(
+    (metadataResult: MetadataResult) => {
+      if (!staker) return
 
-    openModal(<NFTWithdrawDialog staker={staker} metadataResult={metadataResult} />, false)
-  }, [staker])
+      openModal(<NFTWithdrawDialog staker={staker} metadataResult={metadataResult} />, false)
+    },
+    [staker]
+  )
 }
 
 export default useWithdraw

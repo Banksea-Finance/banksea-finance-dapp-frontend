@@ -1,27 +1,11 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { SolanaWallet, SupportWalletNames, useSolanaWeb3 } from '@/contexts/solana-web3'
-import { WalletModalContent } from './MyWalletModal'
 import { Button } from '../Button'
-import { useModal } from '@/contexts'
-import { Card, Dialog } from '@/contexts/theme/components'
+import { SOLANA_CLUSTER, useModal } from '@/contexts'
+import { Card, Dialog, Text, Flex, Grid } from '@/contexts/theme/components'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
-import { Grid } from '@react-css/grid'
-import { shortenAddress } from '@/utils'
-
-const SCCurrentAccount = styled.div`
-  display: flex;
-  align-items: center;
-
-  .icon {
-    margin-right: 1.2rem;
-
-    img {
-      width: 26px;
-      height: 26px;
-    }
-  }
-`
+import { shortenAddress, sleep } from '@/utils'
 
 export const WalletItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.secondary};
@@ -51,83 +35,79 @@ export const WalletItem: React.FC<{ wallet: SolanaWallet; onClick: (name: Suppor
   wallet,
   onClick
 }) => {
-  const { name, icon } = wallet
+  const { name } = wallet
 
   return (
     <WalletItemCard onClick={() => onClick(name)} plain color={'secondary'}>
       <span className="wallet-name">{name}</span>
-      <img src={icon} alt="" />
+      <img src={wallet.adapter.icon} alt="" />
     </WalletItemCard>
   )
 }
 
-const CurrentAccount: React.FC = () => {
-  const { wallet, account, disconnect } = useSolanaWeb3()
-
-  const { openModal } = useModal()
-
-  const open = useCallback(() => {
-    if (!account) {
-      return
-    }
-
-    openModal(<WalletModalContent account={account.toString()} disconnect={disconnect} />)
-  }, [account, disconnect, openModal])
-
-  return (
-    <Button onClick={open}>
-      <SCCurrentAccount>
-        <div className="icon">
-          <img src={wallet?.icon} alt="" />
-        </div>
-        {account && <span>{`${shortenAddress(account.toBase58(), 4)}`}</span>}
-      </SCCurrentAccount>
-    </Button>
-  )
-}
-
-export const WalletSelectDialog: React.FC = () => {
-  const { select } = useSolanaWeb3()
+export const WalletDialog: React.FC = () => {
+  const { select, account, disconnect } = useSolanaWeb3()
   const { closeModal } = useModal()
 
+  const handleDisconnect = async () => {
+    closeModal()
+    sleep(500)
+      .then(disconnect)
+  }
+
+  // not connected
+  if (!account) {
+    return (
+      <Dialog title={'Connect to a wallet'}>
+        <Grid gridGap={'16px'} gridTemplateRows={`repeat(${Object.keys(SUPPORT_WALLETS).length}, 1fr)`}>
+          {
+            Object.values(SUPPORT_WALLETS).map(wallet => (
+              <WalletItem
+                wallet={wallet}
+                key={`wallet-item-${wallet.name}`}
+                onClick={() => {
+                  closeModal()
+                  sleep(500).then(() => select(wallet.name as SupportWalletNames))
+                }}
+              />
+            ))
+          }
+        </Grid>
+      </Dialog>
+    )
+  }
+
+  // connected
   return (
-    <Dialog title={'Connect to a wallet'}>
-      <Grid gap={'16px'} rows={'repeat(2, 1fr)'}>
-        {Object.values(SUPPORT_WALLETS).map(wallet => (
-          <WalletItem
-            wallet={wallet}
-            key={wallet.name}
-            onClick={() => {
-              select(wallet.name as SupportWalletNames)
-              closeModal()
-            }}
-          />
-        ))}
-      </Grid>
+    <Dialog title={'My Wallet'} onCancel={handleDisconnect} cancelButtonProps={{ children: 'Disconnect' }}>
+      <Text textAlign={'center'} fontSize={'18px'} mb={'16px'}>
+        You are now connected to <b>{shortenAddress(account)}</b>
+      </Text>
+      <Text textAlign={'center'} fontSize={'18px'}>
+        Current Network: {SOLANA_CLUSTER}
+      </Text>
     </Dialog>
   )
 }
 
-const ConnectButton = () => {
-  const { openModal } = useModal()
-
-  return (
-    <Button
-      onClick={() => openModal(<WalletSelectDialog />)}
-    >
-      Connect
-    </Button>
-  )
-}
-
 const Wallet: React.FC = () => {
-  const { account } = useSolanaWeb3()
+  const { openModal } = useModal()
+  const { account, wallet } = useSolanaWeb3()
 
   return (
-    <>
-      {!account && <ConnectButton />}
-      {!!account && <CurrentAccount />}
-    </>
+    <Button scale={'L'} onClick={() => openModal(<WalletDialog />)}>
+      {
+        account
+          ? (
+            <Flex ai={'center'}>
+              <img src={wallet?.adapter?.icon} alt="" style={{ marginRight: '4px', width: '32px', height: '32px' }} />
+              {account && <span>{`${shortenAddress(account, 4)}`}</span>}
+            </Flex>
+          ) : (
+            'Connect'
+          )
+      }
+    </Button>
   )
 }
 

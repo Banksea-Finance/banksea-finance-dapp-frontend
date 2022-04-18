@@ -11,8 +11,7 @@ const useTotalDepositedQuery = (staker?: TokenStaker) => {
       if (!staker) return undefined
 
       return staker.getTotalDeposited()
-    },
-    { refetchInterval: false, refetchOnWindowFocus: false, keepPreviousData: true }
+    }
   )
 }
 

@@ -14,20 +14,18 @@ import {
 } from './nft'
 import { NFTStaker } from './helpers/NFTStaker'
 
-const useNFTStaking = (props: NFTStakingPoolConfig) => {
+export const useNFTStaking = (props: NFTStakingPoolConfig) => {
   const { program } = useStakingProgram()
   const { account } = useSolanaWeb3()
 
   const staker = useMemo(() => {
-    if (!program) return undefined
-
     return new NFTStaker({
       ...props,
       poolName: props.name,
       program,
       user: account
     })
-  }, [program, props])
+  }, [program, props, account])
 
   const deposit = useDeposit(staker)
   const withdraw = useWithdraw(staker)
@@ -51,5 +49,3 @@ const useNFTStaking = (props: NFTStakingPoolConfig) => {
     rewardsPerDay
   }
 }
-
-export default useNFTStaking

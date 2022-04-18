@@ -25,12 +25,10 @@ const NFTDepositDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataRe
   )
 }
 
-const useDeposit = (staker?: NFTStaker) => {
+const useDeposit = (staker: NFTStaker) => {
   const { openModal } = useModal()
 
   return useCallback(async (metadataResult: MetadataResult) => {
-    if (!staker) return
-
     openModal(<NFTDepositDialog staker={staker} metadataResult={metadataResult} />, false)
   }, [staker])
 }

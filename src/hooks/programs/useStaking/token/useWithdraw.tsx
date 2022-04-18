@@ -91,10 +91,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       transactionName={`Withdraw ${staker.poolName}`}
       onSendTransaction={(callbacks: TransactionEventCallback) => staker?.withdraw(new BigNumber(inputValue), checked, callbacks).then(forceRefresh)}
       title={`Withdraw ${staker.poolName}`}
-      bottomMessage={{
-        children: inputInvalidError,
-        color: 'failure'
-      }}
+      error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
       <Text textAlign={'end'} mb={'8px'}>

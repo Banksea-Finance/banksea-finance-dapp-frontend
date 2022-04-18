@@ -10,7 +10,7 @@ import useDiscordUserQuery from '@/hooks/queries/airdrop/useDiscordUserQuery'
 import { Grid } from '@react-css/grid'
 import API from '@/api'
 import useDiscordAccessToken from '@/hooks/useDiscordAccessToken'
-import { WalletSelectDialog } from '@/contexts/theme/components/Wallet/Wallet'
+import { WalletDialog } from '@/contexts/theme/components/Wallet/Wallet'
 
 const BindingDialog: React.FC<{ token: string; wallet: string; username: string }> = ({ token, wallet, username }) => {
   const [loading, setLoading] = useState(false)
@@ -83,7 +83,7 @@ export const PersonalInfo: React.FC = () => {
           variant={'primary'}
           scale={'M'}
           mr={'8px'}
-          onClick={() => openModal(<WalletSelectDialog />)}
+          onClick={() => openModal(<WalletDialog />)}
         >
           Connect to Wallet
         </Button>

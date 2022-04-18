@@ -8,11 +8,10 @@ const useUserDepositedQuery = (staker?: TokenStaker) => {
   return useQuery(
     ['TOKEN_USER_DEPOSITED', staker?.pool, staker?.user, intermediateRefreshFlag],
     () => {
-      if (!staker) return undefined
+      if (!staker?.user) return undefined
 
       return staker.getUserDeposited()
     },
-    { refetchInterval: false, refetchOnWindowFocus: false, keepPreviousData: true }
   )
 }
 
