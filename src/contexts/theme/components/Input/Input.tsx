@@ -1,7 +1,8 @@
 import Input from 'rc-input'
 import styled, { DefaultTheme } from 'styled-components'
-import { InputProps, scales } from './types'
+import { InputProps } from './types'
 import { layout, space } from 'styled-system'
+import { scales } from '../../configs/scales'
 
 interface StyledInputProps extends InputProps {
   theme: DefaultTheme
@@ -22,13 +23,13 @@ const getBoxShadow = ({ isSuccess = false, isWarning = false, theme }: StyledInp
   return theme.shadows.inset
 }
 
-const getHeight = ({ scale = scales.MD }: StyledInputProps) => {
+const getHeight = ({ scale = scales.L }: StyledInputProps) => {
   switch (scale) {
-  case scales.SM:
+  case scales.S:
     return '32px'
-  case scales.LG:
+  case scales.L:
     return '48px'
-  case scales.MD:
+  case scales.M:
   default:
     return '40px'
   }
@@ -38,6 +39,7 @@ const StyledInput = styled(Input)<InputProps>`
   background-color: ${({ theme }) => theme.colors.input};
   border-radius: 16px;
   box-shadow: ${getBoxShadow};
+  border-color: transparent;
   color: ${({ theme }) => theme.colors.primary};
   display: block;
   font-size: 16px;

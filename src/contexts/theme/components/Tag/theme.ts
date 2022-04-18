@@ -1,16 +1,19 @@
-import { scales, variants } from './types'
+import { scales } from '../../configs/scales'
+import { variants } from './types'
 
 export const scaleVariants = {
-  [scales.MD]: {
-    height: '28px',
-    padding: '0 8px',
+  [scales.S]: {
+    padding: '2px 6px',
     fontSize: '14px'
   },
-  [scales.SM]: {
-    height: '24px',
-    padding: '0 4px',
-    fontSize: '12px'
-  }
+  [scales.M]: {
+    padding: '4px 10px',
+    fontSize: '16px'
+  },
+  [scales.L]: {
+    padding: '6px 12px',
+    fontSize: '20px'
+  },
 }
 
 export const styleVariants = {

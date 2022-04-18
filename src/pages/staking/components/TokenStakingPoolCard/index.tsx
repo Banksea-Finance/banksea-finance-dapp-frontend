@@ -31,7 +31,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   } = useTokenStaking(props)
 
   return (
-    <StyledTokenStakingPoolCard>
+    <StyledTokenStakingPoolCard flexDirection={'column'}>
       <StakingPoolHead
         name={poolName}
         icon={currencies[0].icon}
@@ -65,10 +65,10 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
 
       <Flex row justifyCenter>
         <Grid gap={'20px'} columns={'repeat(2, 1fr)'}>
-          <WalletRequiredButton onClick={deposit} scale={'sm'}>
+          <WalletRequiredButton onClick={deposit} scale={'M'}>
             Deposit
           </WalletRequiredButton>
-          <WalletRequiredButton onClick={withdraw} scale={'sm'}>
+          <WalletRequiredButton onClick={withdraw} scale={'M'}>
             Withdraw
           </WalletRequiredButton>
         </Grid>
@@ -81,7 +81,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
               {' | '}
             </Text>
             <Button
-              scale={'xs'}
+              scale={'S'}
               p={'0'}
               ml={'4px'}
               variant={'text'}

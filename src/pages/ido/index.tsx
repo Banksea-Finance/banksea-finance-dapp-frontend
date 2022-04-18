@@ -35,7 +35,11 @@ export const IdoPage: React.FC = () => {
 
   return (
     <DefaultPageContainer>
-      <Card width={'100%'} p={'16px 32px'}>
+      <Card
+        width={'100%'}
+        p={'16px 32px'}
+        flexDirection={'column'}
+      >
         <Text important bold fontSize={'32px' } color={'primary'}>IDO Whitelist Register</Text>
 
         <Flex justifySpaceBetween style={{ width: '80%', margin: '32px 0 32px 10%' }}>
@@ -44,7 +48,7 @@ export const IdoPage: React.FC = () => {
           <BNTimeDataItem time={poolAccount?.withdrawStartTime} label={'Withdraw Start Time'} />
         </Flex>
 
-        <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'xs' : 'sm'}>
+        <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'S' : 'M'}>
           <Tabs.Pane title={'My Stake'} tabKey={'stake'}>
             <NFTsGridView
               queryResult={userDeposited}

@@ -236,7 +236,7 @@ export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
         title={'Register Grant'}
         titlePrefix={
           <Button
-            scale={'sm'}
+            scale={'M'}
             mr={'8px'}
             variant={'danger'}
             onClick={() => openModal(<AllGrantsDialog />)}
@@ -260,7 +260,7 @@ export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
       title={'Register Grant'}
       titlePrefix={
         <Button
-          scale={'sm'}
+          scale={'M'}
           mr={'8px'}
           variant={'danger'}
           onClick={() => openModal(<AllGrantsDialog />)}

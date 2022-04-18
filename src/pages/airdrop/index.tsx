@@ -29,7 +29,7 @@ export const AirdropPage: React.FC = () => {
 
   return (
     <AirdropPageContainer>
-      <Card p={'24px'}>
+      <Card p={'24px'} flexDirection={'column'}>
         <Introductions />
         <div style={{ padding: '0 24px' }}>
           <PersonalInfo />

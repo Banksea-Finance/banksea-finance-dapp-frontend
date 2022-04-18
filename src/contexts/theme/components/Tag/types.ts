@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { SpaceProps, TypographyProps } from 'styled-system'
+import { Scales } from '../../configs/scales'
 
 export const variants = {
   PRIMARY: 'primary',
@@ -12,17 +13,11 @@ export const variants = {
   WARNING: 'warning'
 } as const
 
-export const scales = {
-  MD: 'md',
-  SM: 'sm',
-} as const
-
-export type Scale = typeof scales[keyof typeof scales];
 export type Variant = typeof variants[keyof typeof variants];
 
 export interface TagProps extends SpaceProps, TypographyProps {
   variant?: Variant;
-  scale?: Scale;
+  scale?: Scales;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
   outline?: boolean;

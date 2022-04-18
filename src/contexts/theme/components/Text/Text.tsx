@@ -19,7 +19,7 @@ const Text = styled.div<TextProps>`
   color: ${getColor};
   font-size: ${getFontSize};
   font-family: ${getFontFamily};
-  font-weight: ${({ bold }) => (bold ? 600 : 400)};
+  font-weight: ${({ bold, important }) => (bold ? 700 : (important ? 400 : 500))};
   line-height: 1.5;
   
   .primary {
@@ -34,7 +34,7 @@ const Text = styled.div<TextProps>`
 
 Text.defaultProps = {
   color: 'text',
-  small: false,
+  fontSize: '16px',
 }
 
 export default Text

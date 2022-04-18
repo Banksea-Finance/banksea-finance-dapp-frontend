@@ -28,7 +28,7 @@ export const StyledTag = styled.div<ThemedProps>`
   border-radius: 16px;
   color: #ffffff;
   display: inline-flex;
-  font-weight: 400;
+  font-weight: 500;
   white-space: nowrap;
   width: fit-content;
 

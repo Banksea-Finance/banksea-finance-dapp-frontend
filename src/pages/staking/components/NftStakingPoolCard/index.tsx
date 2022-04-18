@@ -33,7 +33,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   } = useNFTStaking(props)
 
   return (
-    <StyledNftStakingPoolCard>
+    <StyledNftStakingPoolCard flexDirection={'column'}>
       <StakingPoolHead
         name={name}
         icon={logo}
@@ -65,7 +65,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       </InfoGrid>
 
       <Flex column alignItemsCenter>
-        <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'xs' : 'sm'}>
+        <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'S' : 'M'}>
           <Tabs.Pane title={'My Stake'} tabKey={'deposit'}>
             <NFTsGridView
               emptyText={'You have not deposited anything'}
@@ -87,7 +87,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                   </Text>
 
                   <Button
-                    scale={'xs'}
+                    scale={'S'}
                     p={'0'}
                     ml={'4px'}
                     variant={'text'}

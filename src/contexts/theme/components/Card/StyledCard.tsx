@@ -38,6 +38,9 @@ const getBackgroundColor = ({ backgroundColor, theme }: StyledCardProps) => {
 }
 
 const StyledCard = styled.div<StyledCardProps>`
+  display: flex;
+  ${flexbox};
+
   background-color: ${getBackgroundColor};
   border: ${p => getCardTheme(p).boxShadow};
   border-radius: 32px;
@@ -54,7 +57,6 @@ const StyledCard = styled.div<StyledCardProps>`
 
   ${space}
   ${layout}
-  ${flexbox}
   ${display}
   ${overflow}
 `

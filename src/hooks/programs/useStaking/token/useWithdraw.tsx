@@ -32,7 +32,7 @@ const sliderMarks = {
 const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   const [inputValue, setInputValue] = useState('0')
   const [sliderValue, setSliderValue] = useState(0)
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(true)
   const { forceRefresh } = useRefreshController()
   const { data: userDeposits } = useUserDepositedQuery(staker)
   const { data: availableRewards } = useUserAvailableRewardsQuery(staker)
@@ -108,7 +108,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       </Text>
 
       <Input
-        scale={'md'}
+        scale={'M'}
         value={inputValue}
         allowClear
         autoFocus
@@ -131,7 +131,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
         availableRewards?.gt(0) && (
           <Flex alignItemsCenter justifyContent={'space-between'} style={{ marginTop: '8px' }}>
             <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
-            <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
+            <Checkbox checked={checked} onChange={() => setChecked(b => !b)} />
           </Flex>
         )
       }

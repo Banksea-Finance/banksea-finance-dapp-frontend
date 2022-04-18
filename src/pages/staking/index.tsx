@@ -10,7 +10,7 @@ const StakingPageContainer = styled(DefaultPageContainer)`
   display: grid;
   gap: 32px;
 
-  min-width: 330px;
+  min-width: 375px;
   overflow-x: auto;
 
   ${({ theme }) => theme.mediaQueries.xl} {

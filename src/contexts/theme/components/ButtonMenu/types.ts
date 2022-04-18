@@ -1,7 +1,8 @@
-import { BaseButtonProps, Scale, variants } from '../Button/types'
+import { BaseButtonProps, variants } from '../Button/types'
 import React, { HTMLAttributes } from 'react'
 import { SpaceProps } from 'styled-system'
 import { CSSProperties } from 'styled-components'
+import { Scales } from '../../configs/scales'
 
 export interface ButtonMenuItemProps extends BaseButtonProps {
   isActive?: boolean
@@ -13,7 +14,7 @@ export interface ButtonMenuProps extends HTMLAttributes<HTMLDivElement>, SpacePr
   activeIndex?: number
   activeKey?: string
   onItemClick?: (args: { index: number; key?: string }) => void
-  scale?: Scale
+  scale?: Scales
   children: React.ReactElement[]
 }
 

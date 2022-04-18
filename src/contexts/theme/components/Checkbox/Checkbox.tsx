@@ -1,64 +1,27 @@
-import styled from 'styled-components'
-import { CheckboxProps, scales } from './types'
+import React from 'react'
+import { CheckboxProps, getScale } from '@/contexts/theme/components/Checkbox/types'
+import { Flex } from '@/contexts/theme/components/Box'
+import StyledCheckbox from '@/contexts/theme/components/Checkbox/StyledCheckbox'
+import { Text } from '@/contexts/theme/components'
 
-const getScale = ({ scale }: CheckboxProps) => {
-  switch (scale) {
-  case scales.XS:
-    return '16px'
-  case scales.SM:
-    return '24px'
-  case scales.MD:
-    return '32px'
-  }
-}
+const Checkbox: React.FC<CheckboxProps> = props => {
+  const { label, labelTextStyles, ...rest } = props
 
-const Checkbox = styled.input.attrs({ type: 'checkbox' })<CheckboxProps>`
-  appearance: none;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  display: inline-block;
-  height: ${getScale};
-  width: ${getScale};
-  vertical-align: middle;
-  transition: background-color 0.2s ease-in-out;
-  border: 0;
-  border-radius: 6px;
-  background-color: ${({ theme }) => theme.colors.input};
-  box-shadow: ${({ theme }) => theme.shadows.inset};
-
-  &:after {
-    content: '';
-    position: absolute;
-    border-bottom: 2px solid;
-    border-left: 2px solid;
-    border-color: transparent;
-    top: 30%;
-    left: 0;
-    right: 0;
-    width: 50%;
-    height: 25%;
-    margin: auto;
-    transform: rotate(-50deg);
-    transition: border-color 0.2s ease-in-out;
-  }
-
-  &:checked {
-    background-color: ${({ theme }) => theme.colors.success};
-
-    &:after {
-      border-color: white;
-    }
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-`
-
-Checkbox.defaultProps = {
-  scale: scales.SM,
+  return (
+    <Flex alignItems={'center'}>
+      <StyledCheckbox {...rest} />
+      {
+        label && (
+          <Text
+            fontSize={getScale(props)}
+            {...labelTextStyles}
+          >
+            {label}
+          </Text>
+        )
+      }
+    </Flex>
+  )
 }
 
 export default Checkbox

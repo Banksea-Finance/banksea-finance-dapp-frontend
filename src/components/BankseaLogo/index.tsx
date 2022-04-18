@@ -17,7 +17,7 @@ const Logo: React.FC<{ width?: string }> = () => {
   return (
     <Flex alignItemsCenter>
       <LogoContainer src={require('@/assets/images/logo.png')} />
-      <DevnetTag variant={'primaryContrary'} scale={'md'}>Devnet</DevnetTag>
+      <DevnetTag variant={'primaryContrary'} scale={'M'}>Devnet</DevnetTag>
     </Flex>
   )
 }

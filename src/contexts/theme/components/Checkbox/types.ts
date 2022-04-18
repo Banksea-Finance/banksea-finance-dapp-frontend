@@ -1,13 +1,22 @@
-import { Props as RcCheckboxProps } from 'rc-checkbox'
+import { InputHTMLAttributes } from 'react'
 
-export const scales = {
-  XS: 'xs',
-  SM: 'sm',
-  MD: 'md'
-} as const
+import { TextProps } from '@/contexts/theme/components/Text'
+import { scales, Scales } from '../../configs/scales'
 
-export type Scales = typeof scales[keyof typeof scales];
+export const getScale = ({ scale }: CheckboxProps) => {
+  switch (scale) {
+  case scales.S:
+    return '14px'
+  case scales.M:
+    return '16px'
+  case scales.L:
+    return '24px'
+  }
+}
 
-export interface CheckboxProps extends RcCheckboxProps{
-  scale?: Scales;
+export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string
+  labelTextStyles?: TextProps
+  scale?: Scales
+  type?: 'checkbox'
 }

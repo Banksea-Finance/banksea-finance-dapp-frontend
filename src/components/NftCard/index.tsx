@@ -45,7 +45,7 @@ export const NftCard: React.FC<NftCardProps> = props => {
       <Text fontWeight={600} fontSize={isMobile ? '16px' : '20px'} color={'primary'} m={'6px 0'}>{account?.data.data.name}</Text>
       {
         operate && (
-          <Button scale={'sm'} variant={'primaryContrary'} onClick={() => operate.callback(props)}>
+          <Button scale={'M'} variant={'primaryContrary'} onClick={() => operate.callback(props)}>
             {operate.text}
           </Button>
         )

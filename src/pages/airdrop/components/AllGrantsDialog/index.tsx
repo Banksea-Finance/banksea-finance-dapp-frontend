@@ -15,6 +15,7 @@ const GrantCard: React.FC<RegisterGrantConfig & { registered?: boolean }> = prop
 
   return (
     <Card
+      flexDirection={'column'}
       onClick={() => {
         if (registered) return
         openModal(<RegisterGrantDialog {...props} />)
@@ -29,7 +30,7 @@ const GrantCard: React.FC<RegisterGrantConfig & { registered?: boolean }> = prop
       activeOnHover={!registered}
       style={{ cursor: registered ? 'not-allowed' : 'pointer' }}
     >
-      <img src={image} alt={name} style={{ width: '350px', borderBottom: '1.5px #ccc solid' }} />
+      <img src={image} alt={name} style={{ width: '350px', height: '160px', borderBottom: '1.5px #ccc solid' }} />
       <Flex alignItemsCenter justifyCenter>
         <Text textAlign={'center'} fontSize={'18px'} bold mt={'4px'}>
           {name}
@@ -53,7 +54,10 @@ export const AllGrantsDialog: React.FC = () => {
   const { data: userByWallet } = useUserByWalletQuery()
 
   return (
-    <Dialog plain title={'All grants we participated:'}>
+    <Dialog
+      plain
+      title={'All grants we participated:'}
+    >
       <StyledGrid>
         {GrantsCanBeRegister.map(grant => (
           <GrantCard

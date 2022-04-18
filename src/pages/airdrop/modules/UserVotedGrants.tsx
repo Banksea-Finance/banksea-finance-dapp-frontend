@@ -38,7 +38,7 @@ export const UserVotedGrants: React.FC = () => {
         <Text bold important fontSize={'28px'} color={'primary'} mr={'16px'}>
           Your voted grants
         </Text>
-        <Button scale={'sm'} variant={'secondary'} onClick={() => openModal(<AllGrantsDialog />)}>
+        <Button scale={'M'} variant={'secondary'} onClick={() => openModal(<AllGrantsDialog />)}>
           ＋ Register a new one
         </Button>
       </Flex>

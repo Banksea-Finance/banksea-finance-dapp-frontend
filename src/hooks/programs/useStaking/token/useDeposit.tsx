@@ -104,7 +104,7 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
         { staker.poolName }
       </Text>
       <Input
-        scale={'md'}
+        scale={'M'}
         autoFocus
         value={inputValue}
         allowClear

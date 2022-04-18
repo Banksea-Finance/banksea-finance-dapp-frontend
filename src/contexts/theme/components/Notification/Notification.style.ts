@@ -88,7 +88,7 @@ export const NotificationStyleMixin = css`
     }
 
     &-fade-leave {
-      ${FadeEffect}
+      ${FadeEffect};
       animation-play-state: paused;
     }
 

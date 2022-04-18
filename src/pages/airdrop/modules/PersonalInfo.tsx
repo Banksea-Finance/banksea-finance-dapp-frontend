@@ -46,15 +46,13 @@ const BindingDialog: React.FC<{ token: string; wallet: string; username: string 
       cancelButtonProps={{ children: done ? 'Close' : undefined }}
       confirmButtonProps={{ isLoading: loading, disabled: done }}
       bottomMessage={
-        done
-          ? {
-            children: 'Connect successfully!',
-            color: 'success'
-          }
-          : {
-            children: error,
-            color: 'failure'
-          }
+        done ? {
+          children: 'Connect successfully!',
+          color: 'success'
+        } : {
+          children: error,
+          color: 'failure'
+        }
       }
     >
       <Text>
@@ -83,7 +81,7 @@ export const PersonalInfo: React.FC = () => {
 
         <Button
           variant={'primary'}
-          scale={'sm'}
+          scale={'M'}
           mr={'8px'}
           onClick={() => openModal(<WalletSelectDialog />)}
         >
@@ -104,7 +102,7 @@ export const PersonalInfo: React.FC = () => {
       <Flex alignItemsCenter justifyCenter style={{ marginTop: '48px' }}>
         <Text mr={'8px'} fontSize={'18px'} bold>Account info not found by connecting wallet, please </Text>
 
-        <Button variant={'primary'} scale={'sm'} onClick={() => window.open(discordLoginUrl, '_blank')}>
+        <Button variant={'primary'} scale={'M'} onClick={() => window.open(discordLoginUrl, '_blank')}>
           <DiscordIcon style={{ marginRight: '4px' }} />
           Login with Discord
         </Button>
@@ -141,7 +139,7 @@ export const PersonalInfo: React.FC = () => {
               {shortenAddress(account?.toBase58())}
             </Text>
           </Flex>
-          <Button mt={'8px'} scale={'sm'} onClick={() => openModal(<BindingDialog token={token!} wallet={account!.toBase58()} username={discordUser.username} />)}>
+          <Button mt={'8px'} scale={'M'} onClick={() => openModal(<BindingDialog token={token!} wallet={account!.toBase58()} username={discordUser.username} />)}>
             Connect Discord and Wallet
           </Button>
         </div>

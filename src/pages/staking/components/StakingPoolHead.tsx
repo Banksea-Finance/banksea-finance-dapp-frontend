@@ -118,7 +118,7 @@ const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, available
             )}
           </Text>
         </div>
-        <WalletRequiredButton scale={'sm'} onClick={onHarvest} variant={'primaryContrary'}>
+        <WalletRequiredButton scale={'M'} onClick={onHarvest} variant={'primaryContrary'}>
           Harvest
         </WalletRequiredButton>
       </RewardsCard>

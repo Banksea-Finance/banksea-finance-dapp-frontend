@@ -1,17 +1,18 @@
-import { scales, Variant, variants } from './types'
+import { scales } from '../../configs/scales'
+import { Variant, variants } from './types'
 
 export const scaleVariants = {
-  [scales.MD]: {
+  [scales.L]: {
     height: '48px',
     padding: '0 24px',
     fontSize: '18px'
   },
-  [scales.SM]: {
+  [scales.M]: {
     height: '36px',
     padding: '0 16px',
     fontSize: '16px'
   },
-  [scales.XS]: {
+  [scales.S]: {
     height: '28px',
     fontSize: '14px',
     padding: '0 12px'
@@ -39,11 +40,7 @@ export const styleVariants: Record<Variant, any> = {
     backgroundColor: 'tertiary',
     boxShadow: 'none',
     color: 'primary',
-    border: '1px transparent solid',
-    ':hover:not(:disabled):not(:active)': {
-      filter: 'brightness(102%)',
-      border: '1px #cdcdcd solid'
-    }
+    border: '1px #cdcdcd solid',
   },
   [variants.SUBTLE]: {
     backgroundColor: 'textSubtle',

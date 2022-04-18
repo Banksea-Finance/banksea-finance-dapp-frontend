@@ -12,7 +12,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
   staker,
   metadataResult
 }) => {
-  const [checked, setChecked] = useState(false)
+  const [checked, setChecked] = useState(true)
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
   const { data: availableRewards } = useUserAvailableRewardsQuery(staker)
@@ -38,7 +38,7 @@ const NFTWithdrawDialog: React.FC<{ staker: NFTStaker; metadataResult: MetadataR
           >
             Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time
           </Text>
-          <Checkbox value={checked} onChange={() => setChecked(b => !b)} />
+          <Checkbox checked={checked} onChange={() => setChecked(b => !b)} />
         </Flex>
       )}
     </TransactionalDialog>

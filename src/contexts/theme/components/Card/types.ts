@@ -6,7 +6,7 @@ import { TextProps } from '@/contexts/theme/components/Text'
 export interface CardRibbonProps {
   variantColor?: keyof Colors
   text: string
-  textStyle: TextProps
+  textStyle?: TextProps
 }
 
 export type CardTheme = {

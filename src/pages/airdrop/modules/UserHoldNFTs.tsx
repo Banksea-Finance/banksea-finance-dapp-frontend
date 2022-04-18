@@ -35,7 +35,7 @@ export const UserHoldNFTs: React.FC = () => {
         <Text bold important fontSize={'28px'} color={'primary'} mr={'16px'}>
           NFTs you hold
         </Text>
-        <Button scale={'sm'} variant={'secondary'}>
+        <Button scale={'M'} variant={'secondary'}>
           Go to purchase!
         </Button>
       </Flex>

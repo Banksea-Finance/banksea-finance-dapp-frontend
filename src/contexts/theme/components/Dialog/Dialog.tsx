@@ -68,6 +68,7 @@ const Dialog: React.FC<DialogProps> = ({
 
   return (
     <Card
+      flexDirection={'column'}
       p={'24px'}
       minWidth={minWidth || (!isMobile ? '448px' : undefined)}
       maxWidth={'min(1080px, 90vw)'}
