@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useModal, useRefreshController } from '@/contexts'
 import { Checkbox, Input, Text } from '@/contexts/theme/components'
@@ -53,25 +53,28 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
   }, [inputValue, decimals])
 
-  const onInputChange = useCallback(
-    (v: any) => {
-      const value = v.target.value
+  const onInputChange = useCallback((v: any) => {
+    const value: string = v.target.value
 
-      if (+value < 0) {
-        setInputValue('0')
-        return
-      }
+    if (+value < 0 || !userDeposits) {
+      setInputValue('0')
+      return
+    }
 
-      if (userDeposits && new BigNumber(value).gt(userDeposits)) {
-        setInputValue(userDeposits.toString())
-      } else {
-        setInputValue(value)
-      }
-    },
-    [userDeposits]
-  )
+    if (new BigNumber(value).gt(userDeposits)) {
+      setInputValue(userDeposits.toString())
+    } else {
+      setInputValue(value.replace(/^0(\d)/, '$1'))
+    }
+
+    setSliderValue(
+      +new BigNumber(value).multipliedBy(100).div(userDeposits).toFixed(0, BigNumber.ROUND_FLOOR)
+    )
+  }, [userDeposits])
 
   const onSliderChange = useCallback((v: number) => {
+    setSliderValue(v)
+
     if (userDeposits) {
       if (v === 0) {
         setInputValue('0')
@@ -83,19 +86,15 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
   }, [userDeposits])
 
-  useEffect(() => {
-    if (userDeposits) {
-      setSliderValue(
-        new BigNumber(inputValue).div(userDeposits).multipliedBy(100).toNumber()
-      )
-    }
-  }, [inputValue, userDeposits])
-
   return (
     <TransactionalDialog
       transactionName={`Withdraw ${staker.poolName}`}
       onSendTransaction={(callbacks: TransactionEventCallback) => staker?.withdraw(new BigNumber(inputValue), checked, callbacks).then(forceRefresh)}
       title={`Withdraw ${staker.poolName}`}
+      bottomMessage={{
+        children: inputInvalidError,
+        color: 'failure'
+      }}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
       <Text textAlign={'end'} mb={'8px'}>
@@ -109,25 +108,17 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       </Text>
 
       <Input
-        scale={'sm'}
+        scale={'md'}
         value={inputValue}
         allowClear
         autoFocus
         onChange={onInputChange}
         mr={'4px'}
+        mb={'8px'}
         suffix={
           <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
         }
       />
-
-      <Flex alignItemsCenter style={{ minHeight: '24px' }}>
-        <div style={{ width: isMobile? '4px' : '176px' }} />
-        <Flex.Item flex={16}>
-          <Text color={'failure'} bold>
-            {inputInvalidError || ' '}
-          </Text>
-        </Flex.Item>
-      </Flex>
 
       <SliderWithTooltip
         value={sliderValue}

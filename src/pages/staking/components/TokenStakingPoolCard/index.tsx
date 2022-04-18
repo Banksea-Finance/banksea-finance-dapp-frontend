@@ -44,7 +44,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         <DataItem
           label={'Total Deposited'}
           value={totalDeposited}
-          displayFunction={data => `${data.toFixed(6)} ${poolName}`}
+          displayFunction={data => `${data.toFixed(2)} ${poolName}`}
         />
         <DataItem
           label={'APR'}
@@ -54,12 +54,12 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         <DataItem
           label={'Your Deposited'}
           value={userDeposited}
-          displayFunction={data => data.toFixed(6)}
+          displayFunction={data => `${data.toFixed(2)} ${poolName}`}
         />
         <DataItem
           label={'Your History Harvest'}
           value={userClaimedRewards}
-          displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
+          displayFunction={data => `${data.toFixed(2)} ${rewardTokenName}`}
         />
       </InfoGrid>
 

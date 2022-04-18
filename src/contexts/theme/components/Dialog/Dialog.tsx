@@ -67,7 +67,14 @@ const Dialog: React.FC<DialogProps> = ({
   }, [closeable, onConfirm, confirmButtonProps])
 
   return (
-    <Card p={'24px'} minWidth={minWidth || (!isMobile ? '448px' : undefined)} width={isMobile ? '95vw' : width} {...rest} isActive>
+    <Card
+      p={'24px'}
+      minWidth={minWidth || (!isMobile ? '448px' : undefined)}
+      maxWidth={'min(1080px, 90vw)'}
+      width={isMobile ? '95vw' : width}
+      {...rest}
+      isActive
+    >
       <Flex
         justifySpaceBetween
         alignItemsCenter

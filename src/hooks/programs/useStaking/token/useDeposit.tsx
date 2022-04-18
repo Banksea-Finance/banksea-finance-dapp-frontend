@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey } from '@solana/web3.js'
 import { useModal, useRefreshController } from '@/contexts'
 import { Input, Text } from '@/contexts/theme/components'
-import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
@@ -62,11 +61,17 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     if (new BigNumber(value).gt(poolBalance)) {
       setInputValue(poolBalance.toString())
     } else {
-      setInputValue(value)
+      setInputValue(value.replace(/^0(\d)/, '$1'))
     }
+
+    setSliderValue(
+      +new BigNumber(value).multipliedBy(100).div(poolBalance).toFixed(0, BigNumber.ROUND_FLOOR)
+    )
   }, [poolBalance])
 
   const onSliderChange = useCallback((v: number) => {
+    setSliderValue(v)
+
     if (poolBalance) {
       if (v === 0) {
         setInputValue('0')
@@ -77,14 +82,6 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
       }
     }
   }, [poolBalance])
-
-  useEffect(() => {
-    if (poolBalance) {
-      setSliderValue(
-        new BigNumber(inputValue).div(poolBalance).multipliedBy(100).toNumber()
-      )
-    }
-  }, [inputValue, poolBalance])
 
   return (
     <TransactionalDialog
@@ -106,23 +103,24 @@ const DepositDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
         </b>
         { staker.poolName }
       </Text>
-      <Flex alignItemsCenter justifyCenter style={{ marginBottom: '8px' }}>
-        <Input
-          autoFocus
-          value={inputValue}
-          allowClear
-          onChange={onInputChange}
-          mr={'4px'}
-          style={{ flexGrow: 1 }}
-          suffix={
-            <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
-          }
-        />
-      </Flex>
+      <Input
+        scale={'md'}
+        autoFocus
+        value={inputValue}
+        allowClear
+        onChange={onInputChange}
+        mr={'4px'}
+        mb={'8px'}
+        style={{ flexGrow: 1 }}
+        suffix={
+          <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
+        }
+      />
 
       <SliderWithTooltip
         value={sliderValue}
         onChange={onSliderChange}
+        step={1}
         style={{ width: '80%', left: '10%', height: '32px' }}
         marks={sliderMarks}
       />
