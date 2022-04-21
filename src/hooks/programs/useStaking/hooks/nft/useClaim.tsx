@@ -1,49 +1,38 @@
 import React, { useCallback } from 'react'
-import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { useModal, useSolanaWeb3 } from '@/contexts'
 import { Text } from '@/contexts/theme/components'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
-import { Transaction } from '@solana/web3.js'
-import { waitTransactionConfirm } from '@/utils'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { NFTStakingPoolConfig } from '../../constants/nft'
 import { buildClaimInstruction } from '../../helpers/instructions'
-import { WalletNotConnectedError } from '../../helpers/errors'
+import { WalletNotConnectedError } from '@/utils/errors'
+import { buildTransaction } from '@/utils'
 
 const NFTClaimDialog: React.FC<{ config: NFTStakingPoolConfig }> = ({ config }) => {
   const { pool: pool, name } = config
   const { data: availableRewards, isLoading } = useUserAvailableRewardsQuery(config.pool)
-  const { adapter, account } = useSolanaWeb3()
-  const { connection } = useSolanaConnectionConfig()
+  const { account } = useSolanaWeb3()
   const program = useStakingProgram()
 
-  const handleClaim = useCallback(
-    async (callbacks: TransactionEventCallback) => {
-      if (!account || !adapter) throw WalletNotConnectedError
+  const handleClaim = useCallback(async () => {
+    if (!account) throw WalletNotConnectedError
 
-      const tx = new Transaction().add(
-        await buildClaimInstruction({
-          user: account,
-          program,
-          pool
-        })
-      )
-      callbacks?.onTransactionBuilt?.()
-
-      const signature = await program.provider.send(tx)
-      callbacks?.onSent?.()
-
-      await waitTransactionConfirm(connection, signature)
-      callbacks?.onConfirm?.(signature)
-    },
-    [adapter, config, account, program]
-  )
+    return buildTransaction(program.provider, [
+      await buildClaimInstruction({
+        user: account,
+        program,
+        pool
+      })
+    ])
+  }, [config, account, program])
 
   return (
     <TransactionalDialog
+      maxWidth={'600px'}
       transactionName={`Harvest rewards from ${name}`}
       title={`Harvest from ${name} pool`}
-      onSendTransaction={handleClaim}
+      transactionsBuilder={handleClaim}
       confirmButtonProps={{ children: 'Harvest now', disabled: isLoading || !availableRewards?.gt(0) }}
     >
       {isLoading ? (

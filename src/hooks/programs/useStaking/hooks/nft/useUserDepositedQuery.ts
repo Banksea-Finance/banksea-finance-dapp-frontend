@@ -6,12 +6,12 @@ import { useStakingProgram } from '../common'
 import { getPassbook } from '../../helpers/accounts'
 
 const useUserDepositedQuery = (pool: PublicKey) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { quietRefreshFlag } = useRefreshController()
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
   return useQuery<MetadataResult[] | undefined, any>(
-    ['NFT_USER_DEPOSITED', user, pool, intermediateRefreshFlag],
+    ['NFT_USER_DEPOSITED', user, pool, quietRefreshFlag],
     async () => {
       if (!user) return undefined
 

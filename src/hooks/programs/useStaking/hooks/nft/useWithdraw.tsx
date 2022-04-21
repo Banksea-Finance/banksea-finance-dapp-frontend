@@ -1,16 +1,15 @@
 import React, { useCallback, useState } from 'react'
 import { MetadataResult } from '@/utils/metaplex/metadata'
-import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { useModal, useSolanaWeb3 } from '@/contexts'
 import { Checkbox, Flex, Text } from '@/contexts/theme/components'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { useResponsive } from '@/contexts/theme'
-import { waitTransactionConfirm } from '@/utils'
 import { chunk } from 'lodash'
 import { Transaction } from '@solana/web3.js'
 import { buildClaimInstruction, buildWithdrawInstruction } from '../../helpers/instructions'
 import { NFTStakingPoolConfig } from '../../constants/nft'
-import { WalletNotConnectedError } from '../../helpers/errors'
+import { WalletNotConnectedError } from '@/utils/errors'
 
 const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: MetadataResult[] }> = ({
   config,
@@ -22,62 +21,49 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
   const { data: availableRewards } = useUserAvailableRewardsQuery(config.pool)
   const { isMobile } = useResponsive()
 
-  const { connection } = useSolanaConnectionConfig()
-  const { account: user, adapter } = useSolanaWeb3()
+  const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
-  const handleDeposit = useCallback(
-    async (callbacks: TransactionEventCallback) => {
-      if (!user || !adapter) throw WalletNotConnectedError
+  const handleDeposit = useCallback(async () => {
+    if (!user) throw WalletNotConnectedError
 
-      const instructions = await Promise.all(
-        metadataList.map(meta =>
-          buildWithdrawInstruction({
-            user: user,
-            pool,
-            tokenMint: meta.mint,
-            program
-          })
-        )
+    const instructions = await Promise.all(
+      metadataList.map(meta =>
+        buildWithdrawInstruction({
+          user: user,
+          pool,
+          tokenMint: meta.mint,
+          program
+        })
       )
+    )
 
-      if (claimAtSameTime) {
-        instructions.push(
-          await buildClaimInstruction({
-            user,
-            program,
-            pool
-          })
-        )
-      }
-      callbacks.onTransactionBuilt?.()
-
-      const transactions = await Promise.all(
-        chunk(instructions, 6).map(async chunk =>
-          new Transaction({
-            recentBlockhash: (await program.provider.connection.getLatestBlockhash()).blockhash,
-            feePayer: user
-          }).add(...chunk)
-        )
+    if (claimAtSameTime) {
+      instructions.push(
+        await buildClaimInstruction({
+          user,
+          program,
+          pool
+        })
       )
+    }
 
-      const rawTransactions = await adapter.signAllTransactions(transactions)
-
-      const signatures = await Promise.all(rawTransactions.map(tx => connection.sendRawTransaction(tx.serialize())))
-      callbacks.onSent?.()
-
-      await Promise.all(signatures.map(signature => waitTransactionConfirm(connection, signature)))
-      callbacks.onConfirm?.(signatures)
-    },
-    [user, adapter, connection, claimAtSameTime]
-  )
+    return Promise.all(
+      chunk(instructions, 6).map(async chunk =>
+        new Transaction({
+          recentBlockhash: (await program.provider.connection.getLatestBlockhash()).blockhash,
+          feePayer: user
+        }).add(...chunk)
+      )
+    )
+  }, [user, claimAtSameTime])
 
   return (
     <TransactionalDialog
       transactionName={`Withdraw ${name}`}
       title={`Withdraw ${name}`}
       onCancel={closeModal}
-      onSendTransaction={handleDeposit}
+      transactionsBuilder={handleDeposit}
     >
       <Text fontSize={'18px'} mb={'8px'} bold>
         Are you sure to withdraw {metadataList.map(o => o.account?.data.data.name).join(', ')}?

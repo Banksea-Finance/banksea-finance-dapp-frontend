@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { useModal, useSolanaWeb3 } from '@/contexts'
 import { Checkbox, Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
 import useUserDepositedQuery from './useUserDepositedQuery'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
 import { useResponsive } from '@/contexts/theme'
 import Slider from 'rc-slider'
@@ -14,9 +14,10 @@ import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import { buildClaimInstruction, buildWithdrawInstruction } from '../../helpers/instructions'
 import { BN } from '@project-serum/anchor'
-import { buildTransaction, waitTransactionConfirm } from '@/utils'
+import { buildTransaction } from '@/utils'
 import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
-import { DataLoadFailedError, WalletNotConnectedError } from '../../helpers/errors'
+import { DataLoadFailedError } from '../../helpers/errors'
+import { WalletNotConnectedError } from '@/utils/errors'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -46,8 +47,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
   const { isMobile } = useResponsive()
   const program = useStakingProgram()
   const { data: depositTokenDecimals } = useDepositTokenDecimalsQuery(whitelist)
-  const { account: user, adapter } = useSolanaWeb3()
-  const { connection } = useSolanaConnectionConfig()
+  const { account: user } = useSolanaWeb3()
 
   const inputInvalidError = useMemo(() => {
     if (!inputValue || !decimals) {
@@ -96,8 +96,8 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
     }
   }, [userDeposits])
 
-  const handleWithdraw = useCallback(async (callbacks: TransactionEventCallback) => {
-    if (!user || !adapter) throw WalletNotConnectedError
+  const handleWithdraw = useCallback(async () => {
+    if (!user) throw WalletNotConnectedError
     if (!depositTokenDecimals) throw DataLoadFailedError('depositTokenDecimals')
 
     const instructions: TransactionInstruction[] = []
@@ -121,21 +121,13 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
       })
     )
 
-    const transaction = await buildTransaction(program.provider, instructions)
-    callbacks.onTransactionBuilt?.()
-
-    const rawTransactions = await adapter.signAllTransactions([transaction])
-    const signatures = await Promise.all(rawTransactions.map(tx => connection.sendRawTransaction(tx.serialize())))
-    callbacks.onSent?.()
-
-    await Promise.all(signatures.map(signature => waitTransactionConfirm(connection, signature)))
-    callbacks.onConfirm?.(signatures)
-  }, [user, pool, program, depositTokenDecimals, adapter, connection, inputValue])
+    return buildTransaction(program.provider, instructions)
+  }, [user, pool, program, depositTokenDecimals, inputValue])
 
   return (
     <TransactionalDialog
       transactionName={`Withdraw ${depositTokenName}`}
-      onSendTransaction={handleWithdraw}
+      transactionsBuilder={handleWithdraw}
       title={`Withdraw ${depositTokenName}`}
       error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}

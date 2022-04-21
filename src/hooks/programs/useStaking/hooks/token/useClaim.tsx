@@ -1,42 +1,30 @@
 import React, { useCallback } from 'react'
 import { Text } from '@/contexts/theme/components'
-import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
+import { useModal, useSolanaWeb3 } from '@/contexts'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
-import { buildTransaction, waitTransactionConfirm } from '@/utils'
+import { buildTransaction } from '@/utils'
 import { buildClaimInstruction } from '../../helpers/instructions'
-import { WalletNotConnectedError } from '../../helpers/errors'
+import { WalletNotConnectedError } from '@/utils/errors'
 
 const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
   const { rewardTokenName, pool } = config
-  const { account: user, adapter } = useSolanaWeb3()
-  const { connection } = useSolanaConnectionConfig()
+  const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
   const { data: availableRewards, isLoading } = useUserAvailableRewardsQuery(pool)
 
-  const handleClaim = useCallback(async (callbacks: TransactionEventCallback) => {
-    if (!user || !adapter) throw WalletNotConnectedError
+  const handleClaim = useCallback(async () => {
+    if (!user) throw WalletNotConnectedError
 
-    const transaction = await buildTransaction(
-      program.provider,
-      [await buildClaimInstruction({ pool, user, program })]
-    )
-    callbacks.onTransactionBuilt?.()
-
-    const rawTransactions = await adapter.signAllTransactions([transaction])
-    const signatures = await Promise.all(rawTransactions.map(tx => connection.sendRawTransaction(tx.serialize())))
-    callbacks.onSent?.()
-
-    await Promise.all(signatures.map(signature => waitTransactionConfirm(connection, signature)))
-    callbacks.onConfirm?.(signatures)
-  }, [user, adapter, pool])
+    return buildTransaction(program.provider, [await buildClaimInstruction({ pool, user, program })])
+  }, [user, pool])
 
   return (
     <TransactionalDialog
       transactionName={`Harvest rewards from ${rewardTokenName}`}
-      onSendTransaction={handleClaim}
+      transactionsBuilder={handleClaim}
       title={`Harvest rewards from ${rewardTokenName}`}
       confirmButtonProps={{ children: 'Harvest now', disabled: isLoading || !availableRewards?.gt(0) }}
     >
@@ -64,14 +52,14 @@ const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) =
   )
 }
 
-const useClaim = (staker?: TokenStakingPoolConfig) => {
+const useClaim = (config: TokenStakingPoolConfig) => {
   const { openModal } = useModal()
 
   return useCallback(async () => {
-    if (!staker) return
+    if (!config) return
 
-    openModal(<ClaimDialog config={staker} />, false)
-  }, [staker])
+    openModal(<ClaimDialog config={config} />, false)
+  }, [config])
 }
 
 export default useClaim

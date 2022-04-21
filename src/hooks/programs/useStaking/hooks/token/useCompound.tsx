@@ -1,75 +1,65 @@
 import React, { useCallback } from 'react'
 import { Text } from '@/contexts/theme/components'
 import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import { BN } from '@project-serum/anchor'
 import { buildClaimInstruction, buildDepositInstructions } from '../../helpers/instructions'
-import { buildTransaction, waitTransactionConfirm } from '@/utils'
+import { buildTransaction } from '@/utils'
 import { getTokenDecimals, getTokenStakingDepositTokenMint } from '../../helpers/getters'
 import { getLargestTokenAccount } from '../../helpers/accounts'
-import { WalletNotConnectedError, DataLoadFailedError } from '../../helpers/errors'
+import { DataLoadFailedError } from '../../helpers/errors'
+import { WalletNotConnectedError } from '@/utils/errors'
 
 const CompoundDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
   const { depositTokenName, rewardTokenName, pool, whitelist } = config
   const { data: availableRewards, isLoading } = useUserAvailableRewardsQuery(config.pool)
-  const { account: user, adapter } = useSolanaWeb3()
+  const { account: user } = useSolanaWeb3()
   const { connection } = useSolanaConnectionConfig()
   const program = useStakingProgram()
 
-  const handleCompound = useCallback(
-    async (callbacks: TransactionEventCallback) => {
-      if (!user || !adapter) throw WalletNotConnectedError
-      if (!availableRewards) throw DataLoadFailedError('availableRewards')
+  const handleCompound = useCallback(async () => {
+    if (!user) throw WalletNotConnectedError
+    if (!availableRewards) throw DataLoadFailedError('availableRewards')
 
-      const decimals = await getTokenDecimals(
-        connection,
-        await getTokenStakingDepositTokenMint(program, config.whitelist)
-      )
+    const decimals = await getTokenDecimals(
+      connection,
+      await getTokenStakingDepositTokenMint(program, config.whitelist)
+    )
 
-      const amount = new BN(availableRewards.shiftedBy(decimals).toString())
+    const amount = new BN(availableRewards.shiftedBy(decimals).toString())
 
-      const claimInstruction = await buildClaimInstruction({
-        pool,
-        user,
-        program,
-        amount
-      })
+    const claimInstruction = await buildClaimInstruction({
+      pool,
+      user,
+      program,
+      amount
+    })
 
-      const depositTokenMint = await getTokenStakingDepositTokenMint(program, config.whitelist)
-      const depositAccount = await getLargestTokenAccount(program.provider.connection, user, depositTokenMint).then(
-        account => account?.pubkey
-      )
+    const depositTokenMint = await getTokenStakingDepositTokenMint(program, config.whitelist)
+    const depositAccount = await getLargestTokenAccount(program.provider.connection, user, depositTokenMint).then(
+      account => account?.pubkey
+    )
 
-      const { instructions: depositInstructions, signers } = await buildDepositInstructions({
-        amount,
-        depositAccount,
-        pool,
-        program,
-        tokenMint: depositTokenMint,
-        user,
-        whitelist
-      })
+    const { instructions: depositInstructions, signers } = await buildDepositInstructions({
+      amount,
+      depositAccount,
+      pool,
+      program,
+      tokenMint: depositTokenMint,
+      user,
+      whitelist
+    })
 
-      const transaction = await buildTransaction(program.provider, [claimInstruction, ...depositInstructions], signers)
-      callbacks.onTransactionBuilt?.()
-
-      const rawTransactions = await adapter.signAllTransactions([transaction])
-      const signatures = await Promise.all(rawTransactions.map(tx => connection.sendRawTransaction(tx.serialize())))
-      callbacks.onSent?.()
-
-      await Promise.all(signatures.map(signature => waitTransactionConfirm(connection, signature)))
-      callbacks.onConfirm?.(signatures)
-    },
-    [availableRewards, pool, user, whitelist]
-  )
+    return buildTransaction(program.provider, [claimInstruction, ...depositInstructions], signers)
+  }, [availableRewards, pool, user, whitelist])
 
   return (
     <TransactionalDialog
       transactionName={`Execute compounding with ${depositTokenName}`}
-      onSendTransaction={handleCompound}
+      transactionsBuilder={handleCompound}
       title={`Execute compounding with ${depositTokenName}`}
       confirmButtonProps={{ disabled: isLoading || !availableRewards?.gt(0) }}
     >
@@ -97,14 +87,14 @@ const CompoundDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
   )
 }
 
-const useCompound = (staker?: TokenStakingPoolConfig) => {
+const useCompound = (config?: TokenStakingPoolConfig) => {
   const { openModal } = useModal()
 
   return useCallback(async () => {
-    if (!staker) return
+    if (!config) return
 
-    openModal(<CompoundDialog config={staker} />, false)
-  }, [staker])
+    openModal(<CompoundDialog config={config} />, false)
+  }, [config])
 }
 
 export default useCompound

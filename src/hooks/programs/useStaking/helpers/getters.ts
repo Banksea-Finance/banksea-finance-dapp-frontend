@@ -18,9 +18,9 @@ export type GetRewardsProps = {
 
 export const getTokenDecimals = memoize(
   (connection: Connection, tokenMint: PublicKey): Promise<number> => {
-    return connection
-      .getParsedAccountInfo(tokenMint)
-      .then(account => (account.value?.data as ParsedAccountData).parsed.info.decimals as number)
+    return connection.getParsedAccountInfo(tokenMint).then(account => {
+      return (account.value?.data as ParsedAccountData).parsed.info.decimals as number
+    })
   },
   (connection: Connection, tokenMint: PublicKey) => connection.rpcEndpoint + tokenMint.toBase58()
 )

@@ -72,7 +72,5 @@ export async function getLargestTokenAccount(
 
   accounts.value.sort((a, b) => +getAmount(b) - (+getAmount(a)))
 
-  console.log(accounts.value)
-
   return accounts.value[0]
 }

@@ -2,12 +2,12 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
 import { Input, Text } from '@/contexts/theme/components'
 import BigNumber from 'bignumber.js'
-import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
+import TransactionalDialog from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { BN } from '@project-serum/anchor'
-import { buildTransaction, waitTransactionConfirm } from '@/utils'
+import { buildTransaction } from '@/utils'
 import { useStakingProgram } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import usePoolBalanceQuery from './usePoolBalanceQuery'
@@ -15,7 +15,8 @@ import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
 import { buildDepositInstructions, buildRegisterInstruction } from '../../helpers/instructions'
 import { getLargestTokenAccount } from '../../helpers/accounts'
 import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
-import { WalletNotConnectedError, DataLoadFailedError } from '../../helpers/errors'
+import { DataLoadFailedError } from '../../helpers/errors'
+import { WalletNotConnectedError } from '@/utils/errors'
 
 const SliderWithTooltip = Slider.createSliderWithTooltip(Slider)
 
@@ -37,7 +38,7 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
 
   const { data: poolBalance } = usePoolBalanceQuery(config)
 
-  const { account: user, adapter } = useSolanaWeb3()
+  const { account: user } = useSolanaWeb3()
   const { connection } = useSolanaConnectionConfig()
   const program = useStakingProgram()
 
@@ -90,8 +91,8 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
     }
   }, [poolBalance])
 
-  const handleDeposit = useCallback(async (callbacks: TransactionEventCallback) => {
-    if (!user || !adapter) throw WalletNotConnectedError
+  const handleDeposit = useCallback(async () => {
+    if (!user) throw WalletNotConnectedError
     if (!depositTokenDecimals) throw DataLoadFailedError('depositTokenDecimals')
 
     const amount = new BN(new BigNumber(inputValue).shiftedBy(depositTokenDecimals).toString())
@@ -115,21 +116,13 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
       whitelist
     })
 
-    const transaction = await buildTransaction(program.provider, [registerInstruction, ...depositInstructions], signers)
-    callbacks.onTransactionBuilt?.()
-
-    const rawTransactions = await adapter.signAllTransactions([transaction])
-    const signatures = await Promise.all(rawTransactions.map(tx => connection.sendRawTransaction(tx.serialize())))
-    callbacks.onSent?.()
-
-    await Promise.all(signatures.map(signature => waitTransactionConfirm(connection, signature)))
-    callbacks.onConfirm?.(signatures)
-  }, [inputValue, depositTokenDecimals, user, pool, whitelist, adapter, connection])
+    return buildTransaction(program.provider, [registerInstruction, ...depositInstructions], signers)
+  }, [inputValue, depositTokenDecimals, user, pool, whitelist, connection])
 
   return (
     <TransactionalDialog
       transactionName={`Deposit ${depositTokenName}`}
-      onSendTransaction={handleDeposit}
+      transactionsBuilder={handleDeposit}
       title={`Deposit ${depositTokenName}`}
       error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
