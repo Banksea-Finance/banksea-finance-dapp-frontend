@@ -1,6 +1,6 @@
 import { InputHTMLAttributes } from 'react'
 
-import { TextProps } from '@/contexts/theme/components/Text'
+import { TextProps } from '../Text'
 import { scales, Scales } from '../../configs/scales'
 
 export const getScale = ({ scale }: CheckboxProps) => {

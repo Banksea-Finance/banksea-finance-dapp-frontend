@@ -22,16 +22,18 @@ export type Currency = {
 
 export type TokenStakingPoolConfig = {
   currencies: [Currency] | [Currency, Currency]
-  poolAddress: PublicKey
+  pool: PublicKey
   whitelist: PublicKey
+  depositTokenName: string
   rewardTokenName: string
 }
 
 const TOKEN_STAKING_POOLS: TokenStakingPoolConfig[] = [
   {
     currencies: [CURRENCY_KSE],
-    poolAddress: new PublicKey('5CYkr8XpRfYtVVazee44WnvFpuAinMwBNEmxoEF5cRNa'),
+    pool: new PublicKey('5CYkr8XpRfYtVVazee44WnvFpuAinMwBNEmxoEF5cRNa'),
     whitelist: new PublicKey('CGAoHE8JCcr11XphwhJPMRuPL4oZH1SY9gYAHCy1k1D3'),
+    depositTokenName: 'KSE',
     rewardTokenName: 'KSE'
   },
   // {

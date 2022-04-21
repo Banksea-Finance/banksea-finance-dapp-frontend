@@ -1,14 +1,14 @@
 import { useQuery, UseQueryResult } from 'react-query'
-import useStakingProgram from '@/hooks/programs/useStaking/useStakingProgram'
-import { PublicKey } from '@solana/web3.js'
 import BigNumber from 'bignumber.js'
 import { useRefreshController } from '@/contexts'
+import { TokenStakingPoolConfig } from '../../constants/token'
+import { useStakingProgram } from '../common'
 
 const useAPRQuery = (
-  pool?: PublicKey
+  { pool }: TokenStakingPoolConfig
 ): UseQueryResult<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
-  const { program } = useStakingProgram()
   const { intermediateRefreshFlag } = useRefreshController()
+  const program = useStakingProgram()
 
   return useQuery(
     ['TOKEN_APR', program.programId, pool, intermediateRefreshFlag],

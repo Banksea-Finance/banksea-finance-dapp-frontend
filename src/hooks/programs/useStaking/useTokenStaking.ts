@@ -1,47 +1,37 @@
-import { TokenStaker } from './helpers/TokenStaker'
-import { useSolanaWeb3 } from '@/contexts'
-import { useMemo } from 'react'
-import useStakingProgram from './useStakingProgram'
 import {
   useAPRQuery,
-  useUserAvailableRewardsQuery,
   useClaim,
+  useCompound,
   useDeposit,
+  usePoolBalanceQuery,
   useTotalDepositedQuery,
-  useUserClaimedRewardsQuery,
   useUserDepositedQuery,
-  useWithdraw, usePoolBalanceQuery
-} from './token'
+  useWithdraw
+} from './hooks/token'
 import { TokenStakingPoolConfig } from './constants/token'
+import { useStakingProgram, useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
 
-export const useTokenStaking = (props: TokenStakingPoolConfig) => {
-  const { program } = useStakingProgram()
-  const { account } = useSolanaWeb3()
+export const useTokenStaking = (config: TokenStakingPoolConfig) => {
+  const program = useStakingProgram()
 
-  const staker = useMemo(() => {
-    return new TokenStaker({
-      ...props,
-      poolName: props.currencies.map(c => c.name).join('/'),
-      program,
-      user: account
-    })
-  }, [program, props, account])
+  const deposit = useDeposit(config)
+  const withdraw = useWithdraw(config)
+  const claim = useClaim(config)
+  const compound = useCompound(config)
 
-  const deposit = useDeposit(staker)
-  const withdraw = useWithdraw(staker)
-  const claim = useClaim(staker)
+  const APR = useAPRQuery(config)
+  const totalDeposited = useTotalDepositedQuery(config)
+  const userDeposited = useUserDepositedQuery(config)
+  const poolBalance = usePoolBalanceQuery(config)
 
-  const APR = useAPRQuery(staker?.pool)
-  const totalDeposited = useTotalDepositedQuery(staker)
-  const userDeposited = useUserDepositedQuery(staker)
-  const userAvailableRewards = useUserAvailableRewardsQuery(staker)
-  const userClaimedRewards = useUserClaimedRewardsQuery(staker)
-  const poolBalance = usePoolBalanceQuery(staker)
+  const userAvailableRewards = useUserAvailableRewardsQuery(config.pool)
+  const userClaimedRewards = useUserClaimedRewardsQuery(config.pool)
 
   return {
     deposit,
     withdraw,
     claim,
+    compound,
     APR,
     poolBalance,
     userDeposited,

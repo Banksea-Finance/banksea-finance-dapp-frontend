@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { Connection, PublicKey, SignatureResult } from '@solana/web3.js'
+import { Connection, PublicKey, SignatureResult, Signer, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Provider } from '@project-serum/anchor'
 
 export const shortenAddress = (address?: string | PublicKey, length = 6) => {
   const str = address?.toString()
@@ -86,7 +87,7 @@ export function formatTime(time: Date) {
   }
 }
 
-export function chunks<T>(array: T[], size: number): T[][] {
+export function chunk<T>(array: T[], size: number): T[][] {
   return Array.apply<number, T[], T[][]>(0, new Array(Math.ceil(array.length / size))).map((_, index) =>
     array.slice(index * size, (index + 1) * size)
   )
@@ -152,4 +153,23 @@ export function waitTransactionConfirm(connection: Connection, signature: string
       }
     })
   })
+}
+
+export async function buildTransaction(provider: Provider, instructions: (TransactionInstruction | undefined)[], signers?: Signer[], feePayer?: PublicKey): Promise<Transaction> {
+  const tx = new Transaction({
+    recentBlockhash: (await provider.connection.getLatestBlockhash()).blockhash,
+    feePayer: feePayer || provider.wallet.publicKey
+  })
+
+  const nonNullInstructions = (instructions.filter(i => i !== undefined) as TransactionInstruction[])
+
+  if (nonNullInstructions.length) {
+    tx.add(...nonNullInstructions)
+  }
+
+  if (signers?.length) {
+    tx.sign(...signers)
+  }
+
+  return tx
 }

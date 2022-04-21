@@ -1,25 +1,20 @@
 import React from 'react'
-import { CheckboxProps, getScale } from '@/contexts/theme/components/Checkbox/types'
-import { Flex } from '@/contexts/theme/components/Box'
-import StyledCheckbox from '@/contexts/theme/components/Checkbox/StyledCheckbox'
-import { Text } from '@/contexts/theme/components'
+import { CheckboxProps, getScale } from './types'
+import { Flex } from '../Box'
+import StyledCheckbox from './StyledCheckbox'
+import { Text } from '../Text'
 
 const Checkbox: React.FC<CheckboxProps> = props => {
-  const { label, labelTextStyles, ...rest } = props
+  const { label, labelTextStyles, className, ...rest } = props
 
   return (
-    <Flex alignItems={'center'}>
+    <Flex alignItems={'center'} className={className}>
       <StyledCheckbox {...rest} />
-      {
-        label && (
-          <Text
-            fontSize={getScale(props)}
-            {...labelTextStyles}
-          >
-            {label}
-          </Text>
-        )
-      }
+      {label && (
+        <Text fontSize={getScale(props)} {...labelTextStyles}>
+          {label}
+        </Text>
+      )}
     </Flex>
   )
 }

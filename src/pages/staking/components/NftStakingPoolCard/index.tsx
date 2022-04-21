@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Flex from '@react-css/flex'
-import { Button, Tabs, Text } from '@/contexts/theme/components'
+import { Button, Grid, Tabs, Text } from '@/contexts/theme/components'
 import { StyledNftStakingPoolCard } from './index.styles'
 import NFTsGridView from '@/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
@@ -32,6 +32,8 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
     withdraw
   } = useNFTStaking(props)
 
+  const [selectedNfts, setSelectedNfts] = useState<MetadataResult[]>([])
+
   return (
     <StyledNftStakingPoolCard flexDirection={'column'}>
       <StakingPoolHead
@@ -43,20 +45,13 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       />
 
       <InfoGrid>
-        <DataItem
-          label={'Total Deposited'}
-          value={totalDeposited}
-        />
+        <DataItem label={'Total Deposited'} value={totalDeposited} />
         <DataItem
           label={'Rewards Per Staking'}
           value={rewardsPerDay}
           displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
         />
-        <DataItem
-          label={'Your Deposited'}
-          value={userDeposited}
-          displayFunction={data => data?.length.toString()}
-        />
+        <DataItem label={'Your Deposited'} value={userDeposited} displayFunction={data => data?.length.toString()} />
         <DataItem
           label={'Your History Harvest'}
           value={userClaimedRewards}
@@ -67,22 +62,50 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'S' : 'M'}>
           <Tabs.Pane title={'My Stake'} tabKey={'deposit'}>
-            <NFTsGridView
-              emptyText={'You have not deposited anything'}
-              queryResult={userDeposited}
-              itemOperation={{
-                text: 'Withdraw',
-                callback: (nft: MetadataResult) => withdraw(nft)
-              }}
-            />
+            <Grid gridTemplateColumns={'1fr max-content 1fr'} mb={'16px'} gridGap={'16px'}>
+              <div />
+              {account && (
+                <Text as={'span'} color={'textDisabled'} mr={'2px'}>
+                  NFTs you deposited:{' '}
+                  <QueriedData
+                    as={'span'}
+                    value={userDeposited}
+                    color={'textDisabled'}
+                    displayFunction={v => v.length.toString()}
+                    fontWeight={500}
+                  />
+                </Text>
+              )}
+              {!!selectedNfts.length && (
+                <Button
+                  width={'fit-content'}
+                  scale={'S'}
+                  onClick={() => {
+                    withdraw(selectedNfts)
+                  }}
+                >
+                  Withdraw selected
+                </Button>
+              )}
+            </Grid>
+
+            <NFTsGridView queryResult={userDeposited} onCheckedNftsChange={setSelectedNfts} />
           </Tabs.Pane>
 
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
-            {
-              account && (
+            <Grid gridTemplateColumns={'1fr max-content 1fr'} mb={'16px'} gridGap={'16px'}>
+              <div />
+              {account && (
                 <Flex alignItemsCenter justifyCenter style={{ width: '100%', marginBottom: '8px' }}>
                   <Text as={'span'} color={'textDisabled'} mr={'2px'}>
-                    NFTs you hold: <QueriedData as={'span'} value={holds} color={'textDisabled'} displayFunction={v => v.length.toString()} fontWeight={500} />
+                    NFTs you hold:{' '}
+                    <QueriedData
+                      as={'span'}
+                      value={holds}
+                      color={'textDisabled'}
+                      displayFunction={v => v.length.toString()}
+                      fontWeight={500}
+                    />
                     {' | '}
                   </Text>
 
@@ -99,16 +122,21 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                     Request airdrop
                   </Button>
                 </Flex>
-              )
-            }
+              )}
+              {!!selectedNfts.length && (
+                <Button
+                  width={'fit-content'}
+                  scale={'S'}
+                  onClick={() => {
+                    deposit(selectedNfts)
+                  }}
+                >
+                  Deposit selected
+                </Button>
+              )}
+            </Grid>
 
-            <NFTsGridView
-              queryResult={holds}
-              itemOperation={{
-                text: 'Deposit',
-                callback: (nft: MetadataResult) => deposit(nft)
-              }}
-            />
+            <NFTsGridView queryResult={holds} onCheckedNftsChange={setSelectedNfts} />
           </Tabs.Pane>
         </Tabs>
       </Flex>

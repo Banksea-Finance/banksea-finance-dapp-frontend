@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import { useSolanaWeb3 } from '@/contexts'
@@ -34,10 +34,39 @@ export type NFTsGridViewProps = {
   queryResult: UseQueryResult<MetadataResult[] | undefined>
   itemOperation?: NftCardOperate
   emptyText?: string | React.ReactNode
+
+  onCheckedNftsChange?: (v: MetadataResult[]) => void
 }
 
-const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation, emptyText }) => {
+const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation, emptyText, onCheckedNftsChange }) => {
   const { account } = useSolanaWeb3()
+
+  const [checkedNfts, setCheckedNfts] = useState<Array<MetadataResult>>([])
+
+  const isChecked = useCallback((o: MetadataResult) => {
+    return checkedNfts.map(o => o.address.toBase58()).includes(o.address.toBase58())
+  }, [checkedNfts])
+
+  const handleChange = useCallback((o: MetadataResult) => {
+    if (isChecked(o)) {
+      setCheckedNfts(prev => {
+        prev.splice(prev.map(o => o.address.toBase58()).indexOf(o.address.toBase58()), 1)
+        return [...prev]
+      })
+    } else {
+      setCheckedNfts(prev => {
+        return [...prev, o]
+      })
+    }
+  }, [isChecked])
+
+  useEffect(() => {
+    onCheckedNftsChange?.(checkedNfts)
+  }, [checkedNfts])
+
+  useEffect(() => {
+    setCheckedNfts([])
+  }, [queryResult.data?.length])
 
   if (!account) {
     return (
@@ -70,7 +99,9 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation,
           <NftCard
             operate={itemOperation}
             {...o}
-            key={o.mint.toBase58()}
+            key={o.address.toBase58()}
+            checked={isChecked(o)}
+            onChange={() => handleChange(o)}
           />
         ))
       }

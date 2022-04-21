@@ -1,11 +1,10 @@
-import Flex from '@react-css/flex'
-import { Card, Text } from '@/contexts/theme/components'
-import { ClipLoader } from 'react-spinners'
+import { Card, Flex, Grid, Text } from '@/contexts/theme/components'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import React from 'react'
 import styled from 'styled-components'
 import { UseQueryResult } from 'react-query'
 import BigNumber from 'bignumber.js'
+import QueriedData from '@/components/QueriedData'
 
 export type StakingPoolHeadProps = {
   name: string
@@ -14,6 +13,7 @@ export type StakingPoolHeadProps = {
   availableRewards: UseQueryResult<BigNumber | undefined>
   rewardTokenName: string
   onHarvest: () => void
+  onCompound?: () => void
 }
 
 const StakingPoolHeadContainer = styled.div`
@@ -42,6 +42,7 @@ const RewardsCard = styled(Card)`
   .texts {
     display: flex;
     flex-direction: row;
+    align-items: center;
     margin-right: 16px;
     column-gap: 8px;
     
@@ -54,14 +55,11 @@ const RewardsCard = styled(Card)`
     padding: 4px 24px;
     margin: 0 auto;
     border-radius: 32px;
-   
-    .texts {
-      flex-direction: column;
-      align-items: center;
+    flex-direction: column;
 
-      div {
-        font-size: 16px;
-      }
+    .texts {
+      margin-right: 0;
+      margin-bottom: 8px;
     }
   }
   
@@ -93,14 +91,12 @@ const PoolImage = styled.img`
   }
 `
 
-const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, availableRewards, rewardTokenName, onHarvest }) => {
+const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, availableRewards, rewardTokenName, onHarvest, onCompound }) => {
   return (
     <StakingPoolHeadContainer>
-      <Flex row alignItemsCenter className={'poolname'}>
+      <Flex ai={'center'} className={'poolname'}>
         <PoolImage src={icon} />
-        <PoolName bold>
-          {name}
-        </PoolName>
+        <PoolName bold>{name}</PoolName>
       </Flex>
 
       <RewardsCard plain backgroundColor={'secondary'}>
@@ -108,19 +104,23 @@ const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, available
           <Text bold color={'textContrary'}>
             {'Available rewards: '}
           </Text>
-          <Text bold color={'textContrary'} >
-            {availableRewards.data ? (
-              `${availableRewards.data?.toFixed(6)} ${rewardTokenName}`
-            ) : availableRewards.isFetching ? (
-              <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
-            ) : (
-              '-'
-            )}
-          </Text>
+          <QueriedData
+            bold
+            color={'textContrary'}
+            value={availableRewards}
+            displayFunction={v => `${v.toFixed(6)} ${rewardTokenName}`}
+          />
         </div>
-        <WalletRequiredButton scale={'M'} onClick={onHarvest} variant={'primaryContrary'}>
-          Harvest
-        </WalletRequiredButton>
+        <Grid gridGap={'8px'} gridTemplateColumns={`repeat(${onCompound ? '2' : '1'}, max-content)`}>
+          <WalletRequiredButton scale={'S'} onClick={onHarvest} variant={'primaryContrary'}>
+            Harvest
+          </WalletRequiredButton>
+          {onCompound && (
+            <WalletRequiredButton scale={'S'} onClick={onCompound} variant={'primaryContrary'}>
+              Compound
+            </WalletRequiredButton>
+          )}
+        </Grid>
       </RewardsCard>
     </StakingPoolHeadContainer>
   )

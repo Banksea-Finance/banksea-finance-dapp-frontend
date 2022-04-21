@@ -1,12 +1,14 @@
 import { HTMLAttributes } from 'react'
 import {
+  AlignItemsProps,
   BackgroundProps,
   BorderProps,
   FlexboxProps,
+  GridProps as _GridProps,
+  JustifyContentProps,
   LayoutProps,
   PositionProps,
-  SpaceProps,
-  GridProps as _GridProps, AlignItemsProps, JustifyContentProps
+  SpaceProps
 } from 'styled-system'
 
 export interface BoxProps

@@ -1,18 +1,14 @@
 import { useMemo } from 'react'
 import { Program } from '@project-serum/anchor'
-import { StakingProgramAddress, StakingProgramIdl } from '@/hooks/programs/useStaking/constants/program'
 import useAnchorProvider from '@/hooks/useAnchorProvider'
+import { StakingProgramAddress, StakingProgramIdl } from '../../constants'
 
 const useStakingProgram = () => {
   const { provider } = useAnchorProvider()
 
-  const program = useMemo(() => {
+  return useMemo(() => {
     return new Program(StakingProgramIdl, StakingProgramAddress, provider)
   }, [provider])
-
-  return {
-    program
-  }
 }
 
 export default useStakingProgram

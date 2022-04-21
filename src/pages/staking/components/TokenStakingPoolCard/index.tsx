@@ -27,6 +27,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
     APR,
     withdraw,
     claim,
+    compound,
     poolBalance
   } = useTokenStaking(props)
 
@@ -38,6 +39,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         availableRewards={userAvailableRewards}
         rewardTokenName={rewardTokenName}
         onHarvest={claim}
+        onCompound={compound}
       />
 
       <InfoGrid>

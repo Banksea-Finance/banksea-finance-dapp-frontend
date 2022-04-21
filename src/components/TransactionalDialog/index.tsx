@@ -5,10 +5,17 @@ import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
 import { BeatLoader } from 'react-spinners'
 import { TextProps } from '@/contexts/theme/components/Text'
 import { WalletError } from '@solana/wallet-adapter-base/lib/esm/errors'
+import { sleep } from '@/utils'
+import { Signer, Transaction } from '@solana/web3.js'
 
-export type TransactionEvents = 'onSent' | 'onConfirm' | 'onTransactionBuilt'
+// export type TransactionEvents = 'onSent' | 'onConfirm' | 'onTransactionBuilt'
 
-export type TransactionEventCallback = Partial<Record<TransactionEvents, (...args: any) => void>>
+// export type TransactionEventCallback = Partial<Record<TransactionEvents, (...args: any) => void>>
+export type TransactionEventCallback = {
+  onSent?: () => void
+  onTransactionBuilt?: () => void
+  onConfirm?: (signatures?: string[] | string) => void
+}
 
 const TransactionStages = {
   building: 'Building transaction...',
@@ -28,6 +35,7 @@ export interface TransactionalDialogProps extends Omit<DialogProps, 'bottomMessa
   onSendTransaction: (callbacks: TransactionEventCallback) => Promise<any>
   transactionName: string
   error?: string
+  // transactionsBuilder: () => Promise<{ transactions: Transaction[], signers: Signer[] }>
 }
 
 const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransaction, children, confirmButtonProps, cancelButtonProps, onConfirm, onCancel, transactionName, error, ...rest }) => {
@@ -48,8 +56,9 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
     onSent: () => {
       setMessage(TransactionStages.sent)
       setClosable(true)
+      forceRefresh()
     },
-    onConfirm: (signature?: string)=> {
+    onConfirm: (signatures: string[] | string = [])=> {
       forceRefresh()
       setOngoing(false)
       setDone(true)
@@ -63,7 +72,19 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
         message: (
           <div>
             <span style={{ marginRight: '4px' }}>{transactionName}</span>
-            <a style={{ color: '#49efba' }} href={`https://solscan.io/tx/${signature}?cluster=${SOLANA_CLUSTER}`} target={'_blank'} rel="noreferrer">
+            <a
+              style={{ color: '#49efba' }}
+              onClick={async () => {
+                if (typeof signatures === 'string') {
+                  window.open(`https://solscan.io/tx/${signature}?cluster=${SOLANA_CLUSTER}`, '_blank')
+                } else {
+                  for (const signature of signatures) {
+                    window.open(`https://solscan.io/tx/${signature}?cluster=${SOLANA_CLUSTER}`, '_blank')
+                    await sleep(200)
+                  }
+                }
+              }}
+            >
               View on Solscan
             </a>
           </div>
@@ -115,7 +136,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ onSendTransac
       confirmButtonProps={{
         ...confirmButtonProps,
         isLoading: ongoing,
-        disabled: confirmButtonProps?.disabled,
+        disabled: done || confirmButtonProps?.disabled,
         children: signature && 'View on Solscan',
         color: signature && 'success',
       }}

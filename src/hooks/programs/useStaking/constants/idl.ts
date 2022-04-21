@@ -451,8 +451,10 @@ export type Staking = {
       ],
       'args': [
         {
-          'name': 'amount',
-          'type': 'u64'
+          'name': 'claimAmount',
+          'type': {
+            'option': 'u64'
+          }
         }
       ]
     }
@@ -1127,8 +1129,10 @@ export const IDL: Staking = {
       ],
       'args': [
         {
-          'name': 'amount',
-          'type': 'u64'
+          'name': 'claimAmount',
+          'type': {
+            'option': 'u64'
+          }
         }
       ]
     }

@@ -1,42 +1,27 @@
 import { NFTStakingPoolConfig } from './constants/nft'
-import { useMemo } from 'react'
-import useStakingProgram from './useStakingProgram'
-import { useSolanaWeb3 } from '@/contexts'
+import { useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
 import {
-  useUserAvailableRewardsQuery,
   useClaim,
   useDeposit,
   useRewardsPerDayQuery,
   useTotalDepositedQuery,
-  useUserClaimedRewardsQuery,
   useUserDepositedQuery,
   useWithdraw
-} from './nft'
-import { NFTStaker } from './helpers/NFTStaker'
+} from './hooks/nft'
 
-export const useNFTStaking = (props: NFTStakingPoolConfig) => {
-  const { program } = useStakingProgram()
-  const { account } = useSolanaWeb3()
+export const useNFTStaking = (config: NFTStakingPoolConfig) => {
+  const { pool } = config
 
-  const staker = useMemo(() => {
-    return new NFTStaker({
-      ...props,
-      poolName: props.name,
-      program,
-      user: account
-    })
-  }, [program, props, account])
+  const deposit = useDeposit(config)
+  const withdraw = useWithdraw(config)
+  const claim = useClaim(config)
 
-  const deposit = useDeposit(staker)
-  const withdraw = useWithdraw(staker)
-  const claim = useClaim(staker)
+  const rewardsPerDay = useRewardsPerDayQuery(pool)
+  const totalDeposited = useTotalDepositedQuery(pool)
 
-  const rewardsPerDay = useRewardsPerDayQuery(staker)
-  const totalDeposited = useTotalDepositedQuery(staker)
-
-  const userDeposited = useUserDepositedQuery(staker)
-  const userClaimedRewards = useUserClaimedRewardsQuery(staker)
-  const userAvailableRewards = useUserAvailableRewardsQuery(staker)
+  const userDeposited = useUserDepositedQuery(pool)
+  const userClaimedRewards = useUserClaimedRewardsQuery(pool)
+  const userAvailableRewards = useUserAvailableRewardsQuery(pool)
 
   return {
     deposit,

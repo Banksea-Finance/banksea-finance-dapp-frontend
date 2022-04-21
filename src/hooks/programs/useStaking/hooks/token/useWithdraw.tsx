@@ -1,17 +1,22 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { PublicKey } from '@solana/web3.js'
-import { useModal, useRefreshController } from '@/contexts'
+import { PublicKey, TransactionInstruction } from '@solana/web3.js'
+import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
 import { Checkbox, Input, Text } from '@/contexts/theme/components'
 import { Flex } from '@react-css/flex'
 import BigNumber from 'bignumber.js'
-import { TokenStaker } from '@/hooks/programs/useStaking/helpers/TokenStaker'
 import useUserDepositedQuery from './useUserDepositedQuery'
 import TransactionalDialog, { TransactionEventCallback } from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
-import useUserAvailableRewardsQuery from './useUserAvailableRewardsQuery'
-import { useQuery } from 'react-query'
 import { useResponsive } from '@/contexts/theme'
 import Slider from 'rc-slider'
+import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
+import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
+import { TokenStakingPoolConfig } from '../../constants/token'
+import { buildClaimInstruction, buildWithdrawInstruction } from '../../helpers/instructions'
+import { BN } from '@project-serum/anchor'
+import { buildTransaction, waitTransactionConfirm } from '@/utils'
+import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
+import { DataLoadFailedError, WalletNotConnectedError } from '../../helpers/errors'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
@@ -29,15 +34,20 @@ const sliderMarks = {
   100: markNode(100)
 }
 
-const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
+const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
+  const { depositTokenName, whitelist, pool } = config
+
   const [inputValue, setInputValue] = useState('0')
   const [sliderValue, setSliderValue] = useState(0)
-  const [checked, setChecked] = useState(true)
-  const { forceRefresh } = useRefreshController()
-  const { data: userDeposits } = useUserDepositedQuery(staker)
-  const { data: availableRewards } = useUserAvailableRewardsQuery(staker)
-  const { data: decimals } = useQuery(['DEPOSITED_TOKEN_DECIMALS', staker.user, staker.poolName, staker.pool], () => staker.depositTokenDecimals())
+  const [claimAtSameTime, setClaimAtSameTime] = useState(true)
+  const { data: userDeposits } = useUserDepositedQuery(config)
+  const { data: availableRewards } = useUserAvailableRewardsQuery(pool)
+  const { data: decimals } = useDepositTokenDecimalsQuery(whitelist)
   const { isMobile } = useResponsive()
+  const program = useStakingProgram()
+  const { data: depositTokenDecimals } = useDepositTokenDecimalsQuery(whitelist)
+  const { account: user, adapter } = useSolanaWeb3()
+  const { connection } = useSolanaConnectionConfig()
 
   const inputInvalidError = useMemo(() => {
     if (!inputValue || !decimals) {
@@ -86,11 +96,47 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
     }
   }, [userDeposits])
 
+  const handleWithdraw = useCallback(async (callbacks: TransactionEventCallback) => {
+    if (!user || !adapter) throw WalletNotConnectedError
+    if (!depositTokenDecimals) throw DataLoadFailedError('depositTokenDecimals')
+
+    const instructions: TransactionInstruction[] = []
+
+    if (claimAtSameTime) {
+      instructions.push(
+        await buildClaimInstruction({ pool, user, program })
+      )
+    }
+
+    const amount = new BN(new BigNumber(inputValue).shiftedBy(depositTokenDecimals).toString())
+    const tokenMint = await getTokenStakingDepositTokenMint(program, config.whitelist)
+
+    instructions.push(
+      await buildWithdrawInstruction({
+        amount,
+        pool,
+        program,
+        tokenMint,
+        user
+      })
+    )
+
+    const transaction = await buildTransaction(program.provider, instructions)
+    callbacks.onTransactionBuilt?.()
+
+    const rawTransactions = await adapter.signAllTransactions([transaction])
+    const signatures = await Promise.all(rawTransactions.map(tx => connection.sendRawTransaction(tx.serialize())))
+    callbacks.onSent?.()
+
+    await Promise.all(signatures.map(signature => waitTransactionConfirm(connection, signature)))
+    callbacks.onConfirm?.(signatures)
+  }, [user, pool, program, depositTokenDecimals, adapter, connection, inputValue])
+
   return (
     <TransactionalDialog
-      transactionName={`Withdraw ${staker.poolName}`}
-      onSendTransaction={(callbacks: TransactionEventCallback) => staker?.withdraw(new BigNumber(inputValue), checked, callbacks).then(forceRefresh)}
-      title={`Withdraw ${staker.poolName}`}
+      transactionName={`Withdraw ${depositTokenName}`}
+      onSendTransaction={handleWithdraw}
+      title={`Withdraw ${depositTokenName}`}
       error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
@@ -101,7 +147,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
             userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
           }
         </b>
-        { staker.poolName }
+        { depositTokenName }
       </Text>
 
       <Input
@@ -113,7 +159,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
         mr={'4px'}
         mb={'8px'}
         suffix={
-          <Text fontSize={'18px'} bold color={'primary'}>{staker.poolName}</Text>
+          <Text fontSize={'18px'} bold color={'primary'}>{depositTokenName}</Text>
         }
       />
 
@@ -128,7 +174,7 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
         availableRewards?.gt(0) && (
           <Flex alignItemsCenter justifyContent={'space-between'} style={{ marginTop: '8px' }}>
             <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
-            <Checkbox checked={checked} onChange={() => setChecked(b => !b)} />
+            <Checkbox checked={claimAtSameTime} onChange={() => setClaimAtSameTime(b => !b)} />
           </Flex>
         )
       }
@@ -136,14 +182,12 @@ const WithdrawDialog: React.FC<{ staker: TokenStaker }> = ({ staker }) => {
   )
 }
 
-const useWithdraw = (staker?: TokenStaker) => {
+const useWithdraw = (config: TokenStakingPoolConfig) => {
   const { openModal } = useModal()
 
   return useCallback(async () => {
-    if (!staker) return
-
-    openModal(<WithdrawDialog staker={staker} />, false)
-  }, [staker])
+    openModal(<WithdrawDialog config={config} />, false)
+  }, [config])
 }
 
 export default useWithdraw

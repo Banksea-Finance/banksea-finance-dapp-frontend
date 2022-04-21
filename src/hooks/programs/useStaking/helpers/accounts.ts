@@ -1,8 +1,8 @@
-import { PublicKey } from '@solana/web3.js'
+import { AccountInfo, Connection, ParsedAccountData, PublicKey, TokenAmount } from '@solana/web3.js'
 import { Buffer } from 'buffer'
-import { StakingProgramIdlType } from '@/hooks/programs/useStaking/constants'
 import { AccountFromIDL } from '@/utils/types'
 import { Program } from '@project-serum/anchor'
+import { StakingProgramIdlType } from '../constants'
 
 export type Passbook = {
   address: PublicKey
@@ -54,4 +54,25 @@ export async function getAsset(props: {
     assetBump,
     assetAccount
   }
+}
+
+export async function getLargestTokenAccount(
+  conn: Connection, owner: PublicKey, mint: PublicKey
+): Promise<{ pubkey: PublicKey; account: AccountInfo<ParsedAccountData> } | undefined> {
+  const accounts = await conn.getParsedTokenAccountsByOwner(owner, { mint })
+
+  const getAmount = (account: {
+    pubkey: PublicKey;
+    account: AccountInfo<ParsedAccountData>;
+  }) => (account.account.data.parsed.info.tokenAmount as TokenAmount).amount
+
+  if (!accounts.value.length) {
+    return undefined
+  }
+
+  accounts.value.sort((a, b) => +getAmount(b) - (+getAmount(a)))
+
+  console.log(accounts.value)
+
+  return accounts.value[0]
 }
