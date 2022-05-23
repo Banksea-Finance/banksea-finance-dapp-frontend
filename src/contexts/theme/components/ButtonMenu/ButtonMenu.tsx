@@ -1,8 +1,8 @@
 import React, { Children, cloneElement, ReactElement } from 'react'
 import StyledButtonMenu from './StyledButtonMenu'
-import { variants } from '../Button/types'
 import { ButtonMenuProps } from './types'
 import ButtonMenuItem from './ButtonMenuItem'
+import { buttonVariant } from '../Button/types'
 
 class ButtonMenu extends React.Component<ButtonMenuProps, any> {
 
@@ -13,7 +13,7 @@ class ButtonMenu extends React.Component<ButtonMenuProps, any> {
       activeKey,
       activeIndex,
       scale = 'md',
-      variant = variants.PRIMARY,
+      variant = buttonVariant.primary,
       onItemClick,
       style,
       children,
@@ -29,6 +29,7 @@ class ButtonMenu extends React.Component<ButtonMenuProps, any> {
               onClick: onItemClick ? () => onItemClick({ index, key: child.props.itemKey as string }) : undefined,
               scale,
               variant,
+              circle: true
             })
           })
         }

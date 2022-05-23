@@ -1,17 +1,11 @@
 import Input from 'rc-input'
-import styled, { DefaultTheme } from 'styled-components'
+import styled from 'styled-components'
 import { InputProps } from './types'
 import { layout, space } from 'styled-system'
-import { scales } from '../../configs/scales'
+import { scales } from '../../types'
+import { getOverridableStyle } from '@/contexts/theme/utils'
 
-interface StyledInputProps extends InputProps {
-  theme: DefaultTheme
-}
-
-/**
- * Priority: Warning --> Success
- */
-const getBoxShadow = ({ isSuccess = false, isWarning = false, theme }: StyledInputProps) => {
+const getBoxShadow = getOverridableStyle('Input', 'boxShadow', ({ isSuccess = false, isWarning = false, theme }) => {
   if (isWarning) {
     return theme.shadows.warning
   }
@@ -21,9 +15,9 @@ const getBoxShadow = ({ isSuccess = false, isWarning = false, theme }: StyledInp
   }
 
   return theme.shadows.inset
-}
+})
 
-const getHeight = ({ scale = scales.L }: StyledInputProps) => {
+const getHeight = getOverridableStyle('Input', 'height', ({ scale = scales.L }) => {
   switch (scale) {
   case scales.S:
     return '32px'
@@ -33,19 +27,31 @@ const getHeight = ({ scale = scales.L }: StyledInputProps) => {
   default:
     return '40px'
   }
-}
+})
+
+const getBorderRadius = getOverridableStyle('Input', 'borderRadius', () => '8px')
+
+const getFontSize = getOverridableStyle('Input', 'fontSize', () => '16px')
+
+const getOutline = getOverridableStyle('Input', 'outline', () => '0')
+
+const getPadding = getOverridableStyle('Input', 'padding', () => '0 16px')
+
+const getBorder = getOverridableStyle('Input', 'border', ({ theme }) => `1px solid ${theme.colors.primary}`)
+
+const getColors = getOverridableStyle('Input', 'color', ({ theme }) => theme.colors.primary)
 
 const StyledInput = styled(Input)<InputProps>`
-  background-color: ${({ theme }) => theme.colors.input};
-  border-radius: 16px;
-  box-shadow: ${getBoxShadow};
-  border-color: transparent;
-  color: ${({ theme }) => theme.colors.primary};
   display: block;
-  font-size: 16px;
+
+  border-radius: ${getBorderRadius};
+  box-shadow: ${getBoxShadow};
+  border: ${getBorder};
+  color: ${getColors};
+  font-size: ${getFontSize};
   height: ${getHeight};
-  outline: 0;
-  padding: 0 16px;
+  outline: ${getOutline};
+  padding: ${getPadding};
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.textSubtle};
@@ -102,11 +108,5 @@ const StyledInput = styled(Input)<InputProps>`
   ${layout}
   ${space}
 `
-
-// StyledInput.defaultProps = {
-//   scale: scales.MD,
-//   isSuccess: false,
-//   isWarning: false,
-// }
 
 export default StyledInput

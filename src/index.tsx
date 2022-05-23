@@ -12,6 +12,8 @@ import {
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { GlobalStyles } from './contexts/theme/styles'
 import { BrowserRouter } from 'react-router-dom'
+import BigNumber from 'bignumber.js'
+import { ComponentStylesOverride } from '@/contexts/theme/types'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,9 +25,16 @@ const queryClient = new QueryClient({
   }
 })
 
+BigNumber.config({
+  EXPONENTIAL_AT: 64,
+})
+
+const componentsStylesOverride: ComponentStylesOverride = {
+}
+
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
-    <ThemeWrapperProvider>
+    <ThemeWrapperProvider componentsOverride={componentsStylesOverride}>
       <GlobalStyles />
       <SolanaConnectionConfigProvider>
         <SolanaWeb3Provider>

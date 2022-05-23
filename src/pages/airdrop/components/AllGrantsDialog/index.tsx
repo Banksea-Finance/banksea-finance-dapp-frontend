@@ -26,8 +26,8 @@ const GrantCard: React.FC<RegisterGrantConfig & { registered?: boolean }> = prop
           <CardRibbon text={'Registered'} textStyle={{ fontSize: '16px', bold: true, color: 'textContrary' }} />
         ) : undefined
       }
-      isSuccess={registered}
-      activeOnHover={!registered}
+      // isSuccess={registered}
+      // activeOnHover={!registered}
       style={{ cursor: registered ? 'not-allowed' : 'pointer' }}
     >
       <img src={image} alt={name} style={{ width: '350px', height: '160px', borderBottom: '1.5px #ccc solid' }} />

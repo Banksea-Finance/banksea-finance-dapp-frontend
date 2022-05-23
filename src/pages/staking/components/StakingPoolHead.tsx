@@ -36,8 +36,8 @@ const StakingPoolHeadContainer = styled.div`
 const RewardsCard = styled(Card)`
   display: flex;
   align-items: center;
-  padding: 8px 32px;
-  border-radius: 40px;
+  padding: 6px 6px 6px 30px;
+  border-radius: 28px;
   
   .texts {
     display: flex;
@@ -47,7 +47,7 @@ const RewardsCard = styled(Card)`
     column-gap: 8px;
     
     div {
-      font-size: 18px;
+      font-size: 16px;
     }
   }
   
@@ -96,27 +96,26 @@ const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, available
     <StakingPoolHeadContainer>
       <Flex ai={'center'} className={'poolname'}>
         <PoolImage src={icon} />
-        <PoolName bold>{name}</PoolName>
+        <PoolName bold color={'primary'}>{name}</PoolName>
       </Flex>
 
-      <RewardsCard plain backgroundColor={'secondary'}>
+      <RewardsCard plain>
         <div className="texts">
-          <Text bold color={'textContrary'}>
+          <Text color={'primary'}>
             {'Available rewards: '}
           </Text>
           <QueriedData
-            bold
             color={'textContrary'}
             value={availableRewards}
             displayFunction={v => `${v.toFixed(6)} ${rewardTokenName}`}
           />
         </div>
         <Grid gridGap={'8px'} gridTemplateColumns={`repeat(${onCompound ? '2' : '1'}, max-content)`}>
-          <WalletRequiredButton scale={'S'} onClick={onHarvest} variant={'primaryContrary'}>
+          <WalletRequiredButton plain circle scale={'S'} onClick={onHarvest} variant={'primary'}>
             Harvest
           </WalletRequiredButton>
           {onCompound && (
-            <WalletRequiredButton scale={'S'} onClick={onCompound} variant={'primaryContrary'}>
+            <WalletRequiredButton plain circle scale={'S'} onClick={onCompound} variant={'primary'}>
               Compound
             </WalletRequiredButton>
           )}

@@ -124,7 +124,7 @@ export const NotificationStyleMixin = css`
 `
 
 export const NoticeTitle = styled.div`
-  font-family: 'gilroy';
+  font-family: 'MontserratAlternates';
   color: white;
   font-weight: 600;
   margin-bottom: 10px;

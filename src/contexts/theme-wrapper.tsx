@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { DefaultTheme, ThemeProvider } from 'styled-components'
-import { themes, ThemeType } from './theme'
+import { themes } from './theme'
 import useLocalStorage from '@/hooks/useLocalStorage'
+import { ComponentStylesOverride, ThemeType } from './theme/types'
 
 export const THEME_STORAGE_KEY = 'theme'
 
@@ -11,8 +12,8 @@ const ThemeWrapperContext = React.createContext({
   switchTheme: () => {}
 })
 
-const ThemeWrapperProvider: React.FC = ({ children }) => {
-  const [storedThemeType, setStoredTheme] = useLocalStorage<ThemeType>(THEME_STORAGE_KEY, 'light')
+const ThemeWrapperProvider: React.FC<{ componentsOverride?: ComponentStylesOverride }> = ({ children, componentsOverride }) => {
+  const [storedThemeType, setStoredTheme] = useLocalStorage<ThemeType>(THEME_STORAGE_KEY, 'dark')
 
   const [themeType, setThemeType] = useState<ThemeType>(storedThemeType as ThemeType)
 
@@ -26,7 +27,10 @@ const ThemeWrapperProvider: React.FC = ({ children }) => {
     }
   }, [themeType])
 
-  const activeTheme: DefaultTheme = useMemo(() => themes[themeType as ThemeType], [themeType])
+  const activeTheme: DefaultTheme = useMemo(() => ({
+    ...themes[themeType as ThemeType],
+    componentStylesOverride: componentsOverride || {}
+  }), [themeType])
 
   return (
     <ThemeWrapperContext.Provider

@@ -3,14 +3,9 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import { AppContainer } from '@/App.style'
 import Navbar from '@/components/Navbar'
 import Redirect from '@/pages/redirect'
-import BigNumber from 'bignumber.js'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
 import { AirdropPage, IdoPage, StakingPage } from './pages'
-
-BigNumber.config({
-  EXPONENTIAL_AT: 64
-})
 
 const NavbarPlaceHolder = styled.div`
   width: 100%;

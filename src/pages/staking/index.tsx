@@ -11,7 +11,7 @@ const StakingPageContainer = styled(DefaultPageContainer)`
   gap: 32px;
 
   min-width: 375px;
-  overflow-x: auto;
+  //overflow-x: auto;
 
   ${({ theme }) => theme.mediaQueries.xl} {
     width: inherit;

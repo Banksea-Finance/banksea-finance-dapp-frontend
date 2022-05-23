@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { PolymorphicComponent, variants } from '../Button/types'
+import { PolymorphicComponent } from '../Button/types'
 import { ButtonMenuItemProps } from './types'
 import { getButtonMenuTheme } from './theme'
-import { Button } from '@/contexts/theme/components'
+import { Button } from '../Button'
 import { layout, space } from 'styled-system'
 
 const MenuItemButton = styled(Button)`
@@ -18,7 +18,6 @@ const MenuItemButton = styled(Button)`
   }
 
   &.active {
-    background-color: ${p => getButtonMenuTheme(p).activeBackground};
     transition: all ease-out 0.38s;
     box-shadow: rgb(98 98 98 / 40%) 0 -2px 0px 0px inset;
   }
@@ -40,7 +39,7 @@ const MenuItemButton = styled(Button)`
 
 const ButtonMenuItem: PolymorphicComponent<ButtonMenuItemProps> = ({
   isActive = false,
-  variant = variants.PRIMARY,
+  variant = 'primary',
   as,
   ...props
 }: ButtonMenuItemProps) => {

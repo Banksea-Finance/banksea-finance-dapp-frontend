@@ -1,7 +1,7 @@
 import React, { CSSProperties, HTMLAttributes } from 'react'
 import { DisplayProps, FlexboxProps, LayoutProps, OverflowProps, SpaceProps } from 'styled-system'
-import { Colors } from '../../configs/types'
-import { TextProps } from '@/contexts/theme/components/Text'
+import { Colors, PickCSSProperties, PropsWithTheme, Variants } from '../../types'
+import { TextProps } from '../Text'
 
 export interface CardRibbonProps {
   variantColor?: keyof Colors
@@ -11,7 +11,6 @@ export interface CardRibbonProps {
 
 export type CardTheme = {
   background: string
-  boxShadow: string
   boxShadowActive: string
   boxShadowSuccess: string
   boxShadowWarning: string
@@ -28,12 +27,13 @@ export interface CardProps
     OverflowProps {
 
   plain?: boolean
-  isActive?: boolean
-  isSuccess?: boolean
-  isWarning?: boolean
-  isDisabled?: boolean
   ribbon?: React.ReactNode
   activeOnHover?: boolean
 
+  variant?: Variants
   backgroundColor?: keyof Colors | CSSProperties['color']
 }
+
+export interface StyledCardProps extends CardProps, PropsWithTheme {}
+
+export type CardOverridableCSSProperties = PickCSSProperties<'boxShadow' | 'backgroundColor' | 'border' | 'borderRadius'>

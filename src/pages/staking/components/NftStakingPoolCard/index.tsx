@@ -13,6 +13,7 @@ import { useResponsive } from '@/contexts/theme'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import QueriedData from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
+import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserDepositedSvg } from '@/components/svgs'
 
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
@@ -45,14 +46,24 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       />
 
       <InfoGrid>
-        <DataItem label={'Total Deposited'} value={totalDeposited} />
+        <DataItem icon={<TotalDepositedSvg />} variant={'success'} label={'Total Deposited'} value={totalDeposited} />
         <DataItem
-          label={'Rewards Per Staking'}
+          icon={<AprSvg />}
+          variant={'secondary'}
+          label={'Rewards Per Staking Per Day'}
           value={rewardsPerDay}
-          displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}/day`}
+          displayFunction={data => `${data.toFixed(6)}`}
         />
-        <DataItem label={'Your Deposited'} value={userDeposited} displayFunction={data => data?.length.toString()} />
         <DataItem
+          icon={<UserDepositedSvg />}
+          variant={'primaryContrary'}
+          label={'Your Deposited'}
+          value={userDeposited}
+          displayFunction={data => data?.length.toString()}
+        />
+        <DataItem
+          icon={<HistoryHarvestSvg />}
+          variant={'danger'}
           label={'Your History Harvest'}
           value={userClaimedRewards}
           displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
@@ -62,7 +73,13 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       <Flex column alignItemsCenter>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'S' : 'M'}>
           <Tabs.Pane title={'My Stake'} tabKey={'deposit'}>
-            <Grid gridTemplateColumns={'1fr max-content 1fr'} mb={'16px'} gridGap={'16px'}>
+            <Grid
+              gridTemplateColumns={'1fr max-content 1fr'}
+              mb={'16px'}
+              gridGap={'16px'}
+              height={'32px'}
+              alignItems={'center'}
+            >
               <div />
               {account && (
                 <Text as={'span'} color={'textDisabled'} mr={'2px'}>
@@ -93,11 +110,17 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           </Tabs.Pane>
 
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
-            <Grid gridTemplateColumns={'1fr max-content 1fr'} mb={'16px'} gridGap={'16px'}>
+            <Grid
+              gridTemplateColumns={'1fr max-content 1fr'}
+              mb={'16px'}
+              gridGap={'16px'}
+              height={'32px'}
+              alignItems={'center'}
+            >
               <div />
               {account && (
                 <Flex alignItemsCenter justifyCenter style={{ width: '100%', marginBottom: '8px' }}>
-                  <Text as={'span'} color={'textDisabled'} mr={'2px'}>
+                  <Text as={'span'} color={'textDisabled'} mr={'4px'}>
                     NFTs you hold:{' '}
                     <QueriedData
                       as={'span'}
@@ -109,18 +132,9 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                     {' | '}
                   </Text>
 
-                  <Button
-                    scale={'S'}
-                    p={'0'}
-                    ml={'4px'}
-                    variant={'text'}
-                    as={'a'}
-                    href={'https://faucet.banksea.finance'}
-                    target={'_blank'}
-                    rel={'noreferrer'}
-                  >
-                    Request airdrop
-                  </Button>
+                  <a href={'https://faucet.banksea.finance'} target={'_blank'} rel={'noreferrer'}>
+                    <Text color={'subtle'}>Request airdrop</Text>
+                  </a>
                 </Flex>
               )}
               {!!selectedNfts.length && (

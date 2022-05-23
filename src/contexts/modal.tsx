@@ -55,7 +55,7 @@ const responsiveDefaultContentStyle = (isDesktop: boolean) => {
       alignItems: 'center',
       justifyContent: 'center',
       fontSize: '24px',
-      fontFamily: 'gilroy'
+      fontFamily: 'MontserratAlternates'
     }
   }
 
@@ -68,7 +68,7 @@ const responsiveDefaultContentStyle = (isDesktop: boolean) => {
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '24px',
-    fontFamily: 'gilroy'
+    fontFamily: 'MontserratAlternates'
   }
 }
 

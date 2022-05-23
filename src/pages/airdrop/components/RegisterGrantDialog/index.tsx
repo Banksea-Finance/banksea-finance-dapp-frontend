@@ -232,7 +232,6 @@ export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
   if (grantKey === 'Gitcoin') {
     return (
       <Dialog
-        isActive
         title={'Register Grant'}
         titlePrefix={
           <Button
@@ -256,7 +255,7 @@ export const RegisterGrantDialog: React.FC<RegisterGrantConfig> = props => {
 
   return (
     <Dialog
-      isActive
+      variant={'success'}
       title={'Register Grant'}
       titlePrefix={
         <Button

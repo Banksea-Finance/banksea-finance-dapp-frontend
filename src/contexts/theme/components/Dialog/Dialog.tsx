@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo } from 'react'
-import { Button, Card, Text } from '@/contexts/theme/components'
-import { Flex } from '@react-css/flex'
-import { ButtonProps } from '../Button'
-import { CardProps } from '../Card'
-import { TextProps } from '../Text'
-import CloseIcon from '@/assets/images/close.svg'
+import { Button, ButtonProps } from '../Button'
+import { Card, CardProps } from '../Card'
+import { Text, TextProps } from '../Text'
+import CloseIcon from '../../assets/images/close.svg'
 import { useModal } from '@/contexts'
-import { useResponsive } from '@/contexts/theme'
+import { useResponsive } from '../../hooks'
+import { Flex } from '../Box'
 
 export type DialogProps = CardProps & {
   title: string | JSX.Element
@@ -74,16 +73,15 @@ const Dialog: React.FC<DialogProps> = ({
       maxWidth={'min(1080px, 90vw)'}
       width={isMobile ? '95vw' : width}
       {...rest}
-      isActive
     >
       <Flex
-        justifySpaceBetween
-        alignItemsCenter
-        style={{ borderBottom: '1px solid #909090', paddingBottom: '8px', marginBottom: '16px' }}
+        jc={'space-between'}
+        ai={'center'}
+        style={{ borderBottom: '1px solid #909090', paddingBottom: '8px', marginBottom: '32px' }}
       >
-        <Flex alignItemsCenter>
+        <Flex ai={'center'}>
           {titlePrefix}
-          <Text fontSize={'20px'} important fontWeight={500}>
+          <Text fontSize={'20px'} important fontWeight={500} color={'primary'}>
             {title}
           </Text>
         </Flex>
@@ -97,9 +95,9 @@ const Dialog: React.FC<DialogProps> = ({
       { children }
 
       <Flex
-        style={{ marginTop: (onCancel || onConfirm) ? '16px' : '0' }}
-        justifyCenter
-        alignItemsCenter
+        style={{ marginTop: (onCancel || onConfirm) ? '32px' : '0' }}
+        jc={'center'}
+        ai={'center'}
       >
         {
           onCancel && (

@@ -1,7 +1,7 @@
 import React from 'react'
 import { TagProps } from './types'
 import { StyledTag } from './StyledTag'
-import { scales } from '../../configs/scales'
+import { scales } from '../../types'
 
 const Tag: React.FC<TagProps> = ({ startIcon, endIcon, children, ...props }) => (
   <StyledTag {...props}>

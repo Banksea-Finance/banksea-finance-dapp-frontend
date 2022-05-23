@@ -7,12 +7,11 @@ import { CheckboxProps } from '@/contexts/theme/components/Checkbox'
 
 const StyledNftCard = styled(Card)`
   display: flex;
+  padding: 18px;
   flex-direction: column;
   align-items: center;
-  background: rgb(247, 247, 247);
   background-size: 100%;
   border-radius: 20px;
-  padding-bottom: 8px;
   cursor: pointer;
 
   .nftcard-checkbox {
@@ -49,15 +48,15 @@ export const NftCard: React.FC<NftCardProps> = props => {
 
   return (
     <StyledNftCard
+      variant={'success'}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      isSuccess
       width={'100%'}
       onClick={() => onChange?.({} as any)}
     >
       {!loaded && <Skeleton width={'100%'} height={'258px'} />}
       <NFTImage src={data?.image} alt="" onLoad={() => setLoaded(true)} style={{ display: !loaded ? 'none' : '' }} />
-      <Text fontWeight={600} fontSize={isMobile ? '16px' : '20px'} color={'primary'} m={'6px 0'}>
+      <Text fontWeight={600} fontSize={isMobile ? '16px' : '18px'} color={'primary'} m={'6px 0 0 0'}>
         {account?.data.data.name}
       </Text>
 

@@ -1,10 +1,11 @@
-import React, { ElementType, isValidElement } from 'react'
+import React, { cloneElement, ElementType, isValidElement } from 'react'
 import getExternalLinkProps from '../../utils/getExternalLinkProps'
 import StyledButton from './StyledButton'
-import { ButtonProps, variants } from './types'
+import { ButtonProps, buttonVariant } from './types'
 import { DotLoader } from 'react-spinners'
-import { useResponsive } from '@/contexts/theme'
+import { useResponsive } from '../../hooks'
 import { Flex } from '../Box'
+import { scales } from '../../types'
 
 const Button = <E extends ElementType = 'button'>(props: ButtonProps<E>): JSX.Element => {
   const { startIcon, endIcon, external, className, isLoading, disabled, children, ...rest } = props
@@ -23,7 +24,12 @@ const Button = <E extends ElementType = 'button'>(props: ButtonProps<E>): JSX.El
       {...rest}
     >
       <Flex alignItems={'center'}>
-        {isValidElement(startIcon) && <span style={{ marginRight: '4px' }}>{startIcon}</span>}
+        {
+          isValidElement(startIcon) && cloneElement(startIcon, {
+            style: { marginRight: '24px' },
+            className: '__prefix'
+          })
+        }
         {children}
         {isLoading && <DotLoader css={'margin-left: 8px'} size={'16px'} color={'#ccc'} />}
         {isValidElement(endIcon) && <span style={{ marginLeft: '4px' }}>{endIcon}</span>}
@@ -35,9 +41,10 @@ const Button = <E extends ElementType = 'button'>(props: ButtonProps<E>): JSX.El
 Button.defaultProps = {
   isLoading: false,
   external: false,
-  variant: variants.PRIMARY,
+  variant: buttonVariant.primary,
+  letterSpacing: '1px',
   disabled: false,
-  scale: 'M'
+  scale: scales.M
 }
 
 export default Button

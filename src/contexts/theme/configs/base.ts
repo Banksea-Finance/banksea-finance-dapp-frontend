@@ -1,4 +1,4 @@
-import { Breakpoints, MediaQueries, Shadows, Spacing } from './types'
+import { Breakpoints, MediaQueries, Shadows, Spacing } from '../types'
 
 export const breakpointMap: { [key: string]: number } = {
   xs: 370,
@@ -16,7 +16,6 @@ const mediaQueries: MediaQueries = {
   md: `@media screen and (max-width: ${breakpointMap.md}px)`,
   lg: `@media screen and (max-width: ${breakpointMap.lg}px)`,
   xl: `@media screen and (max-width: ${breakpointMap.xl}px)`,
-  nav: `@media screen and (max-width: ${breakpointMap.lg}px)`,
 }
 
 export const shadows: Shadows = {

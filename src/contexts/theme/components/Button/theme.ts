@@ -1,62 +1,65 @@
-import { scales } from '../../configs/scales'
-import { Variant, variants } from './types'
+import { scales } from '../../types'
+import { ButtonVariant, buttonVariant } from './types'
 
 export const scaleVariants = {
-  [scales.L]: {
-    height: '48px',
-    padding: '0 24px',
-    fontSize: '18px'
+  [scales.S]: {
+    height: '32px',
+    fontSize: '14px',
+    padding: '0 14px'
   },
   [scales.M]: {
-    height: '36px',
-    padding: '0 16px',
+    height: '40px',
+    padding: '0 14px',
     fontSize: '16px'
   },
-  [scales.S]: {
-    height: '28px',
-    fontSize: '14px',
-    padding: '0 12px'
+  [scales.L]: {
+    height: '50px',
+    padding: '0 36px',
+    fontSize: '18px'
   }
 }
 
-export const styleVariants: Record<Variant, any> = {
-  [variants.PRIMARY]: {
-    backgroundColor: 'primary',
+export const styleVariants: Record<ButtonVariant, any> = {
+  [buttonVariant.primary]: {
+    color: 'textContrary'
+  },
+  [buttonVariant.primaryContrary]: {
     color: 'textContrary',
   },
-  [variants.PRIMARY_CONTRARY]: {
-    backgroundColor: 'primaryContrary',
-    color: 'textContrary',
-  },
-  [variants.SECONDARY]: {
-    backgroundColor: 'secondary',
+  [buttonVariant.secondary]: {
     borderColor: 'primary',
     color: 'textContrary',
     ':disabled': {
       backgroundColor: 'transparent',
     },
   },
-  [variants.TERTIARY]: {
-    backgroundColor: 'tertiary',
+  [buttonVariant.tertiary]: {
     boxShadow: 'none',
     color: 'primary',
     border: '1px #cdcdcd solid',
   },
-  [variants.SUBTLE]: {
-    backgroundColor: 'textSubtle',
+  [buttonVariant.subtle]: {
+    color: 'white',
+    boxShadow: 'none',
+  },
+  [buttonVariant.danger]: {
     color: 'white',
   },
-  [variants.DANGER]: {
-    backgroundColor: 'failure',
+  [buttonVariant.success]: {
     color: 'white',
   },
-  [variants.SUCCESS]: {
-    backgroundColor: 'success',
+  [buttonVariant.disabled]: {
     color: 'white',
   },
-  [variants.TEXT]: {
+  [buttonVariant.warning]: {
+    color: 'white',
+  },
+  [buttonVariant.text]: {
     backgroundColor: 'transparent',
     color: 'primary',
     boxShadow: 'none',
   },
+  [buttonVariant.outlined]: {
+    color: 'primary'
+  }
 }

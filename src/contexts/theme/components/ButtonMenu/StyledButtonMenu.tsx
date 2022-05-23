@@ -1,27 +1,29 @@
-import styled, { DefaultTheme } from 'styled-components'
-import { Variant } from '../Button/types'
-import { getButtonMenuTheme } from './theme'
+import styled from 'styled-components'
 import { space } from 'styled-system'
+import { StyledButtonMenuProps } from './types'
+import { getOverridableStyle } from '../../utils'
 
-type StyledButtonMenuProps = {
-  variant: Variant
-  theme: DefaultTheme
-}
+const getBackgroundColor = getOverridableStyle('ButtonMenu', 'backgroundColor', () => 'transparent')
 
-const getBackgroundColor = (props: StyledButtonMenuProps) => {
-  return getButtonMenuTheme(props).backgroundColor
-}
+const getPadding = getOverridableStyle('ButtonMenu', 'padding', () => '4px')
+
+const getBorderRadius = getOverridableStyle('ButtonMenu', 'borderRadius', () => '40px')
+
+const getBorder = getOverridableStyle('ButtonMenu', 'border', ({ theme }) => `1px solid ${theme.colors.primary}`)
 
 const StyledButtonMenu = styled.div<StyledButtonMenuProps>`
   background-color: ${getBackgroundColor};
-  border-radius: 40px;
+  border: ${getBorder};
+  padding: ${getPadding};
+  border-radius: ${getBorderRadius};
+  
   display: inline-flex;
 
   & > button + button,
   & > a + a {
     margin-left: 2px;
   }
-  
+
   ${space}
 `
 

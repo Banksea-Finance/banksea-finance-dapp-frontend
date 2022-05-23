@@ -1,8 +1,8 @@
 import { createGlobalStyle } from 'styled-components'
 import { NotificationStyleMixin } from '../components/Notification'
-import ResetDefaultStyles from '@/contexts/theme/styles/ResetDefaultStyles'
-import FontFaces from '@/contexts/theme/styles/FontFaces'
-import ScrollBarStyles from '@/contexts/theme/styles/ScrollBar'
+import { FontFaces } from './FontFaces'
+import { ResetDefaultStyles } from './ResetDefaultStyles'
+import { ScrollBarStyles } from './ScrollBar'
 
 export const GlobalStyles = createGlobalStyle`
   ${ResetDefaultStyles}
@@ -12,6 +12,6 @@ export const GlobalStyles = createGlobalStyle`
 
   body {
     background: ${({ theme }) => theme.colors.background};
-    font-family: 'gilroy';
+    font-family: 'MontserratAlternates';
   }
 `

@@ -5,7 +5,7 @@ import { Text } from '@/contexts/theme/components'
 export const NavbarWrapper = styled.div`
   width: 100%;
   position: fixed;
-  background: white;
+  background: ${({ theme }) => theme.colors.backgroundSecondary};
   transform: translateY(0);
   transition: transform 0.38s;
   z-index: 5;
@@ -55,6 +55,6 @@ export const NavLinkText = styled(Text)`
   transition: color 0.38s;
   
   :hover:not(.active) {
-    color: ${({ theme }) => theme.colors.secondary};
+    color: ${({ theme }) => theme.colors.subtle};
   }
 `

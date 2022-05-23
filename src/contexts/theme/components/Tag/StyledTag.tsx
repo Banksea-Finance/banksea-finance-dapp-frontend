@@ -1,37 +1,34 @@
-import styled, { DefaultTheme } from 'styled-components'
+import styled from 'styled-components'
 import { space, typography, variant } from 'styled-system'
-import { Colors } from '../../configs/types'
-import { scaleVariants, styleVariants } from './theme'
-import { TagProps, variants } from './types'
+import { Colors } from '../../types/colors'
+import { scaleVariants } from './theme'
+import { StyledTagProps } from './types'
+import { getOverridableStyle } from '../../utils'
 
-interface ThemedProps extends TagProps {
-  theme: DefaultTheme
-}
+const getColor = getOverridableStyle('Tag', 'color', ({ outline, theme, variant = 'primary' }) => {
+  return outline ? theme.colors[theme.colors[variant] as keyof Colors] : '#fff'
+})
 
-const getOutlineStyles = ({ outline, theme, variant: variantKey = variants.PRIMARY }: ThemedProps) => {
-  if (outline) {
-    const themeColorKey = styleVariants[variantKey].backgroundColor as keyof Colors
-    const color = theme.colors[themeColorKey]
+const getBackgroundColor = getOverridableStyle('Tag', 'backgroundColor', ({ outline, theme, variant = 'primary' }) => {
+  return outline ? theme.colors.background : theme.colors[variant]
+})
 
-    return `
-      color: ${color};
-      background: ${theme.colors.background};
-      border: 2px solid ${color};
-    `
-  }
+const getBorder = getOverridableStyle('Tag', 'border', ({ outline, theme, variant = 'primary' }) => {
+  return outline ? `2px solid ${theme.colors[theme.colors[variant] as keyof Colors]}` : ''
+})
 
-  return ''
-}
-
-export const StyledTag = styled.div<ThemedProps>`
+export const StyledTag = styled.div<StyledTagProps>`
   align-items: center;
   border-radius: 16px;
-  color: #ffffff;
   display: inline-flex;
   font-weight: 500;
   white-space: nowrap;
   width: fit-content;
 
+  color: ${getColor};
+  background-color: ${getBackgroundColor};
+  border: ${getBorder};
+  
   & > svg {
     fill: currentColor;
   }
@@ -42,11 +39,6 @@ export const StyledTag = styled.div<ThemedProps>`
     prop: 'scale',
     variants: scaleVariants,
   })}
-  ${variant({
-    variants: styleVariants,
-  })}
   ${space}
   ${typography}
-
-  ${getOutlineStyles}
 `

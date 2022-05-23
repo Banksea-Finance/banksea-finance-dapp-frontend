@@ -8,9 +8,10 @@ import { DataItem } from '../DataItem'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
 import { InfoGrid } from '../common.styles'
-import { Button, Text } from '@/contexts/theme/components'
+import { Text } from '@/contexts/theme/components'
 import QueriedData from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
+import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserDepositedSvg } from '@/components/svgs'
 
 const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
@@ -44,21 +45,29 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
 
       <InfoGrid>
         <DataItem
+          icon={<TotalDepositedSvg />}
+          variant={'success'}
           label={'Total Deposited'}
           value={totalDeposited}
           displayFunction={data => `${data.toFixed(2)} ${poolName}`}
         />
         <DataItem
+          icon={<AprSvg />}
+          variant={'secondary'}
           label={'APR'}
           value={APR}
           displayFunction={data => `${data.APR.multipliedBy(100)?.toFixed(2)}%`}
         />
         <DataItem
+          icon={<UserDepositedSvg />}
+          variant={'primaryContrary'}
           label={'Your Deposited'}
           value={userDeposited}
           displayFunction={data => `${data.toFixed(2)} ${poolName}`}
         />
         <DataItem
+          icon={<HistoryHarvestSvg />}
+          variant={'danger'}
           label={'Your History Harvest'}
           value={userClaimedRewards}
           displayFunction={data => `${data.toFixed(2)} ${rewardTokenName}`}
@@ -67,37 +76,28 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
 
       <Flex row justifyCenter>
         <Grid gap={'20px'} columns={'repeat(2, 1fr)'}>
-          <WalletRequiredButton onClick={deposit} scale={'M'}>
-            Deposit
-          </WalletRequiredButton>
-          <WalletRequiredButton onClick={withdraw} scale={'M'}>
+          <WalletRequiredButton onClick={withdraw} variant={'outlined'}>
             Withdraw
+          </WalletRequiredButton>
+          <WalletRequiredButton onClick={deposit}>
+            Deposit
           </WalletRequiredButton>
         </Grid>
       </Flex>
       {
         account && (
           <Flex alignItemsCenter justifyCenter style={{ width: '100%', marginTop: '16px' }}>
-            <Text as={'span'} textAlign={'center'} color={'textDisabled'}>
+            <Text as={'span'} textAlign={'center'} color={'textDisabled'} mr={'4px'}>
               Your Balance: <QueriedData as={'span'} value={poolBalance} color={'textDisabled'} /> KSE
               {' | '}
             </Text>
-            <Button
-              scale={'S'}
-              p={'0'}
-              ml={'4px'}
-              variant={'text'}
-              as={'a'}
-              href={'https://faucet.banksea.finance'}
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
-              Request airdrop
-            </Button>
+
+            <a href={'https://faucet.banksea.finance'} target={'_blank'} rel={'noreferrer'}>
+              <Text color={'subtle'}>Request airdrop</Text>
+            </a>
           </Flex>
         )
       }
-
     </StyledTokenStakingPoolCard>
   )
 }

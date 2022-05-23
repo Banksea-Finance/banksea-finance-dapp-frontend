@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-const ScrollBarStyles = css`
+export const ScrollBarStyles = css`
   ::-webkit-scrollbar {
     width: 8px;
     overflow: hidden;
@@ -16,5 +16,3 @@ const ScrollBarStyles = css`
     border-radius: 10px;
   }
 `
-
-export default ScrollBarStyles

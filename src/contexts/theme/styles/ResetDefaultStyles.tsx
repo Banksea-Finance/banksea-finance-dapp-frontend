@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-const ResetDefaultStyles = css`
+export const ResetDefaultStyles = css`
   /* prettier-ignore */
 
   html, body, div, span, applet, object, iframe,
@@ -60,7 +60,7 @@ const ResetDefaultStyles = css`
   }
 
   a {
-    color: rgb(61,153,203);
+    color: rgb(61, 153, 203);
     font-weight: 500;
     text-decoration: none;
   }
@@ -104,5 +104,3 @@ const ResetDefaultStyles = css`
     color: transparent;
   }
 `
-
-export default ResetDefaultStyles

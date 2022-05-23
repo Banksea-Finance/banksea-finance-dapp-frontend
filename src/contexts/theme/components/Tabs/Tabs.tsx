@@ -1,9 +1,8 @@
 import { StyledTabs } from './styles'
 import React, { cloneElement, ReactElement } from 'react'
-import { ButtonMenu } from '@/contexts/theme/components'
 import { CSSTransition, SwitchTransition } from 'react-transition-group'
 import { WidthProps } from 'styled-system'
-import { ButtonMenuProps } from '@/contexts/theme/components/ButtonMenu'
+import { ButtonMenu, ButtonMenuProps } from '../ButtonMenu'
 
 export interface TabsProps extends WidthProps, ButtonMenuProps {
   activeKey: string
@@ -24,7 +23,6 @@ class Tabs extends React.Component<TabsProps, any> {
 
   constructor(props: TabsProps | Readonly<TabsProps>) {
     super(props)
-
   }
 
   render() {
@@ -41,11 +39,13 @@ class Tabs extends React.Component<TabsProps, any> {
           scale={scale}
           variant={variant}
         >
-          {React.Children.map(children, (o: any, _i) =>
-            cloneElement(<ButtonMenu.Item>{o.props.title}</ButtonMenu.Item>, {
-              itemKey: o.props.tabKey
-            })
-          )}
+          {
+            React.Children.map(children, (o: any, _i) =>
+              cloneElement(<ButtonMenu.Item>{o.props.title}</ButtonMenu.Item>, {
+                itemKey: o.props.tabKey
+              })
+            )
+          }
         </ButtonMenu>
 
         <div style={{ width: '100%' }}>

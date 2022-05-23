@@ -10,7 +10,7 @@ import { shortenAddress } from '@/utils'
 
 const VotedGrantCard: React.FC<GrantInfo & UserVotedGrant> = ({ image, name, vote, address }) => {
   return (
-    <Card height={'128px'} p={'12px 8px'} display={'flex'} isActive>
+    <Card height={'128px'} p={'12px 8px'} display={'flex'}>
       <img src={image} alt="" style={{ height: '100%', borderRadius: '32px', marginRight: '16px' }} />
       <div style={{ padding: '0', display: 'grid', rowGap: '8px', alignItems: 'center' }}>
         <Text>

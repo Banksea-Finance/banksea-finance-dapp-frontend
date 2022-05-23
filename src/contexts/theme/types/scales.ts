@@ -4,4 +4,4 @@ export const scales = {
   L: 'L'
 } as const
 
-export type Scales = keyof typeof scales;
+export type Scales = keyof typeof scales

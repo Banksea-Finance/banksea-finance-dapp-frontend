@@ -1,16 +1,16 @@
 import { InputHTMLAttributes } from 'react'
 
 import { TextProps } from '../Text'
-import { scales, Scales } from '../../configs/scales'
+import { scales, Scales } from '../../types'
 
 export const getScale = ({ scale }: CheckboxProps) => {
   switch (scale) {
-  case scales.S:
-    return '14px'
-  case scales.M:
-    return '16px'
-  case scales.L:
-    return '24px'
+    case scales.S:
+      return '14px'
+    case scales.M:
+      return '16px'
+    case scales.L:
+      return '24px'
   }
 }
 

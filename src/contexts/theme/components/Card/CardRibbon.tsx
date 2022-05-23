@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { DefaultTheme } from 'styled-components'
 import { CardRibbonProps } from './types'
-import { Text } from '@/contexts/theme/components'
+import { Text } from '../Text'
 
 interface StyledCardRibbonProps extends CardRibbonProps {
   theme: DefaultTheme

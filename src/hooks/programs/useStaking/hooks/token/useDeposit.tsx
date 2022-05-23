@@ -49,7 +49,7 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
       return
     }
 
-    if (new BigNumber(inputValue).isNaN()) {
+    if (new BigNumber(inputValue.replace(/(\d)[, ](\d)/g, '$1$2')).isNaN()) {
       return 'The input is not a number'
     }
 

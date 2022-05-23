@@ -1,6 +1,6 @@
 import { ButtonMenuTheme } from './types'
 import { DefaultTheme } from 'styled-components'
-import { themes } from '@/contexts/theme'
+import { themes } from '../../configs'
 
 const base = {
   width: '197px'

@@ -1,25 +1,16 @@
 import { ReactNode } from 'react'
 import { SpaceProps, TypographyProps } from 'styled-system'
-import { Scales } from '../../configs/scales'
-
-export const variants = {
-  PRIMARY: 'primary',
-  PRIMARY_CONTRARY: 'primaryContrary',
-  SECONDARY: 'secondary',
-  SUCCESS: 'success',
-  TEXTDISABLED: 'textDisabled',
-  TEXTSUBTLE: 'textSubtle',
-  FAILURE: 'failure',
-  WARNING: 'warning'
-} as const
-
-export type Variant = typeof variants[keyof typeof variants];
+import { PickCSSProperties, PropsWithTheme, Scales, Variants } from '../../types'
 
 export interface TagProps extends SpaceProps, TypographyProps {
-  variant?: Variant;
-  scale?: Scales;
-  startIcon?: ReactNode;
-  endIcon?: ReactNode;
-  outline?: boolean;
-  textTransform?: 'uppercase' | 'lowercase' | 'capitalize';
+  variant?: Variants
+  scale?: Scales
+  startIcon?: ReactNode
+  endIcon?: ReactNode
+  outline?: boolean
+  textTransform?: 'uppercase' | 'lowercase' | 'capitalize'
 }
+
+export interface StyledTagProps extends TagProps, PropsWithTheme{}
+
+export type TagOverridableCSSProperties = PickCSSProperties<'color' | 'backgroundColor' | 'border'>

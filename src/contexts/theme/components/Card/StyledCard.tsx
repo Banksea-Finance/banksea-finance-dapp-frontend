@@ -1,53 +1,43 @@
-import styled, { DefaultTheme } from 'styled-components'
+import styled from 'styled-components'
 import { display, flexbox, layout, overflow, space } from 'styled-system'
-import { CardProps } from './types'
+import { StyledCardProps } from './types'
 import { getCardTheme } from './theme'
-import getThemeValue from '@/contexts/theme/utils/getThemeValue'
+import { getOverridableStyle, getThemeValue } from '../../utils'
 
-interface StyledCardProps extends CardProps {
-  theme: DefaultTheme
-}
-
-/**
- * Priority: Plain --> Warning --> Success --> Active
- */
-const getBoxShadow = ({ plain, isActive, isSuccess, isWarning, theme }: StyledCardProps) => {
-  const cardTheme = getCardTheme({ theme })
-
+const getBoxShadow = getOverridableStyle('Card', 'boxShadow', ({ plain, theme, variant = 'primary' }) => {
   if (plain) {
     return ''
   }
 
-  if (isWarning) {
-    return cardTheme.boxShadowWarning
-  }
+  const color = `${theme.colors[variant]}`
 
-  if (isSuccess) {
-    return cardTheme.boxShadowSuccess
-  }
+  return `0px 4px 10px -1px ${color}`
+})
 
-  if (isActive) {
-    return cardTheme.boxShadowActive
-  }
-
-  return cardTheme.boxShadow
-}
-
-const getBackgroundColor = ({ backgroundColor, theme }: StyledCardProps) => {
+const getBackgroundColor = getOverridableStyle('Card', 'backgroundColor', ({ backgroundColor, theme }) => {
   return getThemeValue(`colors.${backgroundColor}`, getCardTheme({ theme }).background)(theme)
-}
+})
+
+const getBorder = getOverridableStyle('Card', 'border', ({ variant = 'primary', theme }: StyledCardProps) => {
+  const color = theme.colors[variant]
+
+  return `1px solid ${color}`
+})
+
+const getBorderRadius = getOverridableStyle('Card', 'borderRadius', () => '32px')
 
 const StyledCard = styled.div<StyledCardProps>`
   display: flex;
   ${flexbox};
 
-  background-color: ${getBackgroundColor};
-  border: ${p => getCardTheme(p).boxShadow};
-  border-radius: 32px;
-  box-shadow: ${getBoxShadow};
   overflow: hidden;
   position: relative;
   transition: all 0.28s;
+
+  background-color: ${getBackgroundColor};
+  border: ${getBorder};
+  border-radius: ${getBorderRadius};
+  box-shadow: ${getBoxShadow};
 
   ${props => props.activeOnHover && `
     &:hover {
@@ -60,12 +50,5 @@ const StyledCard = styled.div<StyledCardProps>`
   ${display}
   ${overflow}
 `
-
-StyledCard.defaultProps = {
-  isActive: false,
-  isSuccess: false,
-  isWarning: false,
-  isDisabled: false
-}
 
 export default StyledCard

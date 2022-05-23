@@ -1,11 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { SolanaWallet, SupportWalletNames, useSolanaWeb3 } from '@/contexts/solana-web3'
+import { SupportWalletNames, useSolanaWeb3 } from '@/contexts/solana-web3'
 import { Button } from '../Button'
 import { SOLANA_CLUSTER, useModal } from '@/contexts'
-import { Card, Dialog, Text, Flex, Grid } from '@/contexts/theme/components'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
 import { shortenAddress, sleep } from '@/utils'
+import { Card } from '../Card'
+import { Dialog } from '../Dialog'
+import { Flex, Grid } from '../Box'
+import { Text } from '../Text'
 
 export const WalletItemCard = styled(Card)`
   background: ${({ theme }) => theme.colors.secondary};
@@ -25,22 +28,21 @@ export const WalletItemCard = styled(Card)`
     width: 48px;
     height: 48px;
   }
-  
+
   ${({ theme }) => theme.mediaQueries.xl} {
     width: 82vw;
   }
 `
 
-export const WalletItem: React.FC<{ wallet: SolanaWallet; onClick: (name: SupportWalletNames) => void }> = ({
-  wallet,
+export const WalletItem: React.FC<{ name: string, icon: string, onClick: () => void }> = ({
+  name,
+  icon,
   onClick
 }) => {
-  const { name } = wallet
-
   return (
-    <WalletItemCard onClick={() => onClick(name)} plain color={'secondary'}>
+    <WalletItemCard onClick={onClick} plain color={'secondary'}>
       <span className="wallet-name">{name}</span>
-      <img src={wallet.adapter.icon} alt="" />
+      <img src={icon} alt="" />
     </WalletItemCard>
   )
 }
@@ -63,7 +65,8 @@ export const WalletDialog: React.FC = () => {
           {
             Object.values(SUPPORT_WALLETS).map(wallet => (
               <WalletItem
-                wallet={wallet}
+                name={wallet.name}
+                icon={wallet.adapter.icon}
                 key={`wallet-item-${wallet.name}`}
                 onClick={() => {
                   closeModal()
@@ -100,8 +103,8 @@ const Wallet: React.FC = () => {
         account
           ? (
             <Flex ai={'center'}>
-              <img src={wallet?.adapter?.icon} alt="" style={{ marginRight: '4px', width: '32px', height: '32px' }} />
-              {account && <span>{`${shortenAddress(account, 4)}`}</span>}
+              <img src={wallet?.adapter?.icon} alt="" style={{ marginRight: '16px', width: '30px', height: '30px' }} />
+              {account && <Text>{`${shortenAddress(account, 4)}`}</Text>}
             </Flex>
           ) : (
             'Connect'

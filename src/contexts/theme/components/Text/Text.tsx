@@ -1,32 +1,38 @@
 import styled from 'styled-components'
 import { layout, space, typography } from 'styled-system'
-import getThemeValue from '../../utils/getThemeValue'
-import { TextProps, ThemedProps } from './types'
+import { getOverridableStyle, getThemeValue } from '../../utils'
+import { TextProps } from './types'
 
-const getColor = ({ color = 'text', theme }: ThemedProps) => {
+const getColor = getOverridableStyle('Text', 'color', ({ color = 'text', theme }) => {
   return getThemeValue(`colors.${color}`, color)(theme)
-}
+})
 
-const getFontSize = ({ fontSize, small }: TextProps) => {
+const getFontSize = getOverridableStyle('Text', 'fontSize', ({ fontSize, small }) => {
   return small ? '14px' : fontSize || '16px'
-}
+})
 
-const getFontFamily = ({ important }: TextProps) => {
+const getFontFamily = getOverridableStyle('Text', 'fontFamily', ({ important }: TextProps) => {
   return important ? 'orbitron' : ''
-}
+})
+
+const getFontWeight = getOverridableStyle('Text', 'fontWeight', ({ bold, important }) => {
+  return (bold ? 700 : (important ? 400 : 500))
+})
+
+const getLineHeight = getOverridableStyle('Text', 'lineHeight', () => '1.5')
 
 const Text = styled.div<TextProps>`
   color: ${getColor};
   font-size: ${getFontSize};
   font-family: ${getFontFamily};
-  font-weight: ${({ bold, important }) => (bold ? 700 : (important ? 400 : 500))};
-  line-height: 1.5;
-  
+  font-weight: ${getFontWeight};
+  line-height: ${getLineHeight};
+
   .primary {
     color: ${({ theme }) => theme.colors.primary};
   }
-  
-  ${({ textTransform }) => textTransform && `text-transform: ${textTransform};`}
+
+  text-transform: ${({ textTransform }) => textTransform};
   ${space}
   ${layout}
   ${typography}
@@ -34,7 +40,7 @@ const Text = styled.div<TextProps>`
 
 Text.defaultProps = {
   color: 'text',
-  fontSize: '16px',
+  fontSize: '16px'
 }
 
-export default Text
+export { Text }

@@ -9,7 +9,7 @@ import throttle from 'lodash/throttle'
 const NavItems = [
   { name: 'Staking', path: '/staking' },
   { name: 'Airdrop', path: '/airdrop' },
-  { name: 'IDO', path: '/ido' },
+  { name: 'IDO', path: '/ido' }
 ]
 
 const Navbar: React.FC = () => {
@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
             NavItems.map(({ name, path }, index) => (
               <NavLink key={`nav-link-${index}`} to={path}>
                 <NavLinkText
-                  color={pathname === path ? 'primaryContrary' : 'text'}
+                  color={pathname === path ? 'primary' : 'text'}
                   className={pathname === path ? 'active' : ''}
                   fontSize={'22px'}
                   important

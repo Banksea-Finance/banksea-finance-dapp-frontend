@@ -1,9 +1,13 @@
 import { LayoutProps, SpaceProps, TypographyProps } from 'styled-system'
-import { Colors } from '@/contexts/theme/configs/types'
 import { CSSProperties, HTMLAttributes } from 'react'
 import { DefaultTheme } from 'styled-components'
+import { Colors, PickCSSProperties } from '../../types'
 
-export interface TextProps extends SpaceProps, LayoutProps, TypographyProps, HTMLAttributes<HTMLSpanElement | HTMLDivElement> {
+export interface TextProps
+  extends SpaceProps,
+    LayoutProps,
+    TypographyProps,
+    HTMLAttributes<HTMLSpanElement | HTMLDivElement> {
   as?: 'div' | 'span'
 
   color?: keyof Colors | CSSProperties['color']
@@ -14,6 +18,8 @@ export interface TextProps extends SpaceProps, LayoutProps, TypographyProps, HTM
   important?: boolean
 }
 
-export interface ThemedProps extends TextProps {
+export interface StyledTextProps extends TextProps {
   theme: DefaultTheme
 }
+
+export type TextOverridableCSSProperties = PickCSSProperties<'color' | 'fontSize' | 'fontFamily' | 'fontWeight' | 'lineHeight'>

@@ -2,7 +2,7 @@ import React from 'react'
 import Notification from 'rc-notification'
 import { NotificationInstance } from 'rc-notification/es/Notification'
 import { NoticeTitle, NotifyTypeIcon } from './Notification.style'
-import Flex from '@react-css/flex'
+import { Flex } from '../Box'
 
 let notification: NotificationInstance
 
