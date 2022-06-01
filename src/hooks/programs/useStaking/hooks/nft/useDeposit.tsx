@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import { useModal, useSolanaWeb3 } from '@/contexts'
-import { Text } from '@/contexts/theme/components'
+import { useSolanaWeb3 } from '@/contexts'
+import { Text, useModal } from '@banksea-finance/ui-kit'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { buildRegisterInstruction } from '../../helpers/instructions'
@@ -27,14 +27,12 @@ const NFTDepositDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: M
       pool: config.pool
     })
 
-    const transactions = registerInstruction
-      ? [
-        new Transaction({
-          recentBlockhash: (await program.provider.connection.getLatestBlockhash()).blockhash,
-          feePayer: user
-        }).add(registerInstruction)
-      ]
-      : []
+    const transactions = registerInstruction ? [
+      new Transaction({
+        recentBlockhash: (await program.provider.connection.getLatestBlockhash()).blockhash,
+        feePayer: user
+      }).add(registerInstruction)
+    ] : []
 
     const depositTransactions = await buildDepositNFTsTransactions({
       tokens: metadataList.map(meta => ({ tokenMint: meta.mint, metadata: meta.address })),

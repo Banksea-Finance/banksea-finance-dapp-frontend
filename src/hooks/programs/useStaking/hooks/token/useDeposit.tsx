@@ -1,11 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
-import { Input, Text } from '@/contexts/theme/components'
+import { useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { Box, Input, Slider, Text, useModal } from '@banksea-finance/ui-kit'
 import BigNumber from 'bignumber.js'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
-import Slider from 'rc-slider'
-import 'rc-slider/assets/index.css'
 import { BN } from '@project-serum/anchor'
 import { buildTransaction } from '@/utils'
 import { useStakingProgram } from '../common'
@@ -17,18 +15,11 @@ import { getLargestTokenAccount } from '../../helpers/accounts'
 import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
 import { DataLoadFailedError } from '../../helpers/errors'
 import { WalletNotConnectedError } from '@/utils/errors'
+import _ from 'lodash'
 
-const SliderWithTooltip = Slider.createSliderWithTooltip(Slider)
-
-const markNode = (number: number) => ({ style: { width: '8px' }, label: `${number}%` })
-
-const sliderMarks = {
-  0: markNode(0),
-  25: markNode(25),
-  50: markNode(50),
-  75: markNode(75),
-  100: markNode(100)
-}
+const sliderMarks = _.range(0, 5)
+  .map(o => o * 25)
+  .map(o => ({ value: o, label: `${o}%` }))
 
 const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
   const { pool, whitelist, depositTokenName } = config
@@ -39,6 +30,7 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
   const { data: poolBalance } = usePoolBalanceQuery(config)
 
   const { account: user } = useSolanaWeb3()
+
   const { connection } = useSolanaConnectionConfig()
   const program = useStakingProgram()
 
@@ -77,7 +69,9 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
     )
   }, [poolBalance])
 
-  const onSliderChange = useCallback((v: number) => {
+  const onSliderChange = useCallback((_event, value: number | number[]) => {
+    const v = value as number
+
     setSliderValue(v)
 
     if (poolBalance) {
@@ -140,23 +134,24 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
         scale={'M'}
         autoFocus
         value={inputValue}
-        allowClear
         onChange={onInputChange}
         mr={'4px'}
         mb={'8px'}
         style={{ flexGrow: 1 }}
-        suffix={
+        endAdornment={
           <Text fontSize={'18px'} bold color={'primary'}>{depositTokenName}</Text>
         }
       />
 
-      <SliderWithTooltip
-        value={sliderValue}
-        onChange={onSliderChange}
-        step={1}
-        style={{ width: '80%', left: '10%', height: '32px' }}
-        marks={sliderMarks}
-      />
+      <Box width={'80%'} ml={'10%'}>
+        <Slider
+          tooltip
+          disabled={poolBalance?.lte(0)}
+          value={sliderValue}
+          onChange={onSliderChange}
+          marks={sliderMarks}
+        />
+      </Box>
     </TransactionalDialog>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import { useModal, useSolanaWeb3 } from '@/contexts'
-import { Text } from '@/contexts/theme/components'
+import { useSolanaWeb3 } from '@/contexts'
+import { Text, useModal } from '@banksea-finance/ui-kit'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { Keypair, SystemProgram, SYSVAR_CLOCK_PUBKEY, TransactionInstruction } from '@solana/web3.js'

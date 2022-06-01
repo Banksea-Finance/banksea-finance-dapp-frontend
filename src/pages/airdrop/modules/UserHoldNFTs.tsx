@@ -1,9 +1,8 @@
-import { Button, Skeleton, Text } from '@/contexts/theme/components'
+import { Button, Flex, Skeleton, Text } from '@banksea-finance/ui-kit'
 import React from 'react'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { NFT_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/nft'
 import styled from 'styled-components'
-import { Flex } from '@react-css/flex'
 import { COLUMN_LAYOUT_WIDTH_THRESHOLD } from '../constant'
 import { NftCard } from '@/components/NftCard'
 
@@ -31,7 +30,7 @@ export const UserHoldNFTs: React.FC = () => {
 
   return (
     <Container className={'user-hold-NFTs'}>
-      <Flex alignItemsCenter style={{ marginBottom: '24px' }}>
+      <Flex ai={'center'} mb={'24px'}>
         <Text bold important fontSize={'28px'} color={'primary'} mr={'16px'}>
           NFTs you hold
         </Text>

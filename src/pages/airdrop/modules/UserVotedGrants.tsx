@@ -1,8 +1,6 @@
 import React from 'react'
 import { UserVotedGrant, useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
-import { Button, Card, Skeleton, Text } from '@/contexts/theme/components'
-import { Flex } from '@react-css/flex'
-import { useModal } from '@/contexts'
+import { Button, Card, Flex, Skeleton, Text, useModal } from '@banksea-finance/ui-kit'
 import { AllGrantsDialog } from '@/pages/airdrop/components/AllGrantsDialog'
 import { GrantInfo, GrantsInfoByKey } from '@/pages/airdrop/constant'
 import BigNumber from 'bignumber.js'
@@ -34,7 +32,7 @@ export const UserVotedGrants: React.FC = () => {
 
   return (
     <div className={'user-voted-grants'}>
-      <Flex alignItemsCenter style={{ marginBottom: '24px' }}>
+      <Flex ai={'center'} mb={'24px'}>
         <Text bold important fontSize={'28px'} color={'primary'} mr={'16px'}>
           Your voted grants
         </Text>

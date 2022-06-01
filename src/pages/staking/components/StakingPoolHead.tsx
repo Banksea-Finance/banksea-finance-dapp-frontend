@@ -1,10 +1,10 @@
-import { Card, Flex, Grid, Text } from '@/contexts/theme/components'
+import { Card, Flex, Grid, Text } from '@banksea-finance/ui-kit'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import React from 'react'
 import styled from 'styled-components'
 import { UseQueryResult } from 'react-query'
 import BigNumber from 'bignumber.js'
-import QueriedData from '@/components/QueriedData'
+import { QueriedData } from '@/components/QueriedData'
 
 export type StakingPoolHeadProps = {
   name: string
@@ -22,7 +22,7 @@ const StakingPoolHeadContainer = styled.div`
   align-items: center;
   margin-bottom: 32px;
   
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.maxMd} {
     flex-direction: column;
     justify-content: start;
     align-items: start;
@@ -51,7 +51,7 @@ const RewardsCard = styled(Card)`
     }
   }
   
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.maxMd} {
     padding: 4px 24px;
     margin: 0 auto;
     border-radius: 32px;
@@ -63,17 +63,8 @@ const RewardsCard = styled(Card)`
     }
   }
   
-  ${({ theme }) => theme.mediaQueries.xs} {
+  ${({ theme }) => theme.mediaQueries.maxXs} {
     padding: 4px 16px;
-  }
-`
-
-const PoolName = styled(Text)`
-  font-size: 28px;
-  font-weight: bold;
-  
-  ${({ theme }) => theme.mediaQueries.md} {
-    font-size: 22px;
   }
 `
 
@@ -84,19 +75,19 @@ const PoolImage = styled.img`
   
   margin-right: 16px;
   
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.maxMd} {
     margin-right: 8px;
     width: 36px;
     height: 36px;
   }
 `
 
-const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, availableRewards, rewardTokenName, onHarvest, onCompound }) => {
+export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, availableRewards, rewardTokenName, onHarvest, onCompound }) => {
   return (
     <StakingPoolHeadContainer>
       <Flex ai={'center'} className={'poolname'}>
         <PoolImage src={icon} />
-        <PoolName bold color={'primary'}>{name}</PoolName>
+        <Text bold gradient important fontSize={{ lg: '42px', _: 'max(22px, 4vw)' }}>{name}</Text>
       </Flex>
 
       <RewardsCard plain>
@@ -124,5 +115,3 @@ const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, available
     </StakingPoolHeadContainer>
   )
 }
-
-export { StakingPoolHead }

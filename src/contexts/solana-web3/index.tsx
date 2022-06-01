@@ -2,9 +2,9 @@ import type { PublicKey } from '@solana/web3.js'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { shortenAddress } from '@/utils'
 import { SUPPORT_WALLETS } from '@/contexts/solana-web3/constant'
-import { notify } from '@/contexts/theme/components'
 import { BaseMessageSignerWalletAdapter, WalletReadyState } from '@solana/wallet-adapter-base'
 import useLocalStorage from '@/hooks/useLocalStorage'
+import { useNotify } from '@banksea-finance/ui-kit'
 
 export type SupportWalletNames = 'Phantom' | 'Slope' | 'Solflare'
 // | 'Sollet'
@@ -36,6 +36,7 @@ const SolanaWeb3Context = React.createContext<WalletContextValues>({
 const LOCAL_STORAGE_WALLET_KEY = 'WALLET'
 
 export const SolanaWeb3Provider: React.FC = ({ children }) => {
+  const { notify } = useNotify()
   const [eagerWallet, setEagerWallet] = useLocalStorage<SupportWalletNames>(LOCAL_STORAGE_WALLET_KEY)
 
   const [wallet, setWallet] = useState<SolanaWallet | undefined>(eagerWallet ? SUPPORT_WALLETS[eagerWallet] : undefined)
@@ -72,7 +73,7 @@ export const SolanaWeb3Provider: React.FC = ({ children }) => {
         if (publicKey === null) {
           notify({
             title: 'Wallet Connect Failed',
-            message: `Failed to connect to ${adapter.name} wallet`
+            description: `Failed to connect to ${adapter.name} wallet`
           })
 
           return
@@ -85,7 +86,7 @@ export const SolanaWeb3Provider: React.FC = ({ children }) => {
 
         notify({
           title: 'Wallet update',
-          message: 'Connected to wallet ' + keyToDisplay
+          description: 'Connected to wallet ' + keyToDisplay
         })
       })
       .catch(e => {
@@ -108,7 +109,7 @@ export const SolanaWeb3Provider: React.FC = ({ children }) => {
     adapter.disconnect()
     notify({
       title: 'Wallet disconnect',
-      message: `Disconnected from ${adapter.name} wallet`
+      description: `Disconnected from ${adapter.name} wallet`
     })
   }, [adapter])
 

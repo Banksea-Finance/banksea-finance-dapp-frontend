@@ -1,9 +1,6 @@
 import React from 'react'
-import { Card, CardRibbon, Dialog, Text } from '@/contexts/theme/components'
-import { Grid } from '@react-css/grid'
+import { Card, CardRibbon, Dialog, Flex, Grid, Text, useModal } from '@banksea-finance/ui-kit'
 import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
-import { Flex } from '@react-css/flex'
-import { useModal } from '@/contexts'
 import { RegisterGrantDialog } from '@/pages/airdrop/components/RegisterGrantDialog'
 import { GrantsCanBeRegister, RegisterGrantConfig } from '@/pages/airdrop/constant'
 import styled from 'styled-components'
@@ -31,7 +28,7 @@ const GrantCard: React.FC<RegisterGrantConfig & { registered?: boolean }> = prop
       style={{ cursor: registered ? 'not-allowed' : 'pointer' }}
     >
       <img src={image} alt={name} style={{ width: '350px', height: '160px', borderBottom: '1.5px #ccc solid' }} />
-      <Flex alignItemsCenter justifyCenter>
+      <Flex ai={'center'} jc={'center'}>
         <Text textAlign={'center'} fontSize={'18px'} bold mt={'4px'}>
           {name}
         </Text>
@@ -44,7 +41,7 @@ const StyledGrid = styled(Grid)`
   grid-template-columns: repeat(2, 350px);
   gap: 24px;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     justify-content: center;
     grid-template-columns: 350px;
   }

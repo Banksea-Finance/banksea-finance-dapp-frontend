@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { Text } from '@/contexts/theme/components'
+import { Text } from '@banksea-finance/ui-kit'
 
 export const NavbarWrapper = styled.div`
   width: 100%;
@@ -25,7 +25,7 @@ export const NavbarContainer = styled.div`
   justify-content: space-between;
   z-index: 3;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     padding: 10px;
     width: 100vw;
   }
@@ -37,7 +37,7 @@ export const NavItemsContainer = styled.div<{ itemCount: number }>`
   width: fit-content;
   gap: 0 32px;
   
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     display: none;
   }
 `
@@ -46,7 +46,7 @@ export const NavLink = styled(Link)`
   position: relative;
   cursor: pointer;
 
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     font-size: 12px;
   }
 `

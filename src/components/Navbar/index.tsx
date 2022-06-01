@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { NavbarContainer, NavbarWrapper, NavItemsContainer, NavLink, NavLinkText } from './index.style'
-import Logo from '../BankseaLogo'
 import { Link, useLocation } from 'react-router-dom'
-import { Wallet } from '@/contexts/theme/components'
 
 import throttle from 'lodash/throttle'
+import { Wallet } from '../Wallet'
+import { BankseaImageLogoSvg, BankseaTextLogoSvg } from '@/components/svgs'
+import { useResponsive } from '@banksea-finance/ui-kit'
 
 const NavItems = [
   { name: 'Staking', path: '/staking' },
@@ -12,10 +13,12 @@ const NavItems = [
   { name: 'IDO', path: '/ido' }
 ]
 
-const Navbar: React.FC = () => {
+export const Navbar: React.FC = () => {
   const { pathname } = useLocation()
   const [show, setShow] = useState(true)
   const [, setScrollY] = useState<number>(0)
+
+  const { isMobile } = useResponsive()
 
   useEffect(() => {
     const cb = throttle(event => {
@@ -46,7 +49,7 @@ const Navbar: React.FC = () => {
     <NavbarWrapper className={show ? 'show' : 'hide'}>
       <NavbarContainer>
         <Link to={'/'}>
-          <Logo />
+          {isMobile ? <BankseaImageLogoSvg /> : <BankseaTextLogoSvg />}
         </Link>
         <NavItemsContainer itemCount={NavItems.length}>
           {
@@ -70,5 +73,3 @@ const Navbar: React.FC = () => {
     </NavbarWrapper>
   )
 }
-
-export default Navbar

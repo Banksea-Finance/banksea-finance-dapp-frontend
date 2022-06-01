@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { AppContainer } from '@/App.style'
-import Navbar from '@/components/Navbar'
+import { Navbar } from '@/components/Navbar'
 import Redirect from '@/pages/redirect'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
@@ -9,10 +9,10 @@ import { AirdropPage, IdoPage, StakingPage } from './pages'
 
 const NavbarPlaceHolder = styled.div`
   width: 100%;
-  
+
   height: 100px;
-  
-  ${({ theme }) => theme.mediaQueries.xl} {
+
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     height: 68px;
   }
 `

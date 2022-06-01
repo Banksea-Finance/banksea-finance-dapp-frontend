@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { SOLANA_CLUSTER, useModal, useRefreshController, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
-import { Dialog, notify, Text } from '@/contexts/theme/components'
-import { DialogProps } from '@/contexts/theme/components/Dialog/Dialog'
+import { SOLANA_CLUSTER, useRefreshController, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { Dialog, DialogProps, Text, TextProps, useModal, useNotify } from '@banksea-finance/ui-kit'
 import { BeatLoader } from 'react-spinners'
-import { TextProps } from '@/contexts/theme/components/Text'
 import { WalletError } from '@solana/wallet-adapter-base'
 import { sleep, waitTransactionConfirm } from '@/utils'
 import { Transaction } from '@solana/web3.js'
@@ -34,6 +32,7 @@ export interface TransactionalDialogProps extends Omit<DialogProps, 'bottomMessa
 }
 
 const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ transactionsBuilder, children, confirmButtonProps, cancelButtonProps, onConfirm, onCancel, transactionName, error, ...rest }) => {
+  const { notify } = useNotify()
   const { closeModal } = useModal()
   const { forceRefresh } = useRefreshController()
   const [message, setMessage] = useState<string | JSX.Element>()
@@ -56,8 +55,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ transactionsB
 
     notify({
       title: 'Transaction Success',
-      type: 'success',
-      message: (
+      description: (
         <div>
           <span style={{ marginRight: '4px' }}>{transactionName}</span>
           <a
@@ -136,7 +134,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ transactionsB
       closeable={closable}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
-      bottomMessage={{ children: innerError, color: 'failure' }}
+      bottomMessage={{ children: innerError, color: 'danger' }}
       cancelButtonProps={{ ...cancelButtonProps, disabled: !closable, children: 'Close' }}
       confirmButtonProps={{
         ...confirmButtonProps,
@@ -148,7 +146,7 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ transactionsB
     >
       {
         (ongoing || done)
-          ? <Text fontSize={'18px'} textAlign={'center'} color={messageType}>{message}</Text>
+          ? <Text fontSize={'18px'} textAlign={'center'} color={messageType} fontWeight={500}>{message}</Text>
           : children
       }
     </Dialog>

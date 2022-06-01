@@ -2,8 +2,7 @@ import styled from 'styled-components'
 
 export const AppContainer = styled.div`
   width: 100%;
-  overflow-x: scroll;
-
+  overflow-x: auto;
   background-color: ${({ theme }) => theme.colors.background};
   transition: background-color 0.38s;
 

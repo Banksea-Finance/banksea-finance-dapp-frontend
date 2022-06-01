@@ -32,7 +32,7 @@ export type Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -62,6 +62,27 @@ export type Staking = {
       ]
     },
     {
+      'name': 'setAuthority',
+      'accounts': [
+        {
+          'name': 'pool',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'authority',
+          'isMut': false,
+          'isSigner': true
+        },
+        {
+          'name': 'newAuthority',
+          'isMut': false,
+          'isSigner': false
+        }
+      ],
+      'args': []
+    },
+    {
       'name': 'addWhitelist',
       'accounts': [
         {
@@ -81,7 +102,7 @@ export type Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -181,7 +202,7 @@ export type Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -237,7 +258,7 @@ export type Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -637,6 +658,168 @@ export type Staking = {
       }
     }
   ],
+  'events': [
+    {
+      'name': 'AddWhiteListEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'format',
+          'type': 'u32',
+          'index': false
+        },
+        {
+          'name': 'addr',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'weight',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'SetEnddingEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'oldEnding',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'newEnding',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'SetRewardRateEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'oldRate',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'newRate',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'DepositEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'user',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'WithdrawEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'user',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'ClaimEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'user',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'RefundEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    }
+  ],
   'errors': [
     {
       'code': 300,
@@ -672,6 +855,16 @@ export type Staking = {
       'code': 306,
       'name': 'InvalidRefundAmount',
       'msg': 'invalid refund amount'
+    },
+    {
+      'code': 307,
+      'name': 'InvalidEndTime',
+      'msg': 'invalid end time'
+    },
+    {
+      'code': 308,
+      'name': 'InvalidWhitelistFormat',
+      'msg': 'invalid whitelist format'
     }
   ]
 };
@@ -710,7 +903,7 @@ export const IDL: Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -740,6 +933,27 @@ export const IDL: Staking = {
       ]
     },
     {
+      'name': 'setAuthority',
+      'accounts': [
+        {
+          'name': 'pool',
+          'isMut': true,
+          'isSigner': false
+        },
+        {
+          'name': 'authority',
+          'isMut': false,
+          'isSigner': true
+        },
+        {
+          'name': 'newAuthority',
+          'isMut': false,
+          'isSigner': false
+        }
+      ],
+      'args': []
+    },
+    {
       'name': 'addWhitelist',
       'accounts': [
         {
@@ -759,7 +973,7 @@ export const IDL: Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -859,7 +1073,7 @@ export const IDL: Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -915,7 +1129,7 @@ export const IDL: Staking = {
         },
         {
           'name': 'payer',
-          'isMut': false,
+          'isMut': true,
           'isSigner': true
         },
         {
@@ -1315,6 +1529,168 @@ export const IDL: Staking = {
       }
     }
   ],
+  'events': [
+    {
+      'name': 'AddWhiteListEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'format',
+          'type': 'u32',
+          'index': false
+        },
+        {
+          'name': 'addr',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'weight',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'SetEnddingEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'oldEnding',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'newEnding',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'SetRewardRateEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'oldRate',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'newRate',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'DepositEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'user',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'WithdrawEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'user',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'ClaimEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'user',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    },
+    {
+      'name': 'RefundEvent',
+      'fields': [
+        {
+          'name': 'pool',
+          'type': 'publicKey',
+          'index': true
+        },
+        {
+          'name': 'token',
+          'type': 'publicKey',
+          'index': false
+        },
+        {
+          'name': 'amount',
+          'type': 'u64',
+          'index': false
+        }
+      ]
+    }
+  ],
   'errors': [
     {
       'code': 300,
@@ -1350,6 +1726,16 @@ export const IDL: Staking = {
       'code': 306,
       'name': 'InvalidRefundAmount',
       'msg': 'invalid refund amount'
+    },
+    {
+      'code': 307,
+      'name': 'InvalidEndTime',
+      'msg': 'invalid end time'
+    },
+    {
+      'code': 308,
+      'name': 'InvalidWhitelistFormat',
+      'msg': 'invalid whitelist format'
     }
   ]
 }

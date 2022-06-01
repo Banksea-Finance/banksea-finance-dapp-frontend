@@ -1,19 +1,16 @@
 import React, { useState } from 'react'
-import Flex from '@react-css/flex'
-import { Button, Grid, Tabs, Text } from '@/contexts/theme/components'
-import { StyledNftStakingPoolCard } from './index.styles'
+import { Button, Card, Flex, Grid, Tabs, Text, useResponsive } from '@banksea-finance/ui-kit'
 import NFTsGridView from '@/components/NFTsGridView'
 import { NFTStakingPoolConfig } from '@/hooks/programs/useStaking/constants/nft'
 import { useOwnedNFTsQuery } from '@/hooks/queries/useOwnedNFTsQuery'
 import { useNFTStaking } from '@/hooks/programs/useStaking'
-import { DataItem } from '@/pages/staking/components/DataItem'
+import { StatisticCard } from '@/pages/staking/components/StatisticCard'
 import { StakingPoolHead } from '@/pages/staking/components/StakingPoolHead'
 import { InfoGrid } from '@/pages/staking/components/common.styles'
-import { useResponsive } from '@/contexts/theme'
 import { MetadataResult } from '@/utils/metaplex/metadata'
-import QueriedData from '@/components/QueriedData'
+import { QueriedData } from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
-import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserDepositedSvg } from '@/components/svgs'
+import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserSvg } from '@/components/svgs'
 
 const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
@@ -36,7 +33,11 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const [selectedNfts, setSelectedNfts] = useState<MetadataResult[]>([])
 
   return (
-    <StyledNftStakingPoolCard flexDirection={'column'}>
+    <Card
+      flexDirection={'column'}
+      backgroundColor={'backgroundSecondary'}
+      p={{ lg: '24px 24px 36px 24px', _: '12px 8px' }}
+    >
       <StakingPoolHead
         name={name}
         icon={logo}
@@ -46,31 +47,62 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       />
 
       <InfoGrid>
-        <DataItem icon={<TotalDepositedSvg />} variant={'success'} label={'Total Deposited'} value={totalDeposited} />
-        <DataItem
-          icon={<AprSvg />}
-          variant={'secondary'}
-          label={'Rewards Per Staking Per Day'}
-          value={rewardsPerDay}
-          displayFunction={data => `${data.toFixed(6)}`}
+        <StatisticCard
+          type={'NFT'}
+          icon={<TotalDepositedSvg />}
+          label={'Total Deposited'}
+          description={'All CitizenOne on this staking pool.'}
+          value={totalDeposited}
+          background={require('@/assets/images/cards-bg/1.webp')}
         />
-        <DataItem
-          icon={<UserDepositedSvg />}
-          variant={'primaryContrary'}
+        <StatisticCard
+          type={'NFT'}
+          icon={<AprSvg />}
+          label={'RRPD'}
+          description={
+            <>
+              Rewards of Rarity Per Day. <br />
+              <br />
+              CitizenOne are divided into 4 rarity levels: <br />
+              <ul style={{ marginLeft: '16px' }}>
+                <li>level 1: CitizenOne without Mythic Traits.</li>
+                <li>level 2: CitizenOne with 1 Mythic trait.</li>
+                <li>level 3: CitizenOne with 2 Mythic Traits. </li>
+                <li>level 4: CitizenOne with 3 Mythic Traits. </li>
+              </ul>
+              <br />
+              E.g. If you deposit one CitizenOne at level 1 and another <br />
+              at level 2, you will receive (3 * RRPD) KSE as a daily reward. <br />
+              <br />
+              NOTE: The total reward rate is fixed, so the `RRPD` will <br />
+              dynamically update according to `Total Deposited`.
+            </>
+          }
+          value={rewardsPerDay}
+          displayFunction={data => `${data.toFixed(6)} KSE`}
+          background={require('@/assets/images/cards-bg/2.webp')}
+        />
+        <StatisticCard
+          type={'NFT'}
+          icon={<UserSvg />}
           label={'Your Deposited'}
+          description={'All CitizenOne you have deposited.'}
           value={userDeposited}
           displayFunction={data => data?.length.toString()}
+          background={require('@/assets/images/cards-bg/3.webp')}
         />
-        <DataItem
+        <StatisticCard
+          type={'NFT'}
           icon={<HistoryHarvestSvg />}
-          variant={'danger'}
           label={'Your History Harvest'}
+          description={'The your accumulated historical rewards in staking.'}
           value={userClaimedRewards}
           displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
+          background={require('@/assets/images/cards-bg/4.webp')}
         />
       </InfoGrid>
 
-      <Flex column alignItemsCenter>
+      <Flex flexDirection={'column'} ai={'center'}>
         <Tabs activeKey={key} onTabChange={setKey} width={'100%'} scale={isMobile ? 'S' : 'M'}>
           <Tabs.Pane title={'My Stake'} tabKey={'deposit'}>
             <Grid
@@ -112,31 +144,26 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           <Tabs.Pane title={'My Hold'} tabKey={'hold'}>
             <Grid
               gridTemplateColumns={'1fr max-content 1fr'}
-              mb={'16px'}
+              mb={'24px'}
               gridGap={'16px'}
               height={'32px'}
-              alignItems={'center'}
+              ai={'center'}
             >
               <div />
-              {account && (
-                <Flex alignItemsCenter justifyCenter style={{ width: '100%', marginBottom: '8px' }}>
-                  <Text as={'span'} color={'textDisabled'} mr={'4px'}>
-                    NFTs you hold:{' '}
-                    <QueriedData
-                      as={'span'}
-                      value={holds}
-                      color={'textDisabled'}
-                      displayFunction={v => v.length.toString()}
-                      fontWeight={500}
-                    />
-                    {' | '}
-                  </Text>
 
-                  <a href={'https://faucet.banksea.finance'} target={'_blank'} rel={'noreferrer'}>
-                    <Text color={'subtle'}>Request airdrop</Text>
-                  </a>
-                </Flex>
+              {account && (
+                <Text as={'span'} color={'textDisabled'} mr={'4px'} height={'fit-content'}>
+                  NFTs you hold:{' '}
+                  <QueriedData
+                    as={'span'}
+                    value={holds}
+                    color={'textDisabled'}
+                    displayFunction={v => v.length.toString()}
+                    fontWeight={500}
+                  />
+                </Text>
               )}
+
               {!!selectedNfts.length && (
                 <Button
                   width={'fit-content'}
@@ -154,7 +181,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           </Tabs.Pane>
         </Tabs>
       </Flex>
-    </StyledNftStakingPoolCard>
+    </Card>
   )
 }
 

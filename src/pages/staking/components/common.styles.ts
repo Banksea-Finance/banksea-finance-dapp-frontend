@@ -8,12 +8,11 @@ export const InfoGrid = styled.div`
   margin-bottom: 32px;
   justify-items: center;
 
-  ${({ theme }) => theme.mediaQueries.md} {
+  ${({ theme }) => theme.mediaQueries.maxMd} {
     width: 100%;
-    margin-left: 0;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 49% 49%;
     justify-items: start;
-    justify-content: center;
-    gap: 16px 32px;
+    justify-content: space-between;
+    grid-gap: 8px 0;
   }
 `

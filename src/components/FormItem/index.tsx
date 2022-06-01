@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { CSSProperties } from 'styled-components'
-import { Text } from '@/contexts/theme/components'
+import { Text } from '@banksea-finance/ui-kit'
 import { flexbox, FlexboxProps, layout, LayoutProps, space, SpaceProps } from 'styled-system'
 
 export type FormItemLabelPosition = 'left' | 'top' | 'right'

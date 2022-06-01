@@ -2,7 +2,7 @@ import React from 'react'
 import { AirdropPageContainer } from '@/pages/airdrop/index.styles'
 import { Introductions, PersonalInfo, UserVotedGrants } from '@/pages/airdrop/modules'
 import styled from 'styled-components'
-import { Card } from '@/contexts/theme/components'
+import { Card } from '@banksea-finance/ui-kit'
 import { COLUMN_LAYOUT_WIDTH_THRESHOLD } from './constant'
 import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
 

@@ -10,8 +10,8 @@ const DefaultPageContainer = styled.div`
   align-items: center;
 
   padding-bottom: 24px;
-  
-  ${({ theme }) => theme.mediaQueries.xl} {
+
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     padding: 16px 1.5vw;
   }
 `

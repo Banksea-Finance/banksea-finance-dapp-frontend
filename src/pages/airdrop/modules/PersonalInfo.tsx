@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
 import { useUserByWalletQuery } from '@/hooks/queries/airdrop/useUserByWalletQuery'
-import { useModal, useRefreshController, useSolanaWeb3 } from '@/contexts'
-import { Button, Dialog, Skeleton, Tag, Text } from '@/contexts/theme/components'
+import { useRefreshController, useSolanaWeb3 } from '@/contexts'
+import { Button, Dialog, Flex, Grid, Skeleton, Tag, Text, useModal } from '@banksea-finance/ui-kit'
 import { ReactComponent as DiscordIcon } from '@/assets/images/social-media-logos/discord.svg'
-import { Flex } from '@react-css/flex'
 import { Avatar } from '@/pages/airdrop/index.styles'
 import { shortenAddress } from '@/utils'
 import useDiscordUserQuery from '@/hooks/queries/airdrop/useDiscordUserQuery'
-import { Grid } from '@react-css/grid'
 import API from '@/api'
 import useDiscordAccessToken from '@/hooks/useDiscordAccessToken'
-import { WalletDialog } from '@/contexts/theme/components/Wallet/Wallet'
+import { WalletDialog } from '@/components/Wallet/Wallet'
 
 const BindingDialog: React.FC<{ token: string; wallet: string; username: string }> = ({ token, wallet, username }) => {
   const [loading, setLoading] = useState(false)
@@ -45,15 +43,14 @@ const BindingDialog: React.FC<{ token: string; wallet: string; username: string 
       onConfirm={confirm}
       cancelButtonProps={{ children: done ? 'Close' : undefined }}
       confirmButtonProps={{ isLoading: loading, disabled: done }}
-      bottomMessage={
-        done ? {
+      bottomMessage={done
+        ? {
           children: 'Connect successfully!',
           color: 'success'
         } : {
           children: error,
-          color: 'failure'
-        }
-      }
+          color: 'danger'
+        }}
     >
       <Text>
         Are you sure want to connect Discord account <b className={'primary'}>{username}</b> to Solana wallet{' '}
@@ -76,7 +73,7 @@ export const PersonalInfo: React.FC = () => {
 
   if (!account) {
     return (
-      <Flex alignItemsCenter justifyCenter style={{ height: '72px' }}>
+      <Flex ai={'center'} jc={'center'} style={{ height: '72px' }}>
         <Text mr={'8px'} fontSize={'18px'} bold>You have NOT connected to a wallet. Please</Text>
 
         <Button
@@ -99,7 +96,7 @@ export const PersonalInfo: React.FC = () => {
 
   if (!userByWallet?.username && !discordUser) {
     return (
-      <Flex alignItemsCenter justifyCenter style={{ marginTop: '48px' }}>
+      <Flex ai={'center'} jc={'center'} style={{ marginTop: '48px' }}>
         <Text mr={'8px'} fontSize={'18px'} bold>Account info not found by connecting wallet, please </Text>
 
         <Button variant={'primary'} scale={'M'} onClick={() => window.open(discordLoginUrl, '_blank')}>
@@ -112,16 +109,16 @@ export const PersonalInfo: React.FC = () => {
 
   if (!userByWallet?.username && discordUser) {
     return (
-      <Flex justifySpaceBetween alignItemsCenter>
-        <Flex alignItemsCenter>
+      <Flex jc="space-between" ai={'center'}>
+        <Flex ai={'center'}>
           <Avatar src={discordUser.avatar} />
           <div>
             <Text fontSize={'20px'} bold mb={'8px'}>
               {discordUser.username}
             </Text>
-            <Flex alignItemsCenter>
+            <Flex ai={'center'}>
               <Text mr={'8px'}>Roles: </Text>
-              <Grid gap={'4px'} columns={`repeat(${discordUser.roles?.length}, max-content)`}>
+              <Grid gap={'4px'} gridTemplateColumns={`repeat(${discordUser.roles?.length}, max-content)`}>
                 {discordUser.roles?.map(role => (
                   <Tag variant={'primaryContrary'} key={role}>
                     <Text fontWeight={500} color={'textContrary'}>{role}</Text>
@@ -133,7 +130,7 @@ export const PersonalInfo: React.FC = () => {
         </Flex>
 
         <div>
-          <Flex alignItemsCenter>
+          <Flex ai={'center'}>
             <Text mr={'8px'}>Your Solana address:</Text>
             <Text fontSize={'20px'} bold>
               {shortenAddress(account?.toBase58())}
@@ -148,16 +145,16 @@ export const PersonalInfo: React.FC = () => {
   }
 
   return (
-    <Flex justifySpaceBetween alignItemsCenter>
-      <Flex alignItemsCenter>
+    <Flex jc="space-between" ai={'center'}>
+      <Flex ai={'center'}>
         <Avatar src={userByWallet?.avatar} />
         <div>
           <Text fontSize={'20px'} bold mb={'8px'}>
             {userByWallet?.username}
           </Text>
-          <Flex alignItemsCenter>
+          <Flex ai={'center'}>
             <Text mr={'8px'}>Roles: </Text>
-            <Grid gap={'8px'} columns={`repeat(${userByWallet!.roles?.length}, max-content)`}>
+            <Grid gridGap={'8px'} gridTemplateColumns={`repeat(${userByWallet!.roles?.length}, max-content)`}>
               {userByWallet!.roles?.map(role => (
                 <Tag variant={'primaryContrary'} key={role}>
                   <Text fontWeight={500} color={'textContrary'}>{role}</Text>

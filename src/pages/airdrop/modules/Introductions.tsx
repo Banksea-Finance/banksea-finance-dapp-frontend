@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from '@/contexts/theme/components'
+import { Text } from '@banksea-finance/ui-kit'
 
 export const Introductions: React.FC = () => {
   return (

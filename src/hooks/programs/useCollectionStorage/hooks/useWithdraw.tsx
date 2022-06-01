@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import { MetadataResult } from '@/utils/metaplex/metadata'
-import { useModal, useSolanaWeb3 } from '@/contexts'
-import { Text } from '@/contexts/theme/components'
+import { Text, useModal } from '@banksea-finance/ui-kit'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { SYSVAR_CLOCK_PUBKEY, Transaction } from '@solana/web3.js'
 import { CollectionStoragePoolAddress } from '@/hooks/programs/useCollectionStorage/constants'
@@ -10,6 +9,7 @@ import { getAssetSigner, getPassbookSigner, getStakingSigner } from '@/hooks/pro
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { useCollectionStorageProgram } from '@/hooks/programs/useCollectionStorage/hooks/useCollectionStorageProgram'
 import { WalletNotConnectedError } from '@/utils/errors'
+import { useSolanaWeb3 } from '@/contexts'
 
 const WithdrawDialog: React.FC<{ metadataResult: MetadataResult }> = ({ metadataResult }) => {
   const { closeModal } = useModal()

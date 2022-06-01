@@ -10,10 +10,10 @@ const StakingPageContainer = styled(DefaultPageContainer)`
   display: grid;
   gap: 32px;
 
+  // TODO: make it effective for all pages
   min-width: 375px;
-  //overflow-x: auto;
 
-  ${({ theme }) => theme.mediaQueries.xl} {
+  ${({ theme }) => theme.mediaQueries.maxXl} {
     width: inherit;
     gap: 16px;
   }

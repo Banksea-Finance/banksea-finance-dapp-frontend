@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import { Text } from '@/contexts/theme/components'
-import { useModal, useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
+import { Text, useModal } from '@banksea-finance/ui-kit'
+import { useSolanaConnectionConfig, useSolanaWeb3 } from '@/contexts'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'

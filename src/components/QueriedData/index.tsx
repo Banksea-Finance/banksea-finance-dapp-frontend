@@ -1,15 +1,14 @@
 import React from 'react'
-import { Text } from '@/contexts/theme/components'
+import { Text, TextProps } from '@banksea-finance/ui-kit'
 import { ClipLoader } from 'react-spinners'
 import { UseQueryResult } from 'react-query'
-import { TextProps } from '@/contexts/theme/components/Text'
 
 export interface QueriedDataProps<T> extends TextProps {
   value: UseQueryResult<T | undefined>
   displayFunction?: (data: T) => string
 }
 
-const QueriedData = <T,>({ value, displayFunction, ...textProps }: QueriedDataProps<T>): JSX.Element => {
+export function QueriedData <T>({ value, displayFunction, ...textProps }: QueriedDataProps<T>): JSX.Element {
   return value.data ? (
     <Text {...textProps}>
       {
@@ -26,5 +25,3 @@ const QueriedData = <T,>({ value, displayFunction, ...textProps }: QueriedDataPr
       : <Text {...textProps}>-</Text>
   )
 }
-
-export default QueriedData

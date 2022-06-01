@@ -1,14 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { PublicKey, TransactionInstruction } from '@solana/web3.js'
-import { useModal, useSolanaWeb3 } from '@/contexts'
-import { Checkbox, Input, Text } from '@/contexts/theme/components'
-import { Flex } from '@react-css/flex'
+import { useSolanaWeb3 } from '@/contexts'
+import { Box, Checkbox, Flex, Input, Slider, Text, useModal, useResponsive } from '@banksea-finance/ui-kit'
 import BigNumber from 'bignumber.js'
 import useUserDepositedQuery from './useUserDepositedQuery'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
-import { useResponsive } from '@/contexts/theme'
-import Slider from 'rc-slider'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
 import { TokenStakingPoolConfig } from '../../constants/token'
@@ -18,22 +15,14 @@ import { buildTransaction } from '@/utils'
 import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
 import { DataLoadFailedError } from '../../helpers/errors'
 import { WalletNotConnectedError } from '@/utils/errors'
+import _ from 'lodash'
 
 export type UseTokenDepositProps = {
   poolAddress: PublicKey
   whitelistAddress?: PublicKey
 }
 
-const SliderWithTooltip = Slider.createSliderWithTooltip(Slider)
-
-const markNode = (number: number) => ({ style: { width: '8px' }, label: `${number}%` })
-const sliderMarks = {
-  0: markNode(0),
-  25: markNode(25),
-  50: markNode(50),
-  75: markNode(75),
-  100: markNode(100)
-}
+const sliderMarks = _.range(0, 5).map(o => o * 25).map(o => ({ value: o, label: `${o}%` }))
 
 const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
   const { depositTokenName, whitelist, pool } = config
@@ -82,7 +71,9 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
     )
   }, [userDeposits])
 
-  const onSliderChange = useCallback((v: number) => {
+  const onSliderChange = useCallback((_event, value: number | number[]) => {
+    const v = value as number
+
     setSliderValue(v)
 
     if (userDeposits) {
@@ -144,28 +135,33 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
 
       <Input
         scale={'M'}
+        disabled={userDeposits?.lte(0)}
         value={inputValue}
-        allowClear
         autoFocus
         onChange={onInputChange}
         mr={'4px'}
         mb={'8px'}
-        suffix={
+        endAdornment={
           <Text fontSize={'18px'} bold color={'primary'}>{depositTokenName}</Text>
         }
       />
 
-      <SliderWithTooltip
-        value={sliderValue}
-        onChange={onSliderChange}
-        style={{ width: '80%', left: '10%', height: '32px' }}
-        marks={sliderMarks}
-      />
+      <Box width={'80%'} ml={'10%'} mb={'32px'}>
+        <Slider
+          tooltip
+          disabled={userDeposits?.lte(0)}
+          value={sliderValue}
+          onChange={onSliderChange}
+          marks={sliderMarks}
+        />
+      </Box>
 
       {
         availableRewards?.gt(0) && (
-          <Flex alignItemsCenter justifyContent={'space-between'} style={{ marginTop: '8px' }}>
-            <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined}>Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time</Text>
+          <Flex ai={'center'} justifyContent={'space-between'}>
+            <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined} as={'span'}>
+              Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time
+            </Text>
             <Checkbox checked={claimAtSameTime} onChange={() => setClaimAtSameTime(b => !b)} />
           </Flex>
         )

@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { Card, Checkbox, Skeleton, Text } from '@/contexts/theme/components'
+import { Card, Checkbox, CheckboxProps, Skeleton, Text } from '@banksea-finance/ui-kit'
 import styled from 'styled-components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
-import { useResponsive } from '@/contexts/theme'
-import { CheckboxProps } from '@/contexts/theme/components/Checkbox'
 
 const StyledNftCard = styled(Card)`
   display: flex;
@@ -42,13 +40,14 @@ export interface NftCardProps extends MetadataResult, CheckboxProps {
 
 export const NftCard: React.FC<NftCardProps> = props => {
   const { data, account, checked, onChange } = props
-  const { isMobile } = useResponsive()
   const [loaded, setLoaded] = useState(false)
   const [hover, setHover] = useState(false)
 
   return (
     <StyledNftCard
-      variant={'success'}
+      variant={checked ? 'primaryContrary' : 'disabled'}
+      activeVariant={'primaryContrary'}
+      activeOnHover
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       width={'100%'}
@@ -56,7 +55,7 @@ export const NftCard: React.FC<NftCardProps> = props => {
     >
       {!loaded && <Skeleton width={'100%'} height={'258px'} />}
       <NFTImage src={data?.image} alt="" onLoad={() => setLoaded(true)} style={{ display: !loaded ? 'none' : '' }} />
-      <Text fontWeight={600} fontSize={isMobile ? '16px' : '18px'} color={'primary'} m={'6px 0 0 0'}>
+      <Text fontWeight={600} important fontSize={{ _: '14px', sm: '16px' }} textAlign={'center'} color={'primaryContrary'} m={'6px 0 0 0'}>
         {account?.data.data.name}
       </Text>
 
@@ -64,6 +63,7 @@ export const NftCard: React.FC<NftCardProps> = props => {
         checked={checked}
         onChange={() => {}}
         scale={'L'}
+        variant={'primaryContrary'}
         className={'nftcard-checkbox'}
         style={{ display: !checked && !hover ? 'none' : '' }}
       />
