@@ -6,7 +6,7 @@ import TransactionalDialog from '@/components/TransactionalDialog'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { chunk } from 'lodash'
 import { Transaction } from '@solana/web3.js'
-import { buildClaimInstruction, buildWithdrawInstruction } from '../../helpers/instructions'
+import { buildClaimInstructions, buildWithdrawInstruction } from '../../helpers/instructions'
 import { NFTStakingPoolConfig } from '../../constants/nft'
 import { WalletNotConnectedError } from '@/utils/errors'
 
@@ -23,7 +23,7 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
-  const handleDeposit = useCallback(async () => {
+  const buildWithdrawTransactions = useCallback(async () => {
     if (!user) throw WalletNotConnectedError
 
     const instructions = await Promise.all(
@@ -39,11 +39,11 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
 
     if (claimAtSameTime) {
       instructions.push(
-        await buildClaimInstruction({
+        ...(await buildClaimInstructions({
           user,
           program,
           pool
-        })
+        }))
       )
     }
 
@@ -62,7 +62,7 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
       transactionName={`Withdraw ${name}`}
       title={`Withdraw ${name}`}
       onCancel={closeModal}
-      transactionsBuilder={handleDeposit}
+      transactionsBuilder={buildWithdrawTransactions}
     >
       <Text fontSize={'18px'} mb={'8px'} bold>
         Are you sure to withdraw {metadataList.map(o => o.account?.data.data.name).join(', ')}?
@@ -71,7 +71,7 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
       {availableRewards?.gt(0) && (
         <Flex ai={'center'} jc={'space-between'}>
           <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined} style={{ marginTop: '8px' }}>
-            Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time
+            Harvest the rewards of {availableRewards?.toFixed(6)} {config.rewardTokenName} at the same time
           </Text>
           <Checkbox checked={claimAtSameTime} onChange={() => setClaimAtSameTime(b => !b)} />
         </Flex>

@@ -3,7 +3,6 @@ import { CitizenOneCollectionCreator } from '@/utils/constants'
 
 export type NFTStakingPoolConfig = {
   pool: PublicKey
-  whitelist: PublicKey
   name: string
   logo: string
   candyMachineAddress?: PublicKey
@@ -13,11 +12,10 @@ export type NFTStakingPoolConfig = {
 
 export const NFT_STAKING_POOLS: NFTStakingPoolConfig[] = [
   {
-    pool: new PublicKey('9ug4pBAT18tQeQWcvPogXRk7Ma35qRnBpNSCMHMPRh22'),
-    whitelist: new PublicKey('8MzoFXt7P3phCUDWLpxdxjpJu4Mo4nTy54CFhihnFW3P'),
+    pool: new PublicKey('7pJACYp2HBUxwqhZ1crFsSzMLbap9YuuiFqg1n4S2g7B'),
     creator: CitizenOneCollectionCreator,
-    name: 'Citizenone-dev',
+    name: 'CitizenOne-sKSE',
     logo: require('@/assets/images/citizen-one.png'),
-    rewardTokenName: 'KSE'
+    rewardTokenName: 'sKSE'
   }
 ]

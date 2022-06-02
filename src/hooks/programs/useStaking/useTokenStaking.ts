@@ -9,11 +9,9 @@ import {
   useWithdraw
 } from './hooks/token'
 import { TokenStakingPoolConfig } from './constants/token'
-import { useStakingProgram, useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
+import { useStakingEndTimeQuery, useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
 
 export const useTokenStaking = (config: TokenStakingPoolConfig) => {
-  const program = useStakingProgram()
-
   const deposit = useDeposit(config)
   const withdraw = useWithdraw(config)
   const claim = useClaim(config)
@@ -27,6 +25,8 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
   const userAvailableRewards = useUserAvailableRewardsQuery(config.pool)
   const userClaimedRewards = useUserClaimedRewardsQuery(config.pool)
 
+  const { data: endTime } = useStakingEndTimeQuery(config.pool)
+
   return {
     deposit,
     withdraw,
@@ -38,6 +38,6 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
     totalDeposited,
     userAvailableRewards,
     userClaimedRewards,
-    program
+    endTime
   }
 }

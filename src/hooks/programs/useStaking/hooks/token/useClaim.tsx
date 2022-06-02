@@ -6,7 +6,7 @@ import { BeatLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import { buildTransaction } from '@/utils'
-import { buildClaimInstruction } from '../../helpers/instructions'
+import { buildClaimInstructions } from '../../helpers/instructions'
 import { WalletNotConnectedError } from '@/utils/errors'
 
 const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
@@ -18,7 +18,7 @@ const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) =
   const handleClaim = useCallback(async () => {
     if (!user) throw WalletNotConnectedError
 
-    return buildTransaction(program.provider, [await buildClaimInstruction({ pool, user, program })])
+    return buildTransaction(program.provider, await buildClaimInstructions({ pool, user, program }))
   }, [user, pool])
 
   return (
@@ -35,8 +35,8 @@ const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) =
       ) : availableRewards?.gt(0) ? (
         <div>
           <Text textAlign={'center'} fontSize={'20px'} mb={'16px'}>
-            {'You have  '}
-            <b className="primary">{`${availableRewards.toString()}${rewardTokenName} `}</b>
+            You have
+            <b className="primary">{` ${availableRewards.toString()} ${rewardTokenName} `}</b>
             rewards available now. <br />
           </Text>
           <Text textAlign={'center'} fontSize={'20px'}>

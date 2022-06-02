@@ -511,6 +511,10 @@ export type Staking = {
             'type': 'u64'
           },
           {
+            'name': 'totalDepositAmount',
+            'type': 'u64'
+          },
+          {
             'name': 'authority',
             'type': 'publicKey'
           },
@@ -1379,6 +1383,10 @@ export const IDL: Staking = {
           },
           {
             'name': 'totalStakingAmount',
+            'type': 'u64'
+          },
+          {
+            'name': 'totalDepositAmount',
             'type': 'u64'
           },
           {

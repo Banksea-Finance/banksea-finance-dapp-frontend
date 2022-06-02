@@ -2,9 +2,9 @@ import { useQuery } from 'react-query'
 import { useRefreshController, useSolanaWeb3 } from '@/contexts'
 import { PublicKey } from '@solana/web3.js'
 import { getAvailableRewards } from '../../helpers/getters'
-import useStakingProgram from './useStakingProgram'
+import { useStakingProgram } from './useStakingProgram'
 
-const useUserAvailableRewardsQuery = (pool: PublicKey) => {
+export const useUserAvailableRewardsQuery = (pool: PublicKey) => {
   const { intermediateRefreshFlag } = useRefreshController()
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
@@ -15,5 +15,3 @@ const useUserAvailableRewardsQuery = (pool: PublicKey) => {
     return getAvailableRewards({ program, pool, user })
   })
 }
-
-export default useUserAvailableRewardsQuery

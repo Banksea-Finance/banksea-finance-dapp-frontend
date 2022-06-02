@@ -9,14 +9,17 @@ const useTotalDepositedQuery = ({ pool, whitelist }: TokenStakingPoolConfig) => 
   const { intermediateRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
-  return useQuery<BigNumber>(
+  return useQuery<BigNumber | undefined>(
     ['TOKEN_TOTAL_DEPOSITED', pool, whitelist, intermediateRefreshFlag],
     async () => {
-      const account = await program.account.pool.fetch(pool)
+      const account = await program.account.pool.fetchNullable(pool)
+
+      if (!account) return undefined
+
       const tokenMint = await getTokenStakingDepositTokenMint(program, whitelist)
       const decimals = await getTokenDecimals(program.provider.connection, tokenMint)
 
-      return new BigNumber(account.totalStakingAmount.toString()).shiftedBy(-decimals)
+      return new BigNumber(account.totalDepositAmount.toString()).shiftedBy(-decimals)
     }
   )
 }

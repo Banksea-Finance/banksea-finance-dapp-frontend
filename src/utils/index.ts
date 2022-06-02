@@ -1,12 +1,4 @@
 import BigNumber from 'bignumber.js'
-import { Connection, PublicKey, SignatureResult, Signer, Transaction, TransactionInstruction } from '@solana/web3.js'
-import { Provider } from '@project-serum/anchor'
-
-export const shortenAddress = (address?: string | PublicKey, length = 6) => {
-  const str = address?.toString()
-
-  return str ? `${str.substring(0, length)}...${str.slice(-length)}` : '-'
-}
 
 export function numberWithCommas(x?: string | number | BigNumber, decimalPlace = 2, showSign?: boolean): string {
   if (!x?.toString().length) {
@@ -58,32 +50,6 @@ export function simplifyNumber(x?: string | number | BigNumber, decimalPlace = 2
     return num.div(KILO).toFixed(decimalPlace) + 'K'
   } else {
     return num.toFixed(decimalPlace)
-  }
-}
-
-export function formatTime(time: Date) {
-  const now = Date.now()
-
-  const diff = (now - time.getTime()) / 1000
-
-  const onMinute = 60
-  const onHour = onMinute * 60
-  const onDay = onHour * 24
-  const oneMonth = onDay * 30
-  const oneYear = onDay * 365
-
-  if (diff < 30) {
-    return 'Just Now'
-  } else if (diff < onHour) {
-    return [Math.ceil(diff / onMinute), ' minute', diff / onMinute > 1 ? 's' : '', ' ago']
-  } else if (diff < onDay) {
-    return [Math.ceil(diff / onHour), ' hour', diff / onHour > 1 ? 's' : '', ' ago']
-  } else if (diff < oneMonth) {
-    return [Math.ceil(diff / onDay), ' day', diff / onDay > 1 ? 's' : '', ' ago']
-  } else if (diff < oneYear) {
-    return [Math.ceil(diff / oneMonth), ' month', diff / oneMonth > 1 ? 's' : '', ' ago']
-  } else {
-    return [Math.ceil(diff / oneYear), ' year', diff / oneYear > 1 ? 's' : '', ' ago']
   }
 }
 
@@ -143,33 +109,4 @@ export async function sleep(milliseconds: number) {
   return await new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-export function waitTransactionConfirm(connection: Connection, signature: string) {
-  return new Promise<void>((resolve, reject) => {
-    connection.onSignature(signature, (signatureResult: SignatureResult) => {
-      if (signatureResult.err) {
-        return reject(signatureResult.err)
-      } else {
-        return resolve()
-      }
-    })
-  })
-}
-
-export async function buildTransaction(provider: Provider, instructions: (TransactionInstruction | undefined)[], signers?: Signer[], feePayer?: PublicKey): Promise<Transaction> {
-  const tx = new Transaction({
-    recentBlockhash: (await provider.connection.getLatestBlockhash()).blockhash,
-    feePayer: feePayer || provider.wallet.publicKey
-  })
-
-  const nonNullInstructions = (instructions.filter(i => i !== undefined) as TransactionInstruction[])
-
-  if (nonNullInstructions.length) {
-    tx.add(...nonNullInstructions)
-  }
-
-  if (signers?.length) {
-    tx.sign(...signers)
-  }
-
-  return tx
-}
+export * from './solana'

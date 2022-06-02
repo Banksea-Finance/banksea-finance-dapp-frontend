@@ -9,18 +9,16 @@ export interface QueriedDataProps<T> extends TextProps {
 }
 
 export function QueriedData <T>({ value, displayFunction, ...textProps }: QueriedDataProps<T>): JSX.Element {
-  return value.data ? (
+  return value.data !== undefined ? (
     <Text {...textProps}>
       {
         displayFunction
           ? displayFunction(value.data)
-          : (
-            (value.data as any).toString?.() || value.data
-          )
+          : (value.data as any).toString?.() || value.data
       }
     </Text>
   ) : (
-    value.isFetching
+    value.isLoading
       ? <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
       : <Text {...textProps}>-</Text>
   )

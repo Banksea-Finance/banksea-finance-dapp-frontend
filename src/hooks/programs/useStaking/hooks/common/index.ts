@@ -1,3 +1,4 @@
-export { default as useUserAvailableRewardsQuery } from './useUserAvailableRewardsQuery'
-export { default as useUserClaimedRewardsQuery } from './useUserClaimedRewardsQuery'
-export { default as useStakingProgram } from './useStakingProgram'
+export { useUserAvailableRewardsQuery } from './useUserAvailableRewardsQuery'
+export { useUserClaimedRewardsQuery } from './useUserClaimedRewardsQuery'
+export { useStakingProgram } from './useStakingProgram'
+export { useStakingEndTimeQuery } from './useStakingEndTimeQuery'

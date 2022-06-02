@@ -107,7 +107,6 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
       program,
       tokenMint: depositTokenMint,
       user,
-      whitelist
     })
 
     return buildTransaction(program.provider, [registerInstruction, ...depositInstructions], signers)

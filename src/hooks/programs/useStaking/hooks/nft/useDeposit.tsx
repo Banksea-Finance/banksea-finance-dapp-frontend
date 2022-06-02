@@ -14,11 +14,11 @@ const NFTDepositDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: M
   config,
   metadataList
 }) => {
-  const { pool: pool, name, whitelist } = config
+  const { pool: pool, name } = config
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
-  const handleDeposit = useCallback(async () => {
+  const buildDepositTransaction = useCallback(async () => {
     if (!user) throw WalletNotConnectedError
 
     const registerInstruction = await buildRegisterInstruction({
@@ -27,18 +27,21 @@ const NFTDepositDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: M
       pool: config.pool
     })
 
-    const transactions = registerInstruction ? [
-      new Transaction({
-        recentBlockhash: (await program.provider.connection.getLatestBlockhash()).blockhash,
-        feePayer: user
-      }).add(registerInstruction)
-    ] : []
+    const transactions: Transaction[] = []
+
+    if (registerInstruction) {
+      transactions.push(
+        new Transaction({
+          recentBlockhash: (await program.provider.connection.getLatestBlockhash()).blockhash,
+          feePayer: user
+        }).add(registerInstruction)
+      )
+    }
 
     const depositTransactions = await buildDepositNFTsTransactions({
       tokens: metadataList.map(meta => ({ tokenMint: meta.mint, metadata: meta.address })),
       user,
       pool,
-      whitelist,
       program
     })
 
@@ -52,7 +55,7 @@ const NFTDepositDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: M
       maxWidth={'600px'}
       transactionName={`Deposit ${name}`}
       title={`Deposit ${name}`}
-      transactionsBuilder={handleDeposit}
+      transactionsBuilder={buildDepositTransaction}
     >
       <Text fontSize={'18px'} bold>
         Are you sure to deposit {metadataList.map(metadata => metadata.account?.data.data.name).join(', ')}?

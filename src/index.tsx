@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { GlobalStyles, ModalProvider, NotifyProvider, ThemeWrapperProvider } from '@banksea-finance/ui-kit'
 import './index.css'
+import dayjs from 'dayjs'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,45 +22,8 @@ const queryClient = new QueryClient({
 BigNumber.config({
   EXPONENTIAL_AT: 64,
 })
-/*
-ReactDOM.render(
-  <QueryClientProvider client={queryClient}>
-    <SolanaConnectionConfigProvider>
-      <SolanaWeb3Provider>
-        <ThemeWrapperProvider
-          configOverride={{
-            siteWidth: '1440px',
-            shadows: {
-              active: '0px 0px 4px 4px #7864e642'
-            },
-            colors: {
-              primary: '#7864e6',
-              primaryContrary: '#D25AE6',
-              secondary: '#5A82D2',
-              background: '#050F1E',
-              backgroundSecondary: '#0A143C',
-              text: '#fff',
-              disabled: '#999999',
-              gradient: 'linear-gradient(90deg, #7864E6 0%, #D25AE6 55%)'
-            },
-            fontFamilies: {
-              common: 'Rajdhani',
-              important: 'G8321'
-            }
-          }}
-        >
-          <RefreshControllerProvider>
-            <BrowserRouter>
-              <GlobalStyles />
-              <App />
-            </BrowserRouter>
-          </RefreshControllerProvider>
-        </ThemeWrapperProvider>
-      </SolanaWeb3Provider>
-    </SolanaConnectionConfigProvider>
-  </QueryClientProvider>
-  , document.getElementById('root')
-)*/
+
+dayjs.extend(require('dayjs/plugin/localizedFormat'))
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>

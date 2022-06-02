@@ -10,7 +10,7 @@ import { QueriedData } from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
 import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserSvg } from '@/components/svgs'
 
-const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
+export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
   const { currencies, rewardTokenName } = props
   const { account } = useSolanaWeb3()
 
@@ -26,7 +26,8 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
     withdraw,
     claim,
     compound,
-    poolBalance
+    poolBalance,
+    endTime
   } = useTokenStaking(props)
 
   return (
@@ -42,6 +43,7 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         rewardTokenName={rewardTokenName}
         onHarvest={claim}
         onCompound={compound}
+        endTime={endTime}
       />
 
       <InfoGrid>
@@ -106,5 +108,3 @@ const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
     </Card>
   )
 }
-
-export default TokenStakingPoolCard

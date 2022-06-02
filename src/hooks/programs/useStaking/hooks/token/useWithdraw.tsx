@@ -9,7 +9,7 @@ import { ClipLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
 import { TokenStakingPoolConfig } from '../../constants/token'
-import { buildClaimInstruction, buildWithdrawInstruction } from '../../helpers/instructions'
+import { buildClaimInstructions, buildWithdrawInstruction } from '../../helpers/instructions'
 import { BN } from '@project-serum/anchor'
 import { buildTransaction } from '@/utils'
 import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
@@ -95,7 +95,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
 
     if (claimAtSameTime) {
       instructions.push(
-        await buildClaimInstruction({ pool, user, program })
+        ...await buildClaimInstructions({ pool, user, program })
       )
     }
 
@@ -160,7 +160,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
         availableRewards?.gt(0) && (
           <Flex ai={'center'} justifyContent={'space-between'}>
             <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined} as={'span'}>
-              Harvest the rewards of {availableRewards?.toFixed(6)} KSE at the same time
+              Harvest the rewards of {availableRewards?.toFixed(6)} {config.rewardTokenName} at the same time
             </Text>
             <Checkbox checked={claimAtSameTime} onChange={() => setClaimAtSameTime(b => !b)} />
           </Flex>

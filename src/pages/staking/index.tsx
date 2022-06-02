@@ -2,9 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import DefaultPageContainer from '@/components/DefaultPageContainer'
 import { TOKEN_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/token'
-import TokenStakingPoolCard from '@/pages/staking/components/TokenStakingPoolCard'
+import { TokenStakingPoolCard } from './components/TokenStakingPoolCard'
 import { NFT_STAKING_POOLS } from '@/hooks/programs/useStaking/constants/nft'
-import NftStakingPoolCard from '@/pages/staking/components/NftStakingPoolCard'
+import { NFTStakingPoolCard } from './components/NFTStakingPoolCard'
 
 const StakingPageContainer = styled(DefaultPageContainer)`
   display: grid;
@@ -30,7 +30,7 @@ export const StakingPage: React.FC = () => {
 
       {
         NFT_STAKING_POOLS.map((p, index) => (
-          <NftStakingPoolCard {...p} key={index} />
+          <NFTStakingPoolCard {...p} key={index} />
         ))
       }
     </StakingPageContainer>

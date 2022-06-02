@@ -3,7 +3,7 @@ import { Card, Checkbox, CheckboxProps, Skeleton, Text } from '@banksea-finance/
 import styled from 'styled-components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
 
-const StyledNftCard = styled(Card)`
+const StyledNFTCard = styled(Card)`
   display: flex;
   padding: 18px;
   flex-direction: column;
@@ -34,17 +34,17 @@ export type NftCardOperate = {
   callback: (nft: MetadataResult) => void
 }
 
-export interface NftCardProps extends MetadataResult, CheckboxProps {
+export interface NFTCardProps extends MetadataResult, CheckboxProps {
   operate?: NftCardOperate
 }
 
-export const NftCard: React.FC<NftCardProps> = props => {
+export const NFTCard: React.FC<NFTCardProps> = props => {
   const { data, account, checked, onChange } = props
   const [loaded, setLoaded] = useState(false)
   const [hover, setHover] = useState(false)
 
   return (
-    <StyledNftCard
+    <StyledNFTCard
       variant={checked ? 'primaryContrary' : 'disabled'}
       activeVariant={'primaryContrary'}
       activeOnHover
@@ -67,13 +67,6 @@ export const NftCard: React.FC<NftCardProps> = props => {
         className={'nftcard-checkbox'}
         style={{ display: !checked && !hover ? 'none' : '' }}
       />
-      {/*{*/}
-      {/*  operate && (*/}
-      {/*    <Button scale={'M'} variant={'primaryContrary'} onClick={() => operate.callback(props)}>*/}
-      {/*      {operate.text}*/}
-      {/*    </Button>*/}
-      {/*  )*/}
-      {/*}*/}
-    </StyledNftCard>
+    </StyledNFTCard>
   )
 }

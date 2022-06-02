@@ -5,6 +5,7 @@ import { createTokenAccountInstrs } from '@project-serum/common'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { StakingProgramIdlType } from '../constants'
 import { DataLoadFailedError } from './errors'
+import { getOrCreateTokenAccount } from '@/utils'
 
 export type BuildRegisterInstructionProps = {
   user: PublicKey
@@ -37,7 +38,6 @@ export async function buildRegisterInstruction(
 export type BuildDepositInstructionsProps = {
   user: PublicKey
   pool: PublicKey
-  whitelist: PublicKey
   depositAccount?: PublicKey | (() => Promise<PublicKey | undefined>)
   tokenMint: PublicKey
   program: Program<StakingProgramIdlType>
@@ -48,7 +48,7 @@ export type BuildDepositInstructionsProps = {
 export async function buildDepositInstructions(
   props: BuildDepositInstructionsProps
 ): Promise<{ instructions: TransactionInstruction[], signers: Signer[] }> {
-  const { user, tokenMint, metadata, program, pool, whitelist, depositAccount: _depositAccount, amount = new BN(1) } = props
+  const { user, tokenMint, metadata, program, pool, depositAccount: _depositAccount, amount = new BN(1) } = props
   const instructions: TransactionInstruction[] = []
 
   const depositAccount = typeof _depositAccount === 'function' ? await _depositAccount() : _depositAccount
@@ -62,11 +62,12 @@ export async function buildDepositInstructions(
   const { address: passbook } = (await getPassbook(props))!
 
   // check asset or add
-  const { assetAddress: asset, assetBump, assetAccount } = await getAsset({
-    passbook: passbook,
-    tokenMint,
-    program
-  })
+  const { assetAddress: asset, assetBump, assetAccount } = await getAsset({ passbook, tokenMint, program })
+
+  const [whitelist] = await PublicKey.findProgramAddress(
+    [Buffer.from('whitelist'), pool.toBuffer(), tokenMint.toBuffer()],
+    program.programId
+  )
 
   if (!assetAccount) {
     const [stakingSigner, stakingSignerBump] = await PublicKey.findProgramAddress(
@@ -173,7 +174,7 @@ export type BuildClaimInstructionProps = {
   amount?: BN
 }
 
-export async function buildClaimInstruction(props: BuildClaimInstructionProps) {
+export async function buildClaimInstructions(props: BuildClaimInstructionProps): Promise<TransactionInstruction[]> {
   const { program, pool, user, amount } = props
 
   const { rewardAccount, rewardMint } = await program.account.pool.fetch(pool)
@@ -185,20 +186,34 @@ export async function buildClaimInstruction(props: BuildClaimInstructionProps) {
 
   const { address: passbook } = await getPassbook(props)
 
-  const claimAccount = (
-    await program.provider.connection.getTokenAccountsByOwner(user, { mint: rewardMint })
-  ).value[0].pubkey
+  const {
+    instruction: createRewardTokenAccountInstruction,
+    pubkey: rewardTokenAccountAddress
+  } = await getOrCreateTokenAccount(program.provider.connection, rewardMint, user, 'largest')
 
-  return program.instruction.claim(amount || null, {
+  console.log({
+    createRewardTokenAccountInstruction,
+    rewardTokenAccountAddress
+  })
+
+  const instructions: TransactionInstruction[] = []
+
+  if (createRewardTokenAccountInstruction) {
+    instructions.push(createRewardTokenAccountInstruction)
+  }
+
+  instructions.push(await program.instruction.claim(amount || null, {
     accounts: {
       passbook,
       pool,
-      claimAccount,
+      claimAccount: rewardTokenAccountAddress,
       rewardSigner,
       rewardAccount,
       user,
       tokenProgram: TOKEN_PROGRAM_ID,
       clock: SYSVAR_CLOCK_PUBKEY
     }
-  })
+  }))
+
+  return instructions
 }

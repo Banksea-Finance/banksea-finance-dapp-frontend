@@ -5,7 +5,7 @@ import { useSolanaWeb3 } from '@/contexts'
 import { Flex, Text } from '@banksea-finance/ui-kit'
 import { UseQueryResult } from 'react-query'
 import { PropagateLoader } from 'react-spinners'
-import { NftCard, NftCardOperate } from '@/components/NftCard'
+import { NFTCard, NftCardOperate } from '@/components/NFTCard'
 
 const Grid = styled.div`
   display: grid;
@@ -95,7 +95,7 @@ const NFTsGridView: React.FC<NFTsGridViewProps> = ({ queryResult, itemOperation,
     <Grid>
       {
         queryResult.data.map(o => (
-          <NftCard
+          <NFTCard
             operate={itemOperation}
             {...o}
             key={o.address.toBase58()}

@@ -1,72 +1,26 @@
-import { Card, Flex, Grid, Text } from '@banksea-finance/ui-kit'
+import { Box, Card, Flex, Grid, Tag, Text } from '@banksea-finance/ui-kit'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
 import React from 'react'
 import styled from 'styled-components'
 import { UseQueryResult } from 'react-query'
 import BigNumber from 'bignumber.js'
 import { QueriedData } from '@/components/QueriedData'
+import dayjs from 'dayjs'
+import { QuestionMarkSvg } from '@/components/svgs'
+import ReactTooltip from 'react-tooltip'
 
 export type StakingPoolHeadProps = {
   name: string
   icon: string
+  description?: React.ReactNode
 
   availableRewards: UseQueryResult<BigNumber | undefined>
   rewardTokenName: string
   onHarvest: () => void
   onCompound?: () => void
+
+  endTime?: number
 }
-
-const StakingPoolHeadContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  
-  ${({ theme }) => theme.mediaQueries.maxMd} {
-    flex-direction: column;
-    justify-content: start;
-    align-items: start;
-    
-    .poolname {
-      margin-bottom: 12px;
-    }
-  }
-`
-
-const RewardsCard = styled(Card)`
-  display: flex;
-  align-items: center;
-  padding: 6px 6px 6px 30px;
-  border-radius: 28px;
-  
-  .texts {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-right: 16px;
-    column-gap: 8px;
-    
-    div {
-      font-size: 16px;
-    }
-  }
-  
-  ${({ theme }) => theme.mediaQueries.maxMd} {
-    padding: 4px 24px;
-    margin: 0 auto;
-    border-radius: 32px;
-    flex-direction: column;
-
-    .texts {
-      margin-right: 0;
-      margin-bottom: 8px;
-    }
-  }
-  
-  ${({ theme }) => theme.mediaQueries.maxXs} {
-    padding: 4px 16px;
-  }
-`
 
 const PoolImage = styled.img`
   width: 50px;
@@ -82,36 +36,85 @@ const PoolImage = styled.img`
   }
 `
 
-export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({ name, icon, availableRewards, rewardTokenName, onHarvest, onCompound }) => {
+export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({
+  name, icon, availableRewards, rewardTokenName, onHarvest, onCompound, endTime, description
+}) => {
   return (
-    <StakingPoolHeadContainer>
-      <Flex ai={'center'} className={'poolname'}>
-        <PoolImage src={icon} />
-        <Text bold gradient important fontSize={{ lg: '42px', _: 'max(22px, 4vw)' }}>{name}</Text>
+    <Flex
+      flexDirection={'column'}
+      ai={'center'}
+      width={'100%'}
+      mb={{ _: '32px' }}
+    >
+      <Flex
+        jc={{ _: 'start', md: 'space-between' }}
+        flexDirection={{ _: 'column', md: 'row' }}
+        ai={{ _: 'start', md: 'center' }}
+        width={'100%'}
+      >
+        <Flex ai={'center'} mb={{ _: '8px', md: '0' }} >
+          <PoolImage src={icon} />
+
+          <Text
+            bold
+            gradient
+            important
+            fontSize={{ lg: '36px', _: 'max(22px, 4vw)' }}
+            mr={'8px'}
+          >
+            {name}
+          </Text>
+
+          {
+            description && (
+              <>
+                <Box data-tip="true" data-for={name}>
+                  <QuestionMarkSvg color={'#aaa'} />
+                </Box>
+                <ReactTooltip id={name} aria-haspopup="true">
+                  <Text>{description}</Text>
+                </ReactTooltip>
+              </>
+            )
+          }
+        </Flex>
+
+        <Flex jc={{ _: 'center', md: 'end' }} width={{ _: '100%', md: 'fit-content' }}>
+          <Card plain>
+            <Flex
+              ai={'center'}
+              p={{ md: '6px 6px 6px 30px', _: '4px 18px' }}
+              borderRadius={{ md: '28px', _: '32px' }}
+              flexDirection={{ _: 'column', md: 'row' }}
+            >
+              <Flex ai={'center'} mr={{ md: '16px', _: '0' }} gap={'0 8px'} mb={{ _: '8px', md: '0' }}>
+                <Text color={'primary'}>
+                  {'Available rewards: '}
+                </Text>
+                <QueriedData
+                  color={'textContrary'}
+                  value={availableRewards}
+                  displayFunction={v => `${v.toFixed(6)} ${rewardTokenName}`}
+                />
+              </Flex>
+              <Grid gridGap={'8px'} gridTemplateColumns={`repeat(${onCompound ? '2' : '1'}, max-content)`}>
+                <WalletRequiredButton plain circle scale={'S'} onClick={onHarvest} variant={'primary'}>
+                  Harvest
+                </WalletRequiredButton>
+                {onCompound && (
+                  <WalletRequiredButton plain circle scale={'S'} onClick={onCompound} variant={'primary'}>
+                    Compound
+                  </WalletRequiredButton>
+                )}
+              </Grid>
+            </Flex>
+          </Card>
+        </Flex>
       </Flex>
 
-      <RewardsCard plain>
-        <div className="texts">
-          <Text color={'primary'}>
-            {'Available rewards: '}
-          </Text>
-          <QueriedData
-            color={'textContrary'}
-            value={availableRewards}
-            displayFunction={v => `${v.toFixed(6)} ${rewardTokenName}`}
-          />
-        </div>
-        <Grid gridGap={'8px'} gridTemplateColumns={`repeat(${onCompound ? '2' : '1'}, max-content)`}>
-          <WalletRequiredButton plain circle scale={'S'} onClick={onHarvest} variant={'primary'}>
-            Harvest
-          </WalletRequiredButton>
-          {onCompound && (
-            <WalletRequiredButton plain circle scale={'S'} onClick={onCompound} variant={'primary'}>
-              Compound
-            </WalletRequiredButton>
-          )}
-        </Grid>
-      </RewardsCard>
-    </StakingPoolHeadContainer>
+      {
+        !!endTime && <Tag gradient scale={'S'} ml={'8px'} mt={{ _: '8px' }}>Ending time: {dayjs.unix(endTime).format('lll')}</Tag>
+      }
+    </Flex>
   )
 }

@@ -5,7 +5,7 @@ import TransactionalDialog from '@/components/TransactionalDialog'
 import { BeatLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { NFTStakingPoolConfig } from '../../constants/nft'
-import { buildClaimInstruction } from '../../helpers/instructions'
+import { buildClaimInstructions } from '../../helpers/instructions'
 import { WalletNotConnectedError } from '@/utils/errors'
 import { buildTransaction } from '@/utils'
 
@@ -18,13 +18,14 @@ const NFTClaimDialog: React.FC<{ config: NFTStakingPoolConfig }> = ({ config }) 
   const handleClaim = useCallback(async () => {
     if (!account) throw WalletNotConnectedError
 
-    return buildTransaction(program.provider, [
-      await buildClaimInstruction({
+    return buildTransaction(
+      program.provider,
+      await buildClaimInstructions({
         user: account,
         program,
         pool
       })
-    ])
+    )
   }, [config, account, program])
 
   return (
@@ -42,7 +43,7 @@ const NFTClaimDialog: React.FC<{ config: NFTStakingPoolConfig }> = ({ config }) 
       ) : availableRewards?.gt(0) ? (
         <Text fontSize={'20px'} textAlign={'center'}>
           Are you sure to harvest rewards of{' '}
-          <b className="primary">{` ${availableRewards?.toString()}${config.rewardTokenName} `}</b>
+          <b className="primary">{` ${availableRewards?.toString()} ${config.rewardTokenName} `}</b>
           {' from '}
           {name} pool?
         </Text>

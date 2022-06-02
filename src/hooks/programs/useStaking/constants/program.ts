@@ -1,7 +1,7 @@
 import { PublicKey } from '@solana/web3.js'
 import { IDL, Staking } from './idl'
 
-export const StakingProgramAddress = new PublicKey('8EMGFmsk5mkbPMfCxoG1hTGsfTVaPuJh5Gx1esdHMxNh')
+export const StakingProgramAddress = new PublicKey('FYmnBNQ1oEbpjtfcBtZPVgwNATqT64h2WV4d4r4ZSmJK')
 
 export type StakingProgramIdlType = Staking
 

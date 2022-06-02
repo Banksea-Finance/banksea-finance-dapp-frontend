@@ -6,7 +6,7 @@ import { BeatLoader } from 'react-spinners'
 import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import { BN } from '@project-serum/anchor'
-import { buildClaimInstruction, buildDepositInstructions } from '../../helpers/instructions'
+import { buildClaimInstructions, buildDepositInstructions } from '../../helpers/instructions'
 import { buildTransaction } from '@/utils'
 import { getTokenDecimals, getTokenStakingDepositTokenMint } from '../../helpers/getters'
 import { getLargestTokenAccount } from '../../helpers/accounts'
@@ -31,7 +31,7 @@ const CompoundDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
 
     const amount = new BN(availableRewards.shiftedBy(decimals).toString())
 
-    const claimInstruction = await buildClaimInstruction({
+    const claimInstructions = await buildClaimInstructions({
       pool,
       user,
       program,
@@ -49,11 +49,10 @@ const CompoundDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
       pool,
       program,
       tokenMint: depositTokenMint,
-      user,
-      whitelist
+      user
     })
 
-    return buildTransaction(program.provider, [claimInstruction, ...depositInstructions], signers)
+    return buildTransaction(program.provider, [...claimInstructions, ...depositInstructions], signers)
   }, [availableRewards, pool, user, whitelist])
 
   return (
@@ -70,8 +69,8 @@ const CompoundDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
       ) : availableRewards?.gt(0) ? (
         <div>
           <Text textAlign={'center'} fontSize={'20px'} mb={'16px'}>
-            {'You have  '}
-            <b className="primary">{`${availableRewards.toString()}${rewardTokenName} `}</b>
+            You have
+            <b className="primary">{` ${availableRewards.toString()} ${rewardTokenName} `}</b>
             rewards available now. <br />
           </Text>
           <Text textAlign={'center'} fontSize={'20px'}>

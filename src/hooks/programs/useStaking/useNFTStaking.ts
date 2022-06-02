@@ -1,5 +1,5 @@
 import { NFTStakingPoolConfig } from './constants/nft'
-import { useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
+import { useStakingEndTimeQuery, useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
 import {
   useClaim,
   useDeposit,
@@ -23,6 +23,8 @@ export const useNFTStaking = (config: NFTStakingPoolConfig) => {
   const userClaimedRewards = useUserClaimedRewardsQuery(pool)
   const userAvailableRewards = useUserAvailableRewardsQuery(pool)
 
+  const { data: endTime } = useStakingEndTimeQuery(config.pool)
+
   return {
     deposit,
     withdraw,
@@ -31,6 +33,7 @@ export const useNFTStaking = (config: NFTStakingPoolConfig) => {
     totalDeposited,
     userClaimedRewards,
     userAvailableRewards,
-    rewardsPerDay
+    rewardsPerDay,
+    endTime
   }
 }

@@ -12,13 +12,14 @@ import { QueriedData } from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
 import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserSvg } from '@/components/svgs'
 
-const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
+export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
 
   const { isMobile } = useResponsive()
   const [key, setKey] = useState('hold')
   const holds = useOwnedNFTsQuery(creator)
   const { account } = useSolanaWeb3()
+
   const {
     userDeposited,
     totalDeposited,
@@ -27,7 +28,8 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
     userAvailableRewards,
     claim,
     deposit,
-    withdraw
+    withdraw,
+    endTime
   } = useNFTStaking(props)
 
   const [selectedNfts, setSelectedNfts] = useState<MetadataResult[]>([])
@@ -41,9 +43,17 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
       <StakingPoolHead
         name={name}
         icon={logo}
+        description={
+          <>
+            CitizenOne staking for $sKSE <br />
+            NOTE: $sKSE is the pre-staking token. <br />
+            It can be transformed into $KSE after $KSE is issued.
+          </>
+        }
         availableRewards={userAvailableRewards}
         rewardTokenName={rewardTokenName}
         onHarvest={claim}
+        endTime={endTime}
       />
 
       <InfoGrid>
@@ -72,14 +82,14 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
               </ul>
               <br />
               E.g. If you deposit one CitizenOne at level 1 and another <br />
-              at level 2, you will receive (3 * RRPD) KSE as a daily reward. <br />
+              at level 2, you will receive (3 * RRPD) ${props.rewardTokenName} as a daily reward. <br />
               <br />
               NOTE: The total reward rate is fixed, so the `RRPD` will <br />
               dynamically update according to `Total Deposited`.
             </>
           }
           value={rewardsPerDay}
-          displayFunction={data => `${data.toFixed(6)} KSE`}
+          displayFunction={data => `${data.toFixed(6)} ${props.rewardTokenName}`}
           background={require('@/assets/images/cards-bg/2.webp')}
         />
         <StatisticCard
@@ -95,7 +105,7 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           type={'NFT'}
           icon={<HistoryHarvestSvg />}
           label={'Your History Harvest'}
-          description={'The your accumulated historical rewards in staking.'}
+          description={'The your accumulated historical harvest in staking.'}
           value={userClaimedRewards}
           displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
           background={require('@/assets/images/cards-bg/4.webp')}
@@ -184,5 +194,3 @@ const NftStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
     </Card>
   )
 }
-
-export default NftStakingPoolCard
