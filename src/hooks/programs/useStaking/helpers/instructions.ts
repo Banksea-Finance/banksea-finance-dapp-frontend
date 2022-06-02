@@ -191,11 +191,6 @@ export async function buildClaimInstructions(props: BuildClaimInstructionProps):
     pubkey: rewardTokenAccountAddress
   } = await getOrCreateTokenAccount(program.provider.connection, rewardMint, user, 'largest')
 
-  console.log({
-    createRewardTokenAccountInstruction,
-    rewardTokenAccountAddress
-  })
-
   const instructions: TransactionInstruction[] = []
 
   if (createRewardTokenAccountInstruction) {

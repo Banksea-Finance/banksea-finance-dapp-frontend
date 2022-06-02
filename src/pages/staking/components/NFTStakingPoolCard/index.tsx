@@ -15,6 +15,8 @@ import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserSvg } from '@/compone
 export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
 
+  const [selectedNfts, setSelectedNfts] = useState<MetadataResult[]>([])
+
   const { isMobile } = useResponsive()
   const [key, setKey] = useState('hold')
   const holds = useOwnedNFTsQuery(creator)
@@ -23,16 +25,15 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const {
     userDeposited,
     totalDeposited,
-    userClaimedRewards,
-    rewardsPerDay,
+    userDailyRewards,
+    RRPD,
     userAvailableRewards,
     claim,
     deposit,
     withdraw,
-    endTime
+    endTime,
+    ended
   } = useNFTStaking(props)
-
-  const [selectedNfts, setSelectedNfts] = useState<MetadataResult[]>([])
 
   return (
     <Card
@@ -54,6 +55,7 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         rewardTokenName={rewardTokenName}
         onHarvest={claim}
         endTime={endTime}
+        ended={ended}
       />
 
       <InfoGrid>
@@ -88,7 +90,7 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
               dynamically update according to `Total Deposited`.
             </>
           }
-          value={rewardsPerDay}
+          value={RRPD}
           displayFunction={data => `${data.toFixed(6)} ${props.rewardTokenName}`}
           background={require('@/assets/images/cards-bg/2.webp')}
         />
@@ -104,9 +106,16 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         <StatisticCard
           type={'NFT'}
           icon={<HistoryHarvestSvg />}
-          label={'Your History Harvest'}
-          description={'The your accumulated historical harvest in staking.'}
-          value={userClaimedRewards}
+          label={'Your Daily Reward'}
+          description={
+            <>
+              Daily rewards are calculated in real time according to the <br />
+              CitizenOnes you have deposited. <br /><br />
+              E.g. If you deposit one CitizenOne at level 1 and another <br />
+              at level 2, you will receive (3 * RRPD) KSE as a daily reward.
+            </>
+          }
+          value={userDailyRewards}
           displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
           background={require('@/assets/images/cards-bg/4.webp')}
         />
@@ -181,6 +190,7 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                   onClick={() => {
                     deposit(selectedNfts)
                   }}
+                  disabled={ended}
                 >
                   Deposit selected
                 </Button>

@@ -9,7 +9,9 @@ import {
   useWithdraw
 } from './hooks/token'
 import { TokenStakingPoolConfig } from './constants/token'
-import { useStakingEndTimeQuery, useUserAvailableRewardsQuery, useUserClaimedRewardsQuery } from './hooks/common'
+import { useStakingEndTimeQuery, useUserAvailableRewardsQuery, useUserDailyRewardsQuery } from './hooks/common'
+import { useCurrentSlotTime } from '@/hooks/useCurrentSlotTime'
+import { useMemo } from 'react'
 
 export const useTokenStaking = (config: TokenStakingPoolConfig) => {
   const deposit = useDeposit(config)
@@ -17,15 +19,22 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
   const claim = useClaim(config)
   const compound = useCompound(config)
 
-  const APR = useAPRQuery(config)
+  const { data: endTime } = useStakingEndTimeQuery(config.pool)
+
+  const currentSlotTime = useCurrentSlotTime()
+
+  const ended = useMemo(
+    () => !!currentSlotTime && !!endTime && currentSlotTime > endTime,
+    [currentSlotTime, endTime]
+  )
+
+  const APR = useAPRQuery(config, ended)
   const totalDeposited = useTotalDepositedQuery(config)
   const userDeposited = useUserDepositedQuery(config)
   const poolBalance = usePoolBalanceQuery(config)
 
   const userAvailableRewards = useUserAvailableRewardsQuery(config.pool)
-  const userClaimedRewards = useUserClaimedRewardsQuery(config.pool)
-
-  const { data: endTime } = useStakingEndTimeQuery(config.pool)
+  const userDailyRewards = useUserDailyRewardsQuery(config.pool, APR?.data?.totalRewardsPerDay)
 
   return {
     deposit,
@@ -37,7 +46,8 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
     userDeposited,
     totalDeposited,
     userAvailableRewards,
-    userClaimedRewards,
-    endTime
+    userDailyRewards,
+    endTime,
+    ended
   }
 }

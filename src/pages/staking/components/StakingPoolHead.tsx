@@ -20,6 +20,7 @@ export type StakingPoolHeadProps = {
   onCompound?: () => void
 
   endTime?: number
+  ended: boolean
 }
 
 const PoolImage = styled.img`
@@ -37,7 +38,7 @@ const PoolImage = styled.img`
 `
 
 export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({
-  name, icon, availableRewards, rewardTokenName, onHarvest, onCompound, endTime, description
+  name, icon, availableRewards, rewardTokenName, onHarvest, onCompound, endTime, description, ended
 }) => {
   return (
     <Flex
@@ -113,7 +114,15 @@ export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({
       </Flex>
 
       {
-        !!endTime && <Tag gradient scale={'S'} ml={'8px'} mt={{ _: '8px' }}>Ending time: {dayjs.unix(endTime).format('lll')}</Tag>
+        !!endTime && (
+          <Tag gradient={!ended || undefined} variant={ended ? 'warning' : undefined} scale={'S'} ml={'8px'} mt={{ _: '8px' }}>
+            {
+              ended
+                ? 'Staking has ended'
+                : `Ending time: ${dayjs.unix(endTime).format('lll')}`
+            }
+          </Tag>
+        )
       }
     </Flex>
   )

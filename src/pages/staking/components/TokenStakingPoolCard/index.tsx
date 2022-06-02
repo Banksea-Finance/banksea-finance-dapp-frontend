@@ -21,13 +21,14 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
     userDeposited,
     totalDeposited,
     userAvailableRewards,
-    userClaimedRewards,
+    userDailyRewards,
     APR,
     withdraw,
     claim,
     compound,
     poolBalance,
-    endTime
+    endTime,
+    ended
   } = useTokenStaking(props)
 
   return (
@@ -44,6 +45,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         onHarvest={claim}
         onCompound={compound}
         endTime={endTime}
+        ended={ended}
       />
 
       <InfoGrid>
@@ -83,9 +85,16 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         <StatisticCard
           type={'TOKEN'}
           icon={<HistoryHarvestSvg />}
-          label={'Your History Harvest'}
-          description={'The your accumulated historical rewards in staking.'}
-          value={userClaimedRewards}
+          label={'User Daily Rewards'}
+          description={
+            <>
+              Daily rewards are calculated in real <br />
+              time according to the $KSE you have deposited.
+              E.g. If you deposit 3 $KSE, you will <br />
+              receive (3 * APR / 365) KSE as a daily rewards.
+            </>
+          }
+          value={userDailyRewards}
           displayFunction={data => `${data.toFixed(2)} ${rewardTokenName}`}
           background={require('@/assets/images/cards-bg/4.webp')}
         />
@@ -96,7 +105,9 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           <WalletRequiredButton onClick={withdraw} variant={'outlined'}>
             Withdraw
           </WalletRequiredButton>
-          <WalletRequiredButton onClick={deposit}>Deposit</WalletRequiredButton>
+          <WalletRequiredButton onClick={deposit} disabled={ended}>
+            Deposit
+          </WalletRequiredButton>
         </Grid>
       </Flex>
 

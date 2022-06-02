@@ -1,4 +1,4 @@
 export { useUserAvailableRewardsQuery } from './useUserAvailableRewardsQuery'
-export { useUserClaimedRewardsQuery } from './useUserClaimedRewardsQuery'
+export { useUserDailyRewardsQuery } from './useUserDailyRewardsQuery'
 export { useStakingProgram } from './useStakingProgram'
 export { useStakingEndTimeQuery } from './useStakingEndTimeQuery'

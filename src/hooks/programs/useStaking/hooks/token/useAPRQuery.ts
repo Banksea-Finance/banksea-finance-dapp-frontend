@@ -5,15 +5,16 @@ import { TokenStakingPoolConfig } from '../../constants/token'
 import { useStakingProgram } from '../common'
 
 const useAPRQuery = (
-  { pool }: TokenStakingPoolConfig
+  { pool }: TokenStakingPoolConfig,
+  ended: boolean
 ): UseQueryResult<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
   const { intermediateRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
   return useQuery(
-    ['TOKEN_APR', program.programId, pool, intermediateRefreshFlag],
+    ['TOKEN_APR', program.programId, pool, intermediateRefreshFlag, ended],
     async (): Promise<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
-      if (!pool) return undefined
+      if (!pool || ended) return undefined
 
       const poolAccount = await program.account.pool.fetch(pool).catch(() => undefined)
 

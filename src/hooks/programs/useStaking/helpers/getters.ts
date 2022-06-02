@@ -69,12 +69,16 @@ export async function getHistoryTotalRewards(props: GetRewardsProps): Promise<Bi
   }
 
   const curSlot = new BN(rewardSlot)
+
   const multiple = new BN((1e18).toString())
   let factor = new BN(0)
 
   if (!poolAccount.totalStakingAmount.eqn(0)) {
-    factor = curSlot
-      .sub(poolAccount.lastAccSec)
+    factor = BN
+      .max(
+        new BN(0),
+        curSlot.sub(poolAccount.lastAccSec)
+      )
       .mul(poolAccount.rewardPerSec)
       .mul(multiple)
       .div(poolAccount.totalStakingAmount)
