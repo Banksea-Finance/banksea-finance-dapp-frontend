@@ -5,7 +5,7 @@ import { Navbar } from '@/components/Navbar'
 import Redirect from '@/pages/redirect'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import styled from 'styled-components'
-import { AirdropPage, IdoPage, StakingPage } from './pages'
+import { StakingPage } from './pages'
 
 const NavbarPlaceHolder = styled.div`
   width: 100%;
@@ -29,8 +29,8 @@ const App: React.FC = () => {
           <Routes location={location}>
             <Route path={'/'} element={<Redirect to={'/staking'} />} />
             <Route path={'staking'} element={<StakingPage />} />
-            <Route path={'airdrop'} element={<AirdropPage />} />
-            <Route path={'ido'} element={<IdoPage />} />
+            {/*<Route path={'airdrop'} element={<AirdropPage />} />
+            <Route path={'ido'} element={<IdoPage />} />*/}
           </Routes>
         </CSSTransition>
       </TransitionGroup>
