@@ -5,7 +5,7 @@ import { useStakingProgram } from './useStakingProgram'
 import { getPassbook } from '../../helpers/accounts'
 import BigNumber from 'bignumber.js'
 
-export const useUserDailyRewardsQuery = (pool: PublicKey, rewardPerStakingPerDay?: BigNumber) => {
+export const useUserDailyRewardsQuery = (pool: PublicKey, rewardPerStakingPerDay?: BigNumber, stakingTokenDecimals = 0) => {
   const { intermediateRefreshFlag } = useRefreshController()
   const { account } = useSolanaWeb3()
   const program = useStakingProgram()
@@ -19,7 +19,7 @@ export const useUserDailyRewardsQuery = (pool: PublicKey, rewardPerStakingPerDay
 
       if (!passbook) return undefined
 
-      return new BigNumber(passbook.stakingAmount.toString()).multipliedBy(rewardPerStakingPerDay)
+      return new BigNumber(passbook.stakingAmount.toString()).multipliedBy(rewardPerStakingPerDay).shiftedBy(-stakingTokenDecimals)
     }
   )
 }

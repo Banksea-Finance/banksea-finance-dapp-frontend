@@ -10,7 +10,6 @@ export type BuildDepositNFTsTransactionsProps = {
 
   user: PublicKey
   pool: PublicKey
-  // whitelist: PublicKey
   program: Program<StakingProgramIdlType>
 }
 

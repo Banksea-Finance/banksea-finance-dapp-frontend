@@ -9,8 +9,7 @@ import { buildTransaction } from '@/utils'
 import { buildClaimInstructions } from '../../helpers/instructions'
 import { WalletNotConnectedError } from '@/utils/errors'
 
-const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
-  const { rewardTokenName, pool } = config
+const ClaimDialog: React.FC<TokenStakingPoolConfig> = ({ rewardToken, pool }) => {
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
   const { data: availableRewards, isLoading } = useUserAvailableRewardsQuery(pool)
@@ -19,13 +18,13 @@ const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) =
     if (!user) throw WalletNotConnectedError
 
     return buildTransaction(program.provider, await buildClaimInstructions({ pool, user, program }))
-  }, [user, pool])
+  }, [user, pool, program])
 
   return (
     <TransactionalDialog
-      transactionName={`Harvest rewards from ${rewardTokenName}`}
+      transactionName={`Harvest rewards from ${rewardToken.name}`}
       transactionsBuilder={handleClaim}
-      title={`Harvest rewards from ${rewardTokenName}`}
+      title={`Harvest rewards from ${rewardToken.name}`}
       confirmButtonProps={{ children: 'Harvest now', disabled: isLoading || !availableRewards?.gt(0) }}
     >
       {isLoading ? (
@@ -36,7 +35,7 @@ const ClaimDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) =
         <div>
           <Text textAlign={'center'} fontSize={'20px'} mb={'16px'}>
             You have
-            <b className="primary">{` ${availableRewards.toString()} ${rewardTokenName} `}</b>
+            <b className="primary">{` ${availableRewards.toString()} ${rewardToken.name} `}</b>
             rewards available now. <br />
           </Text>
           <Text textAlign={'center'} fontSize={'20px'}>
@@ -58,7 +57,7 @@ const useClaim = (config: TokenStakingPoolConfig) => {
   return useCallback(async () => {
     if (!config) return
 
-    openModal(<ClaimDialog config={config} />, false)
+    openModal(<ClaimDialog {...config} />, false)
   }, [config])
 }
 

@@ -6,13 +6,11 @@ import TransactionalDialog from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
 import { BN } from '@project-serum/anchor'
 import { buildTransaction } from '@/utils'
-import { useStakingProgram } from '../common'
+import { useStakingProgram, useTokenDecimalsQuery } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import usePoolBalanceQuery from './usePoolBalanceQuery'
-import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
 import { buildDepositInstructions, buildRegisterInstruction } from '../../helpers/instructions'
 import { getLargestTokenAccount } from '../../helpers/accounts'
-import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
 import { DataLoadFailedError } from '../../helpers/errors'
 import { WalletNotConnectedError } from '@/utils/errors'
 import _ from 'lodash'
@@ -22,22 +20,19 @@ const sliderMarks = _.range(0, 5)
   .map(o => ({ value: o, label: `${o}%` }))
 
 const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
-  const { pool, whitelist, depositTokenName } = config
+  const { pool, depositToken } = config
 
   const [inputValue, setInputValue] = useState('0')
   const [sliderValue, setSliderValue] = useState(0)
 
   const { data: poolBalance } = usePoolBalanceQuery(config)
-
+  const { data: decimals } = useTokenDecimalsQuery(depositToken.tokenMint)
   const { account: user } = useSolanaWeb3()
-
   const { connection } = useSolanaConnectionConfig()
   const program = useStakingProgram()
 
-  const { data: depositTokenDecimals } = useDepositTokenDecimalsQuery(whitelist)
-
   const inputInvalidError = useMemo(() => {
-    if (!inputValue || !depositTokenDecimals) {
+    if (!inputValue || !decimals) {
       return
     }
 
@@ -45,10 +40,10 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
       return 'The input is not a number'
     }
 
-    if ((/\d+\.(\d+)/.exec(inputValue)?.[1]?.length || 0) > depositTokenDecimals) {
-      return `Decimal places too large (maximum: ${depositTokenDecimals})`
+    if ((/\d+\.(\d+)/.exec(inputValue)?.[1]?.length || 0) > decimals) {
+      return `Decimal places too large (maximum: ${decimals})`
     }
-  }, [inputValue, depositTokenDecimals])
+  }, [inputValue, decimals])
 
   const onInputChange = useCallback((v: any) => {
     const value: string = v.target.value
@@ -87,9 +82,9 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
 
   const handleDeposit = useCallback(async () => {
     if (!user) throw WalletNotConnectedError
-    if (!depositTokenDecimals) throw DataLoadFailedError('depositTokenDecimals')
+    if (!decimals) throw DataLoadFailedError('depositTokenDecimals')
 
-    const amount = new BN(new BigNumber(inputValue).shiftedBy(depositTokenDecimals).toString())
+    const amount = new BN(new BigNumber(inputValue).shiftedBy(decimals).toString())
 
     const registerInstruction = await buildRegisterInstruction({
       user,
@@ -97,26 +92,25 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
       pool
     })
 
-    const depositTokenMint = await getTokenStakingDepositTokenMint(program, config.whitelist)
-    const depositAccount = await getLargestTokenAccount(program.provider.connection, user, depositTokenMint).then(acc => acc?.pubkey)
+    const depositAccount = await getLargestTokenAccount(program.provider.connection, user, depositToken.tokenMint).then(acc => acc?.pubkey)
 
     const { instructions: depositInstructions, signers } = await buildDepositInstructions({
       amount,
       depositAccount,
       pool,
       program,
-      tokenMint: depositTokenMint,
+      tokenMint: depositToken.tokenMint,
       user,
     })
 
     return buildTransaction(program.provider, [registerInstruction, ...depositInstructions], signers)
-  }, [inputValue, depositTokenDecimals, user, pool, whitelist, connection])
+  }, [inputValue, decimals, user, pool, connection, program, depositToken])
 
   return (
     <TransactionalDialog
-      transactionName={`Deposit ${depositTokenName}`}
+      transactionName={`Deposit ${depositToken.name}`}
       transactionsBuilder={handleDeposit}
-      title={`Deposit ${depositTokenName}`}
+      title={`Deposit ${depositToken.name}`}
       error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
@@ -127,7 +121,7 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
             poolBalance?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
           }
         </b>
-        { depositTokenName }
+        { depositToken.name }
       </Text>
       <Input
         scale={'M'}
@@ -138,7 +132,7 @@ const DepositDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config })
         mb={'8px'}
         style={{ flexGrow: 1 }}
         endAdornment={
-          <Text fontSize={'18px'} bold color={'primary'}>{depositTokenName}</Text>
+          <Text fontSize={'18px'} bold color={'primary'}>{depositToken.name}</Text>
         }
       />
 

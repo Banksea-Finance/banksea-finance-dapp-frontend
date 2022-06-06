@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { NavbarContainer, NavbarWrapper, NavItemsContainer, NavLink, NavLinkText } from './index.style'
-import { Link, useLocation } from 'react-router-dom'
+import { NavbarContainer, NavbarWrapper } from './index.style'
+import { Link } from 'react-router-dom'
 
 import throttle from 'lodash/throttle'
 import { Wallet } from '../Wallet'
 import { BankseaImageLogoSvg, BankseaTextLogoSvg } from '@/components/svgs'
 import { useResponsive } from '@banksea-finance/ui-kit'
 
-const NavItems = [
-  { name: 'Staking', path: '/staking' },
-  { name: 'Airdrop', path: '/airdrop' },
-  { name: 'IDO', path: '/ido' }
-]
+// const NavItems = [
+//   { name: 'Staking', path: '/staking' },
+//   { name: 'Airdrop', path: '/airdrop' },
+//   { name: 'IDO', path: '/ido' }
+// ]
 
 export const Navbar: React.FC = () => {
-  const { pathname } = useLocation()
+  // const { pathname } = useLocation()
   const [show, setShow] = useState(true)
   const [, setScrollY] = useState<number>(0)
 
@@ -51,23 +51,23 @@ export const Navbar: React.FC = () => {
         <Link to={'/'}>
           {isMobile ? <BankseaImageLogoSvg /> : <BankseaTextLogoSvg />}
         </Link>
-        <NavItemsContainer itemCount={NavItems.length}>
-          {
-            NavItems.map(({ name, path }, index) => (
-              <NavLink key={`nav-link-${index}`} to={path}>
-                <NavLinkText
-                  color={pathname === path ? 'primary' : 'text'}
-                  className={pathname === path ? 'active' : ''}
-                  fontSize={'22px'}
-                  important
-                  bold
-                >
-                  {name}
-                </NavLinkText>
-              </NavLink>
-            ))
-          }
-        </NavItemsContainer>
+        {/*<NavItemsContainer itemCount={NavItems.length}>*/}
+        {/*  {*/}
+        {/*    NavItems.map(({ name, path }, index) => (*/}
+        {/*      <NavLink key={`nav-link-${index}`} to={path}>*/}
+        {/*        <NavLinkText*/}
+        {/*          color={pathname === path ? 'primary' : 'text'}*/}
+        {/*          className={pathname === path ? 'active' : ''}*/}
+        {/*          fontSize={'22px'}*/}
+        {/*          important*/}
+        {/*          bold*/}
+        {/*        >*/}
+        {/*          {name}*/}
+        {/*        </NavLinkText>*/}
+        {/*      </NavLink>*/}
+        {/*    ))*/}
+        {/*  }*/}
+        {/*</NavItemsContainer>*/}
         <Wallet />
       </NavbarContainer>
     </NavbarWrapper>

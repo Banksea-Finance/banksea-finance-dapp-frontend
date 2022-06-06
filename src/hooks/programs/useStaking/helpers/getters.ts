@@ -101,11 +101,20 @@ export async function getAvailableRewards(props: GetRewardsProps): Promise<BigNu
   return new BigNumber(historyTotalReward.minus(claimedReward).toString())
 }
 
-export const getTokenStakingDepositTokenMint = memoize(
-  async (program: Program<StakingProgramIdlType>, whitelist: PublicKey): Promise<PublicKey> => {
-    const account = await program.account.whitelist.fetch(whitelist)
+// export const getTokenStakingDepositTokenMint = memoize(
+//   async (program: Program<StakingProgramIdlType>, whitelist: PublicKey): Promise<PublicKey> => {
+//     const account = await program.account.whitelist.fetch(whitelist)
+//
+//     return account.addr
+//   },
+//   (program, whitelist) => whitelist.toBase58()
+// )
 
-    return account.addr
-  },
-  (program, whitelist) => whitelist.toBase58()
-)
+export function getWhitelist(program: Program, pool: PublicKey, tokenMint: PublicKey) {
+  const [whitelist] = PublicKey.findProgramAddressSync(
+    [Buffer.from('whitelist'), pool.toBuffer(), tokenMint.toBuffer()],
+    program.programId
+  )
+
+  return whitelist
+}

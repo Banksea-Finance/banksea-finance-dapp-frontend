@@ -16,7 +16,7 @@ export const useUserDepositedQuery = () => {
     async () => {
       if (!account) return undefined
 
-      const [passbook] = await getPassbookSigner(pool, account)
+      const [passbook] = getPassbookSigner(pool, account)
 
       const allAssets = await program.account.asset.all([{
         memcmp: {

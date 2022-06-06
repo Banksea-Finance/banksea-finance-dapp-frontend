@@ -11,6 +11,7 @@ import { MetadataResult } from '@/utils/metaplex/metadata'
 import { QueriedData } from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
 import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserSvg } from '@/components/svgs'
+import { numberWithCommas } from '@/utils'
 
 export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
   const { logo, name, creator, rewardTokenName } = props
@@ -48,7 +49,7 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           <>
             CitizenOne staking for $sKSE <br />
             NOTE: $sKSE is the pre-staking token. <br />
-            It can be transformed into $KSE after $KSE is issued.
+            It can be transformed into $sKSE after $sKSE is issued.
           </>
         }
         availableRewards={userAvailableRewards}
@@ -91,7 +92,7 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
             </>
           }
           value={RRPD}
-          displayFunction={data => `${data.toFixed(6)} ${props.rewardTokenName}`}
+          displayFunction={data => `${numberWithCommas(data)} ${props.rewardTokenName}`}
           background={require('@/assets/images/cards-bg/2.webp')}
         />
         <StatisticCard
@@ -112,11 +113,11 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
               Daily rewards are calculated in real time according to the <br />
               CitizenOnes you have deposited. <br /><br />
               E.g. If you deposit one CitizenOne at level 1 and another <br />
-              at level 2, you will receive (3 * RRPD) KSE as a daily reward.
+              at level 2, you will receive (3 * RRPD) sKSE as a daily reward.
             </>
           }
           value={userDailyRewards}
-          displayFunction={data => `${data.toFixed(6)} ${rewardTokenName}`}
+          displayFunction={data => `${numberWithCommas(data)} ${rewardTokenName}`}
           background={require('@/assets/images/cards-bg/4.webp')}
         />
       </InfoGrid>

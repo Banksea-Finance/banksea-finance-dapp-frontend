@@ -18,7 +18,7 @@
     "@solana/spl-token-registry": "^0.2.312",
     "@solana/wallet-adapter-base": "^0.9.3",
     "@solana/wallet-adapter-wallets": "^0.16.0",
-    "@solana/web3.js": "^1.37.1",
+    "@solana/web3.js": "^1.39.1",
     "@walletconnect/ethereum-provider": "^1.7.4",
     "@walletconnect/jsonrpc-http-connection": "^1.0.0",
     "@walletconnect/jsonrpc-provider": "^1.0.1",

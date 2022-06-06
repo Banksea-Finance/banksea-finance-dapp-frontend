@@ -9,7 +9,12 @@ import {
   useWithdraw
 } from './hooks/token'
 import { TokenStakingPoolConfig } from './constants/token'
-import { useStakingEndTimeQuery, useUserAvailableRewardsQuery, useUserDailyRewardsQuery } from './hooks/common'
+import {
+  useStakingEndTimeQuery,
+  useTokenDecimalsQuery,
+  useUserAvailableRewardsQuery,
+  useUserDailyRewardsQuery
+} from './hooks/common'
 import { useCurrentSlotTime } from '@/hooks/useCurrentSlotTime'
 import { useMemo } from 'react'
 
@@ -33,8 +38,10 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
   const userDeposited = useUserDepositedQuery(config)
   const poolBalance = usePoolBalanceQuery(config)
 
+  const { data: stakingTokenDecimals } = useTokenDecimalsQuery(config.depositToken.tokenMint)
+
   const userAvailableRewards = useUserAvailableRewardsQuery(config.pool)
-  const userDailyRewards = useUserDailyRewardsQuery(config.pool, APR?.data?.totalRewardsPerDay)
+  const userDailyRewards = useUserDailyRewardsQuery(config.pool, APR?.data?.rewardsPerDay, stakingTokenDecimals)
 
   return {
     deposit,

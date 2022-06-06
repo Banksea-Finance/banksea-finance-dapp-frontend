@@ -29,10 +29,10 @@ const DepositDialog: React.FC<{ metadataResult: MetadataResult }> = ({ metadataR
     const pool = CollectionStoragePoolAddress
 
     const newStakingAccount = Keypair.generate()
-    const [passbook, passbookBump] = await getPassbookSigner(pool, user)
-    const [asset, assetBump] = await getAssetSigner(passbook, token)
-    const [stakingSigner, stakingSignerBump] = await getStakingSigner(passbook, token)
-    const [whitelist] = await getWhitelistSigner(pool, token)
+    const [passbook, passbookBump] = getPassbookSigner(pool, user)
+    const [asset, assetBump] = getAssetSigner(passbook, token)
+    const [stakingSigner, stakingSignerBump] = getStakingSigner(passbook, token)
+    const [whitelist] = getWhitelistSigner(pool, token)
 
     const passbookAccount = await program.provider.connection.getAccountInfo(passbook)
     const assetAccount = await program.account.asset.fetchNullable(asset)

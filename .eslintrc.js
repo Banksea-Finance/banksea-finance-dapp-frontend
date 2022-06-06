@@ -41,6 +41,7 @@ module.exports = {
     'jsx-quotes': ['error', 'prefer-double'],
     'keyword-spacing': ['error', { before: true, after: true }],
     'key-spacing': ['error', { beforeColon: false, afterColon: true, mode: 'strict' }],
+    'space-infix-ops': ['error', { 'int32Hint': false }],
     'react/jsx-filename-extension': [0],
     'react/prop-types': [0],
     'react/jsx-closing-bracket-location': 'error',
@@ -57,6 +58,7 @@ module.exports = {
         when: 'multiline'
       }
     ],
+    'react/jsx-props-no-multi-spaces': ['error'],
     'react-hooks/exhaustive-deps': [0],
     '@typescript-eslint/no-use-before-define': ['error'],
     '@typescript-eslint/no-unused-vars': [
@@ -71,6 +73,9 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/type-annotation-spacing': [
+      2, { 'before': false, 'after': true, overrides: { arrow: { before: true, after: true } } }
+    ],
     'no-async-promise-executor': 'off'
   }
 }

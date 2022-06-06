@@ -13,6 +13,31 @@ export type BuildRegisterInstructionProps = {
   pool: PublicKey
 }
 
+export type BuildDepositInstructionsProps = {
+  user: PublicKey
+  pool: PublicKey
+  depositAccount?: PublicKey | (() => Promise<PublicKey | undefined>)
+  tokenMint: PublicKey
+  program: Program<StakingProgramIdlType>
+  metadata?: PublicKey
+  amount?: BN
+}
+
+export type BuildWithdrawInstructionProps = {
+  pool: PublicKey
+  user: PublicKey
+  tokenMint: PublicKey
+  program: Program<StakingProgramIdlType>
+  amount?: BN
+}
+
+export type BuildClaimInstructionProps = {
+  pool: PublicKey
+  user: PublicKey
+  program: Program<StakingProgramIdlType>
+  amount?: BN
+}
+
 export async function buildRegisterInstruction(
   props: BuildRegisterInstructionProps
 ): Promise<TransactionInstruction | undefined> {
@@ -33,16 +58,6 @@ export async function buildRegisterInstruction(
       systemProgram: SystemProgram.programId
     }
   })
-}
-
-export type BuildDepositInstructionsProps = {
-  user: PublicKey
-  pool: PublicKey
-  depositAccount?: PublicKey | (() => Promise<PublicKey | undefined>)
-  tokenMint: PublicKey
-  program: Program<StakingProgramIdlType>
-  metadata?: PublicKey
-  amount?: BN
 }
 
 export async function buildDepositInstructions(
@@ -126,14 +141,6 @@ export async function buildDepositInstructions(
   return { instructions, signers }
 }
 
-export type BuildWithdrawInstructionProps = {
-  pool: PublicKey
-  user: PublicKey
-  tokenMint: PublicKey
-  program: Program<StakingProgramIdlType>
-  amount?: BN
-}
-
 export async function buildWithdrawInstruction(props: BuildWithdrawInstructionProps) {
   const { tokenMint, pool, user, program, amount = new BN(1) } = props
 
@@ -165,13 +172,6 @@ export async function buildWithdrawInstruction(props: BuildWithdrawInstructionPr
       clock: SYSVAR_CLOCK_PUBKEY
     }
   })
-}
-
-export type BuildClaimInstructionProps = {
-  pool: PublicKey
-  user: PublicKey
-  program: Program<StakingProgramIdlType>
-  amount?: BN
 }
 
 export async function buildClaimInstructions(props: BuildClaimInstructionProps): Promise<TransactionInstruction[]> {

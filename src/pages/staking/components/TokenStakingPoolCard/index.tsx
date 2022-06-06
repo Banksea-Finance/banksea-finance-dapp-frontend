@@ -9,9 +9,10 @@ import { Card, Flex, Grid, Text } from '@banksea-finance/ui-kit'
 import { QueriedData } from '@/components/QueriedData'
 import { useSolanaWeb3 } from '@/contexts'
 import { AprSvg, HistoryHarvestSvg, TotalDepositedSvg, UserSvg } from '@/components/svgs'
+import { numberWithCommas } from '@/utils'
 
 export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
-  const { currencies, rewardTokenName } = props
+  const { currencies, rewardToken, depositToken } = props
   const { account } = useSolanaWeb3()
 
   const poolName = currencies[0].name
@@ -41,7 +42,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         name={poolName}
         icon={currencies[0].icon}
         availableRewards={userAvailableRewards}
-        rewardTokenName={rewardTokenName}
+        rewardTokenName={rewardToken.name}
         onHarvest={claim}
         onCompound={compound}
         endTime={endTime}
@@ -55,7 +56,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           label={'Total Deposited'}
           description={'All KSE on this staking pool.'}
           value={totalDeposited}
-          displayFunction={data => `${data.toFixed(2)} ${poolName}`}
+          displayFunction={data => `${numberWithCommas(data)} ${poolName}`}
           background={require('@/assets/images/cards-bg/1.webp')}
         />
         <StatisticCard
@@ -70,7 +71,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
             </>
           }
           value={APR}
-          displayFunction={data => `${data.APR.multipliedBy(100)?.toFixed(2)}%`}
+          displayFunction={data => `${numberWithCommas(data.APR.multipliedBy(100))}%`}
           background={require('@/assets/images/cards-bg/2.webp')}
         />
         <StatisticCard
@@ -79,7 +80,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           label={'Your Deposited'}
           description={'All KSE you have deposited.'}
           value={userDeposited}
-          displayFunction={data => `${data.toFixed(2)} ${poolName}`}
+          displayFunction={data => `${numberWithCommas(data)} ${poolName}`}
           background={require('@/assets/images/cards-bg/3.webp')}
         />
         <StatisticCard
@@ -89,13 +90,12 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           description={
             <>
               Daily rewards are calculated in real <br />
-              time according to the $KSE you have deposited.
-              E.g. If you deposit 3 $KSE, you will <br />
-              receive (3 * APR / 365) KSE as a daily rewards.
+              time according to the $sKSE you have deposited. E.g. If you deposit 3 $sKSE, you will <br />
+              receive (3 * APR / 365) $sKSE as a daily rewards.
             </>
           }
           value={userDailyRewards}
-          displayFunction={data => `${data.toFixed(2)} ${rewardTokenName}`}
+          displayFunction={data => `${numberWithCommas(data)} ${rewardToken.name}`}
           background={require('@/assets/images/cards-bg/4.webp')}
         />
       </InfoGrid>
@@ -113,7 +113,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
 
       {account && (
         <Text as={'span'} textAlign={'center'} color={'textDisabled'} mr={'4px'} mt={'16px'}>
-          Your Balance: <QueriedData as={'span'} value={poolBalance} color={'textDisabled'} /> KSE
+          Your Balance: <QueriedData as={'span'} value={poolBalance} color={'textDisabled'} /> {depositToken.name}
         </Text>
       )}
     </Card>

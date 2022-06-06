@@ -6,13 +6,11 @@ import BigNumber from 'bignumber.js'
 import useUserDepositedQuery from './useUserDepositedQuery'
 import TransactionalDialog from '@/components/TransactionalDialog'
 import { ClipLoader } from 'react-spinners'
-import { useStakingProgram, useUserAvailableRewardsQuery } from '../common'
-import useDepositTokenDecimalsQuery from './useDepositTokenDecimalsQuery'
+import { useStakingProgram, useTokenDecimalsQuery, useUserAvailableRewardsQuery } from '../common'
 import { TokenStakingPoolConfig } from '../../constants/token'
 import { buildClaimInstructions, buildWithdrawInstruction } from '../../helpers/instructions'
 import { BN } from '@project-serum/anchor'
 import { buildTransaction } from '@/utils'
-import { getTokenStakingDepositTokenMint } from '../../helpers/getters'
 import { DataLoadFailedError } from '../../helpers/errors'
 import { WalletNotConnectedError } from '@/utils/errors'
 import _ from 'lodash'
@@ -25,17 +23,16 @@ export type UseTokenDepositProps = {
 const sliderMarks = _.range(0, 5).map(o => o * 25).map(o => ({ value: o, label: `${o}%` }))
 
 const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }) => {
-  const { depositTokenName, whitelist, pool } = config
+  const { depositToken, pool } = config
 
   const [inputValue, setInputValue] = useState('0')
   const [sliderValue, setSliderValue] = useState(0)
   const [claimAtSameTime, setClaimAtSameTime] = useState(true)
   const { data: userDeposits } = useUserDepositedQuery(config)
   const { data: availableRewards } = useUserAvailableRewardsQuery(pool)
-  const { data: decimals } = useDepositTokenDecimalsQuery(whitelist)
+  const { data: decimals } = useTokenDecimalsQuery(depositToken.tokenMint)
   const { isMobile } = useResponsive()
   const program = useStakingProgram()
-  const { data: depositTokenDecimals } = useDepositTokenDecimalsQuery(whitelist)
   const { account: user } = useSolanaWeb3()
 
   const inputInvalidError = useMemo(() => {
@@ -89,7 +86,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
 
   const handleWithdraw = useCallback(async () => {
     if (!user) throw WalletNotConnectedError
-    if (!depositTokenDecimals) throw DataLoadFailedError('depositTokenDecimals')
+    if (!decimals) throw DataLoadFailedError('depositTokenDecimals')
 
     const instructions: TransactionInstruction[] = []
 
@@ -99,27 +96,26 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
       )
     }
 
-    const amount = new BN(new BigNumber(inputValue).shiftedBy(depositTokenDecimals).toString())
-    const tokenMint = await getTokenStakingDepositTokenMint(program, config.whitelist)
+    const amount = new BN(new BigNumber(inputValue).shiftedBy(decimals).toString())
 
     instructions.push(
       await buildWithdrawInstruction({
         amount,
         pool,
         program,
-        tokenMint,
+        tokenMint: depositToken.tokenMint,
         user
       })
     )
 
     return buildTransaction(program.provider, instructions)
-  }, [user, pool, program, depositTokenDecimals, inputValue])
+  }, [user, decimals, claimAtSameTime, pool, program, inputValue, depositToken])
 
   return (
     <TransactionalDialog
-      transactionName={`Withdraw ${depositTokenName}`}
+      transactionName={`Withdraw ${depositToken.name}`}
       transactionsBuilder={handleWithdraw}
-      title={`Withdraw ${depositTokenName}`}
+      title={`Withdraw ${depositToken.name}`}
       error={inputInvalidError}
       confirmButtonProps={{ disabled: !!inputInvalidError || !inputValue.length || +inputValue <= 0 }}
     >
@@ -130,7 +126,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
             userDeposits?.toString() || <ClipLoader color={'#abc'} size={16} css={'position: relative; top: 2px; left: 4px;'} />
           }
         </b>
-        { depositTokenName }
+        { depositToken.name }
       </Text>
 
       <Input
@@ -142,7 +138,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
         mr={'4px'}
         mb={'8px'}
         endAdornment={
-          <Text fontSize={'18px'} bold color={'primary'}>{depositTokenName}</Text>
+          <Text fontSize={'18px'} bold color={'primary'}>{depositToken.name}</Text>
         }
       />
 
@@ -160,7 +156,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
         availableRewards?.gt(0) && (
           <Flex ai={'center'} justifyContent={'space-between'}>
             <Text fontSize={'16px'} maxWidth={isMobile ? '85%' : undefined} as={'span'}>
-              Harvest the rewards of {availableRewards?.toFixed(6)} {config.rewardTokenName} at the same time
+              Harvest the rewards of {availableRewards?.toFixed(6)} {config.rewardToken.name} at the same time
             </Text>
             <Checkbox checked={claimAtSameTime} onChange={() => setClaimAtSameTime(b => !b)} />
           </Flex>

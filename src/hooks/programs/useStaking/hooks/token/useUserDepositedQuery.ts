@@ -3,16 +3,16 @@ import { useRefreshController, useSolanaWeb3 } from '@/contexts'
 import BigNumber from 'bignumber.js'
 import { getPassbook } from '../../helpers/accounts'
 import { TokenStakingPoolConfig } from '../../constants/token'
-import { getTokenDecimals, getTokenStakingDepositTokenMint } from '../../helpers/getters'
+import { getTokenDecimals } from '../../helpers/getters'
 import { useStakingProgram } from '../common'
 
-const useUserDepositedQuery = ({ pool, whitelist }: TokenStakingPoolConfig) => {
+const useUserDepositedQuery = ({ pool, depositToken }: TokenStakingPoolConfig) => {
   const { intermediateRefreshFlag } = useRefreshController()
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
   return useQuery<BigNumber | undefined, any>(
-    ['TOKEN_USER_DEPOSITED', user, pool, whitelist, intermediateRefreshFlag],
+    ['TOKEN_USER_DEPOSITED', user, pool, depositToken, intermediateRefreshFlag],
     async () => {
       if (!user) return undefined
 
@@ -24,8 +24,7 @@ const useUserDepositedQuery = ({ pool, whitelist }: TokenStakingPoolConfig) => {
         return new BigNumber(0)
       }
 
-      const tokenMint = await getTokenStakingDepositTokenMint(program, whitelist)
-      const decimals = await getTokenDecimals(program.provider.connection, tokenMint)
+      const decimals = await getTokenDecimals(program.provider.connection, depositToken.tokenMint)
       return new BigNumber(amount.toString()).shiftedBy(-decimals)
     },
   )

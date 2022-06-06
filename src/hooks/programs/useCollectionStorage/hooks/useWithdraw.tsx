@@ -24,9 +24,9 @@ const WithdrawDialog: React.FC<{ metadataResult: MetadataResult }> = ({ metadata
     const token = metadataResult.mint
     const pool = CollectionStoragePoolAddress
 
-    const [passbook] = await getPassbookSigner(pool, user)
-    const [asset] = await getAssetSigner(passbook, token)
-    const [stakingSigner] = await getStakingSigner(passbook, token)
+    const [passbook] = getPassbookSigner(pool, user)
+    const [asset] = getAssetSigner(passbook, token)
+    const [stakingSigner] = getStakingSigner(passbook, token)
 
     const assetAccount = await program.account.asset.fetch(asset)
     const withdrawAccount = await getAssociatedTokenAddress(token, user)

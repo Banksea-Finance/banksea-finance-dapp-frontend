@@ -17,7 +17,7 @@ export async function getPassbook(props: {
 }): Promise<Passbook> {
   const { program, pool, user } = props
 
-  const [address, bump] = await PublicKey.findProgramAddress(
+  const [address, bump] = PublicKey.findProgramAddressSync(
     [Buffer.from('passbook'), pool.toBuffer(), user.toBuffer()],
     program.programId
   )
@@ -42,7 +42,7 @@ export async function getAsset(props: {
 }> {
   const { program, tokenMint, passbook } = props
 
-  const [assetAddress, assetBump] = await PublicKey.findProgramAddress(
+  const [assetAddress, assetBump] = PublicKey.findProgramAddressSync(
     [Buffer.from('asset'), passbook.toBuffer(), tokenMint.toBuffer()],
     program.programId
   )

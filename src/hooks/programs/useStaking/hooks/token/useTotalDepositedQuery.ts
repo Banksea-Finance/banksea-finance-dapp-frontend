@@ -2,22 +2,21 @@ import { useQuery } from 'react-query'
 import { useRefreshController } from '@/contexts'
 import BigNumber from 'bignumber.js'
 import { useStakingProgram } from '../common'
-import { getTokenDecimals, getTokenStakingDepositTokenMint } from '../../helpers/getters'
+import { getTokenDecimals } from '../../helpers/getters'
 import { TokenStakingPoolConfig } from '../../constants/token'
 
-const useTotalDepositedQuery = ({ pool, whitelist }: TokenStakingPoolConfig) => {
+const useTotalDepositedQuery = ({ pool, depositToken }: TokenStakingPoolConfig) => {
   const { intermediateRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
   return useQuery<BigNumber | undefined>(
-    ['TOKEN_TOTAL_DEPOSITED', pool, whitelist, intermediateRefreshFlag],
+    ['TOKEN_TOTAL_DEPOSITED', pool, intermediateRefreshFlag, depositToken.tokenMint.toBase58()],
     async () => {
       const account = await program.account.pool.fetchNullable(pool)
 
       if (!account) return undefined
 
-      const tokenMint = await getTokenStakingDepositTokenMint(program, whitelist)
-      const decimals = await getTokenDecimals(program.provider.connection, tokenMint)
+      const decimals = await getTokenDecimals(program.provider.connection, depositToken.tokenMint)
 
       return new BigNumber(account.totalDepositAmount.toString()).shiftedBy(-decimals)
     }

@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query'
+import { useQuery } from 'react-query'
 import BigNumber from 'bignumber.js'
 import { useRefreshController } from '@/contexts'
 import { TokenStakingPoolConfig } from '../../constants/token'
@@ -7,13 +7,13 @@ import { useStakingProgram } from '../common'
 const useAPRQuery = (
   { pool }: TokenStakingPoolConfig,
   ended: boolean
-): UseQueryResult<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
+) => {
   const { intermediateRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
-  return useQuery(
+  return useQuery<undefined | { APR: BigNumber; rewardsPerDay: BigNumber }>(
     ['TOKEN_APR', program.programId, pool, intermediateRefreshFlag, ended],
-    async (): Promise<undefined | { APR: BigNumber; totalRewardsPerDay: BigNumber }> => {
+    async () => {
       if (!pool || ended) return undefined
 
       const poolAccount = await program.account.pool.fetch(pool).catch(() => undefined)
@@ -28,6 +28,7 @@ const useAPRQuery = (
 
       const totalStakingAmount = new BigNumber(poolAccount.totalStakingAmount.toString())
       const rewardPerSec = new BigNumber(poolAccount.rewardPerSec.toString())
+
       const secondsInYear = new BigNumber(365 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/)
 
       const totalRewardsInYear = rewardPerSec.multipliedBy(secondsInYear)
@@ -35,7 +36,7 @@ const useAPRQuery = (
 
       return {
         APR,
-        totalRewardsPerDay: APR.div(365)
+        rewardsPerDay: APR.div(365)
       }
     },
     { refetchInterval: false }
