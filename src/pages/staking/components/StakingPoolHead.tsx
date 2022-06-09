@@ -1,6 +1,6 @@
-import { Box, Card, Flex, Grid, Tag, Text } from '@banksea-finance/ui-kit'
+import { Box, Card, Flex, Grid, Tag, TagProps, Text, Variants } from '@banksea-finance/ui-kit'
 import { WalletRequiredButton } from '@/components/WalletRequiredButton'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { UseQueryResult } from 'react-query'
 import BigNumber from 'bignumber.js'
@@ -19,7 +19,9 @@ export type StakingPoolHeadProps = {
   onHarvest: () => void
   onCompound?: () => void
 
+  startTime?: number
   endTime?: number
+  started: boolean
   ended: boolean
 }
 
@@ -27,9 +29,9 @@ const PoolImage = styled.img`
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  
+
   margin-right: 16px;
-  
+
   ${({ theme }) => theme.mediaQueries.maxMd} {
     margin-right: 8px;
     width: 36px;
@@ -38,46 +40,60 @@ const PoolImage = styled.img`
 `
 
 export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({
-  name, icon, availableRewards, rewardTokenName, onHarvest, onCompound, endTime, description, ended
+  name,
+  icon,
+  availableRewards,
+  rewardTokenName,
+  onHarvest,
+  onCompound,
+  description,
+  startTime,
+  endTime,
+  started,
+  ended
 }) => {
+  const stakingStageTips = useMemo<{ label: string, gradient?: TagProps['gradient'], variant?: Variants }>(() => {
+    if (!started) {
+      return startTime
+        ? { label: `Staking will start on ${dayjs.unix(startTime).format('lll')}`, variant: 'primary' }
+        : { label: 'Staking is waiting to start', variant: 'primary' }
+    }
+
+    if (ended) {
+      return { label: 'Staking has ended', variant: 'warning' }
+    }
+
+    // started && !ended
+    return endTime
+      ? { label: `Staking will end on ${dayjs.unix(endTime).format('lll')}`, gradient: true }
+      : { label: 'Staking is is full swing', gradient: true }
+  }, [startTime, started, ended, ended])
+
   return (
-    <Flex
-      flexDirection={'column'}
-      ai={'center'}
-      width={'100%'}
-      mb={{ _: '32px' }}
-    >
+    <Flex flexDirection={'column'} ai={'center'} width={'100%'} mb={{ _: '32px' }}>
       <Flex
         jc={{ _: 'start', md: 'space-between' }}
         flexDirection={{ _: 'column', md: 'row' }}
         ai={{ _: 'start', md: 'center' }}
         width={'100%'}
       >
-        <Flex ai={'center'} mb={{ _: '8px', md: '0' }} >
+        <Flex ai={'center'} mb={{ _: '8px', md: '0' }}>
           <PoolImage src={icon} />
 
-          <Text
-            bold
-            gradient
-            important
-            fontSize={{ lg: '36px', _: 'max(22px, 4vw)' }}
-            mr={'8px'}
-          >
+          <Text bold gradient important fontSize={{ lg: '36px', _: 'max(22px, 4vw)' }} mr={'8px'}>
             {name}
           </Text>
 
-          {
-            description && (
-              <>
-                <Box data-tip="true" data-for={name}>
-                  <QuestionMarkSvg color={'#aaa'} />
-                </Box>
-                <ReactTooltip id={name} aria-haspopup="true">
-                  <Text>{description}</Text>
-                </ReactTooltip>
-              </>
-            )
-          }
+          {description && (
+            <>
+              <Box data-tip="true" data-for={name}>
+                <QuestionMarkSvg color={'#aaa'} />
+              </Box>
+              <ReactTooltip id={name} aria-haspopup="true">
+                <Text>{description}</Text>
+              </ReactTooltip>
+            </>
+          )}
         </Flex>
 
         <Flex jc={{ _: 'center', md: 'end' }} width={{ _: '100%', md: 'fit-content' }}>
@@ -89,9 +105,7 @@ export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({
               flexDirection={{ _: 'column', md: 'row' }}
             >
               <Flex ai={'center'} mr={{ md: '16px', _: '0' }} gap={'0 8px'} mb={{ _: '8px', md: '0' }}>
-                <Text color={'primary'}>
-                  {'Available rewards: '}
-                </Text>
+                <Text color={'primary'}>{'Available rewards: '}</Text>
                 <QueriedData
                   color={'textContrary'}
                   value={availableRewards}
@@ -113,17 +127,27 @@ export const StakingPoolHead: React.FC<StakingPoolHeadProps> = ({
         </Flex>
       </Flex>
 
-      {
-        !!endTime && (
-          <Tag gradient={!ended || undefined} variant={ended ? 'warning' : undefined} scale={'S'} ml={'8px'} mt={{ _: '8px' }}>
-            {
-              ended
-                ? 'Staking has ended'
-                : `Ending time: ${dayjs.unix(endTime).format('lll')}`
-            }
-          </Tag>
-        )
-      }
+      <Tag
+        gradient={stakingStageTips.gradient}
+        variant={stakingStageTips.variant}
+        scale={'S'}
+        ml={'8px'}
+        mt={{ _: '8px' }}
+      >
+        {stakingStageTips.label}
+      </Tag>
+
+      {/*{!!endTime && (*/}
+      {/*  <Tag*/}
+      {/*    gradient={!ended || undefined}*/}
+      {/*    variant={ended ? 'warning' : undefined}*/}
+      {/*    scale={'S'}*/}
+      {/*    ml={'8px'}*/}
+      {/*    mt={{ _: '8px' }}*/}
+      {/*  >*/}
+      {/*    {ended ? 'Staking has ended' : `Ending time: ${dayjs.unix(endTime).format('lll')}`}*/}
+      {/*  </Tag>*/}
+      {/*)}*/}
     </Flex>
   )
 }

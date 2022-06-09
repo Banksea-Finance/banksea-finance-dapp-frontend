@@ -15,7 +15,6 @@ export interface StakingToken {
 export type TokenStakingPoolConfig = {
   currencies: [StakingToken] | [StakingToken, StakingToken]
   pool: PublicKey
-  // whitelist: PublicKey
   depositToken: StakingToken
   rewardToken: StakingToken
 }
@@ -24,7 +23,6 @@ const TOKEN_STAKING_POOLS: TokenStakingPoolConfig[] = [
   {
     currencies: [TOKEN_KSE],
     pool: new PublicKey('Hn4qWvAHpWYceMyjKgf3bmwh2onY7FzFZVZqEAXJwLMM'),
-    // whitelist: new PublicKey('2NxYkFddkdk9L3gdqMoUf22UQe9FKwCQUfrRDpmdZGNJ'),
     depositToken: TOKEN_KSE,
     rewardToken: TOKEN_KSE,
   },

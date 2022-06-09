@@ -32,7 +32,8 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
     claim,
     deposit,
     withdraw,
-    endTime,
+    poolAccount,
+    started,
     ended
   } = useNFTStaking(props)
 
@@ -55,7 +56,9 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
         availableRewards={userAvailableRewards}
         rewardTokenName={rewardTokenName}
         onHarvest={claim}
-        endTime={endTime}
+        startTime={poolAccount?.startSec.toNumber()}
+        endTime={poolAccount?.endSec.toNumber()}
+        started={started}
         ended={ended}
       />
 

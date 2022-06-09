@@ -77,7 +77,9 @@ export async function getHistoryTotalRewards(props: GetRewardsProps): Promise<Bi
     factor = BN
       .max(
         new BN(0),
-        curSlot.sub(poolAccount.lastAccSec)
+        curSlot.sub(
+          BN.max(poolAccount.lastAccSec, poolAccount.startSec)
+        )
       )
       .mul(poolAccount.rewardPerSec)
       .mul(multiple)
@@ -99,22 +101,4 @@ export async function getAvailableRewards(props: GetRewardsProps): Promise<BigNu
   const claimedReward = (await getClaimedRewards(props))!
 
   return new BigNumber(historyTotalReward.minus(claimedReward).toString())
-}
-
-// export const getTokenStakingDepositTokenMint = memoize(
-//   async (program: Program<StakingProgramIdlType>, whitelist: PublicKey): Promise<PublicKey> => {
-//     const account = await program.account.whitelist.fetch(whitelist)
-//
-//     return account.addr
-//   },
-//   (program, whitelist) => whitelist.toBase58()
-// )
-
-export function getWhitelist(program: Program, pool: PublicKey, tokenMint: PublicKey) {
-  const [whitelist] = PublicKey.findProgramAddressSync(
-    [Buffer.from('whitelist'), pool.toBuffer(), tokenMint.toBuffer()],
-    program.programId
-  )
-
-  return whitelist
 }
