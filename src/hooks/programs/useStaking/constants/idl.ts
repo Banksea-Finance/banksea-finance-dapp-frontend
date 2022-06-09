@@ -52,6 +52,10 @@ export type Staking = {
           'type': 'u64'
         },
         {
+          'name': 'rewardStartSec',
+          'type': 'u64'
+        },
+        {
           'name': 'rewardEndSec',
           'type': 'u64'
         },
@@ -131,7 +135,7 @@ export type Staking = {
       ]
     },
     {
-      'name': 'setEndding',
+      'name': 'setTime',
       'accounts': [
         {
           'name': 'pool',
@@ -150,6 +154,10 @@ export type Staking = {
         }
       ],
       'args': [
+        {
+          'name': 'startSec',
+          'type': 'u64'
+        },
         {
           'name': 'endSec',
           'type': 'u64'
@@ -531,6 +539,10 @@ export type Staking = {
             'type': 'u64'
           },
           {
+            'name': 'startSec',
+            'type': 'u64'
+          },
+          {
             'name': 'endSec',
             'type': 'u64'
           },
@@ -689,7 +701,7 @@ export type Staking = {
       ]
     },
     {
-      'name': 'SetEnddingEvent',
+      'name': 'SetTimeEvent',
       'fields': [
         {
           'name': 'pool',
@@ -697,12 +709,22 @@ export type Staking = {
           'index': true
         },
         {
-          'name': 'oldEnding',
+          'name': 'oldStart',
           'type': 'u64',
           'index': false
         },
         {
-          'name': 'newEnding',
+          'name': 'newStart',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'oldEnd',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'newEnd',
           'type': 'u64',
           'index': false
         }
@@ -852,21 +874,31 @@ export type Staking = {
     },
     {
       'code': 305,
+      'name': 'StakingHasNotStarted',
+      'msg': 'staking has not started'
+    },
+    {
+      'code': 306,
       'name': 'StakingHasNotEnded',
       'msg': 'staking hasn\'t ended'
     },
     {
-      'code': 306,
+      'code': 307,
       'name': 'InvalidRefundAmount',
       'msg': 'invalid refund amount'
     },
     {
-      'code': 307,
+      'code': 308,
       'name': 'InvalidEndTime',
       'msg': 'invalid end time'
     },
     {
-      'code': 308,
+      'code': 309,
+      'name': 'InvalidStartTime',
+      'msg': 'invalid start time'
+    },
+    {
+      'code': 310,
       'name': 'InvalidWhitelistFormat',
       'msg': 'invalid whitelist format'
     }
@@ -927,6 +959,10 @@ export const IDL: Staking = {
           'type': 'u64'
         },
         {
+          'name': 'rewardStartSec',
+          'type': 'u64'
+        },
+        {
           'name': 'rewardEndSec',
           'type': 'u64'
         },
@@ -1006,7 +1042,7 @@ export const IDL: Staking = {
       ]
     },
     {
-      'name': 'setEndding',
+      'name': 'setTime',
       'accounts': [
         {
           'name': 'pool',
@@ -1025,6 +1061,10 @@ export const IDL: Staking = {
         }
       ],
       'args': [
+        {
+          'name': 'startSec',
+          'type': 'u64'
+        },
         {
           'name': 'endSec',
           'type': 'u64'
@@ -1406,6 +1446,10 @@ export const IDL: Staking = {
             'type': 'u64'
           },
           {
+            'name': 'startSec',
+            'type': 'u64'
+          },
+          {
             'name': 'endSec',
             'type': 'u64'
           },
@@ -1564,7 +1608,7 @@ export const IDL: Staking = {
       ]
     },
     {
-      'name': 'SetEnddingEvent',
+      'name': 'SetTimeEvent',
       'fields': [
         {
           'name': 'pool',
@@ -1572,12 +1616,22 @@ export const IDL: Staking = {
           'index': true
         },
         {
-          'name': 'oldEnding',
+          'name': 'oldStart',
           'type': 'u64',
           'index': false
         },
         {
-          'name': 'newEnding',
+          'name': 'newStart',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'oldEnd',
+          'type': 'u64',
+          'index': false
+        },
+        {
+          'name': 'newEnd',
           'type': 'u64',
           'index': false
         }
@@ -1727,21 +1781,31 @@ export const IDL: Staking = {
     },
     {
       'code': 305,
+      'name': 'StakingHasNotStarted',
+      'msg': 'staking has not started'
+    },
+    {
+      'code': 306,
       'name': 'StakingHasNotEnded',
       'msg': 'staking hasn\'t ended'
     },
     {
-      'code': 306,
+      'code': 307,
       'name': 'InvalidRefundAmount',
       'msg': 'invalid refund amount'
     },
     {
-      'code': 307,
+      'code': 308,
       'name': 'InvalidEndTime',
       'msg': 'invalid end time'
     },
     {
-      'code': 308,
+      'code': 309,
+      'name': 'InvalidStartTime',
+      'msg': 'invalid start time'
+    },
+    {
+      'code': 310,
       'name': 'InvalidWhitelistFormat',
       'msg': 'invalid whitelist format'
     }

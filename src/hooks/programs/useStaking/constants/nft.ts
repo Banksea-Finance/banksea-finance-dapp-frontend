@@ -12,7 +12,7 @@ export type NFTStakingPoolConfig = {
 
 export const NFT_STAKING_POOLS: NFTStakingPoolConfig[] = [
   {
-    pool: new PublicKey('7pJACYp2HBUxwqhZ1crFsSzMLbap9YuuiFqg1n4S2g7B'),
+    pool: new PublicKey('22ozAGwMjg1EBYWB2CbvnEXNaDc8YPpjFnwgeTpRtpjH'),
     creator: CitizenOneCollectionCreator,
     name: 'CitizenOne-sKSE',
     logo: require('@/assets/images/citizen-one.webp'),
