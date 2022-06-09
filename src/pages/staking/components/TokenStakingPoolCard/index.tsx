@@ -108,7 +108,7 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
           <WalletRequiredButton onClick={withdraw} variant={'outlined'}>
             Withdraw
           </WalletRequiredButton>
-          <WalletRequiredButton onClick={deposit} disabled={ended}>
+          <WalletRequiredButton onClick={deposit} disabled={ended || !started}>
             Deposit
           </WalletRequiredButton>
         </Grid>
