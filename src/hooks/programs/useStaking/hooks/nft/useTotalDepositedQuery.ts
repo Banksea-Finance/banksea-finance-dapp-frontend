@@ -7,10 +7,10 @@ const useTotalDepositedQuery = (pool: PublicKey) => {
   const { intermediateRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
-  return useQuery<number>(['NFT_TOTAL_DEPOSITED', pool, intermediateRefreshFlag], async () => {
-    const poolAccount = await program.account.pool.fetch(pool)
+  return useQuery<number | undefined>(['NFT_TOTAL_DEPOSITED', pool, intermediateRefreshFlag], async () => {
+    const account = await program.account.pool.fetchNullable(pool)
 
-    return poolAccount.totalDepositAmount.toNumber()
+    return account?.totalDepositAmount.toNumber()
   })
 }
 

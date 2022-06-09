@@ -1,5 +1,5 @@
 import { NFTStakingPoolConfig } from './constants/nft'
-import { useStakingEndTimeQuery, useUserAvailableRewardsQuery, useUserDailyRewardsQuery } from './hooks/common'
+import { usePoolAccountQuery, useUserAvailableRewardsQuery, useUserDailyRewardsQuery } from './hooks/common'
 import {
   useClaim,
   useDeposit,
@@ -18,14 +18,25 @@ export const useNFTStaking = (config: NFTStakingPoolConfig) => {
   const withdraw = useWithdraw(config)
   const claim = useClaim(config)
 
-  const { data: endTime } = useStakingEndTimeQuery(config.pool)
-
   const currentSlotTime = useCurrentSlotTime()
 
-  const ended = useMemo(
-    () => !!currentSlotTime && !!endTime && currentSlotTime > endTime,
-    [currentSlotTime, endTime]
-  )
+  const { data: poolAccount } = usePoolAccountQuery(config.pool)
+
+  const ended = useMemo(() => {
+    if (!poolAccount) return false
+
+    const endTime = poolAccount.endSec.toNumber()
+
+    return !!currentSlotTime && !!endTime && currentSlotTime > endTime
+  }, [currentSlotTime, poolAccount])
+
+  const started = useMemo(() => {
+    if (!poolAccount) return false
+
+    const startTime = poolAccount.startSec.toNumber()
+
+    return !!currentSlotTime && !!startTime && currentSlotTime > startTime
+  }, [currentSlotTime, poolAccount])
 
   const RRPD = useRewardsOfRarityPerDayQuery(pool, ended)
   const totalDeposited = useTotalDepositedQuery(pool)
@@ -43,7 +54,8 @@ export const useNFTStaking = (config: NFTStakingPoolConfig) => {
     userDailyRewards,
     userAvailableRewards,
     RRPD,
-    endTime,
-    ended
+    poolAccount,
+    ended,
+    started
   }
 }

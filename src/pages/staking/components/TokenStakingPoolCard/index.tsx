@@ -28,8 +28,9 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
     claim,
     compound,
     poolBalance,
-    endTime,
-    ended
+    ended,
+    started,
+    poolAccount
   } = useTokenStaking(props)
 
   return (
@@ -45,7 +46,9 @@ export const TokenStakingPoolCard: React.FC<TokenStakingPoolConfig> = props => {
         rewardTokenName={rewardToken.name}
         onHarvest={claim}
         onCompound={compound}
-        endTime={endTime}
+        startTime={poolAccount?.startSec.toNumber()}
+        endTime={poolAccount?.endSec.toNumber()}
+        started={started}
         ended={ended}
       />
 

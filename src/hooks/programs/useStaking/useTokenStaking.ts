@@ -10,7 +10,7 @@ import {
 } from './hooks/token'
 import { TokenStakingPoolConfig } from './constants/token'
 import {
-  useStakingEndTimeQuery,
+  usePoolAccountQuery,
   useTokenDecimalsQuery,
   useUserAvailableRewardsQuery,
   useUserDailyRewardsQuery
@@ -24,14 +24,25 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
   const claim = useClaim(config)
   const compound = useCompound(config)
 
-  const { data: endTime } = useStakingEndTimeQuery(config.pool)
-
   const currentSlotTime = useCurrentSlotTime()
 
-  const ended = useMemo(
-    () => !!currentSlotTime && !!endTime && currentSlotTime > endTime,
-    [currentSlotTime, endTime]
-  )
+  const { data: poolAccount } = usePoolAccountQuery(config.pool)
+
+  const ended = useMemo(() => {
+    if (!poolAccount) return false
+
+    const endTime = poolAccount.endSec.toNumber()
+
+    return !!currentSlotTime && !!endTime && currentSlotTime > endTime
+  }, [currentSlotTime, poolAccount])
+
+  const started = useMemo(() => {
+    if (!poolAccount) return false
+
+    const startTime = poolAccount.startSec.toNumber()
+
+    return !!currentSlotTime && !!startTime && currentSlotTime > startTime
+  }, [currentSlotTime, poolAccount])
 
   const APR = useAPRQuery(config, ended)
   const totalDeposited = useTotalDepositedQuery(config)
@@ -54,7 +65,8 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
     totalDeposited,
     userAvailableRewards,
     userDailyRewards,
-    endTime,
-    ended
+    ended,
+    started,
+    poolAccount
   }
 }
