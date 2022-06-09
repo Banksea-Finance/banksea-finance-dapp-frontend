@@ -191,10 +191,8 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
                 <Button
                   width={'fit-content'}
                   scale={'S'}
-                  onClick={() => {
-                    deposit(selectedNfts)
-                  }}
-                  disabled={ended}
+                  onClick={() => deposit(selectedNfts)}
+                  disabled={!started || ended}
                 >
                   Deposit selected
                 </Button>
