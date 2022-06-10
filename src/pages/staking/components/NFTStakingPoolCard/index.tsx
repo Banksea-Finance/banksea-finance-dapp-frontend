@@ -50,7 +50,7 @@ export const NFTStakingPoolCard: React.FC<NFTStakingPoolConfig> = props => {
           <>
             CitizenOne staking for $sKSE <br />
             NOTE: $sKSE is the pre-staking token. <br />
-            It can be transformed into $sKSE after $sKSE is issued.
+            It can be transformed into $KSE after $KSE is issued.
           </>
         }
         availableRewards={userAvailableRewards}
