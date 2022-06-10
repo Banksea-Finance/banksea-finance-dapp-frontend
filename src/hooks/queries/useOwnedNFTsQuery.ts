@@ -11,10 +11,10 @@ const belongsToCollection = (data: MetadataResult, creator: PublicKey) => {
 export const useOwnedNFTsQuery = (creator: PublicKey): UseQueryResult<MetadataResult[] | undefined> => {
   const { connection } = useSolanaConnectionConfig()
   const { account } = useSolanaWeb3()
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { quietRefreshFlag } = useRefreshController()
 
   return useQuery(
-    ['OWNED_NFTS', account, creator, intermediateRefreshFlag],
+    ['OWNED_NFTS', account, creator, quietRefreshFlag],
     async (): Promise<MetadataResult[] | undefined> => {
       if (!account) {
         return undefined

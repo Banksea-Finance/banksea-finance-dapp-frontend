@@ -6,11 +6,11 @@ import { getTokenDecimals } from '../../helpers/getters'
 import { TokenStakingPoolConfig } from '../../constants/token'
 
 const useTotalDepositedQuery = ({ pool, depositToken }: TokenStakingPoolConfig) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
   return useQuery<BigNumber | undefined>(
-    ['TOKEN_TOTAL_DEPOSITED', pool, intermediateRefreshFlag, depositToken.tokenMint.toBase58()],
+    ['TOKEN_TOTAL_DEPOSITED', pool, slowRefreshFlag, depositToken.tokenMint.toBase58()],
     async () => {
       const account = await program.account.pool.fetchNullable(pool)
 

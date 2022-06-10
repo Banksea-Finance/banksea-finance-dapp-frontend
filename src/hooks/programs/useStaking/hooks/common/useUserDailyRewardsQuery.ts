@@ -6,12 +6,12 @@ import { getPassbook } from '../../helpers/accounts'
 import BigNumber from 'bignumber.js'
 
 export const useUserDailyRewardsQuery = (pool: PublicKey, rewardPerStakingPerDay?: BigNumber, stakingTokenDecimals = 0) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const { account } = useSolanaWeb3()
   const program = useStakingProgram()
 
   return useQuery<BigNumber | undefined>(
-    ['USER_DAILY_REWARDS', account, pool, intermediateRefreshFlag, rewardPerStakingPerDay],
+    ['USER_DAILY_REWARDS', account, pool, slowRefreshFlag, rewardPerStakingPerDay],
     async () => {
       if (!account || !rewardPerStakingPerDay) return undefined
 

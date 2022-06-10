@@ -5,12 +5,12 @@ import { TokenStakingPoolConfig } from '../../constants/token'
 import { getLargestTokenAccount } from '@/hooks/programs/useStaking/helpers/accounts'
 
 const usePoolBalanceQuery = ({ depositToken }: TokenStakingPoolConfig) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const { account: user } = useSolanaWeb3()
   const { connection } = useSolanaConnectionConfig()
 
   return useQuery<BigNumber | undefined>(
-    ['TOKEN_STAKING_POOL_BALANCE', depositToken, intermediateRefreshFlag, user],
+    ['TOKEN_STAKING_POOL_BALANCE', depositToken, slowRefreshFlag, user],
     async () => {
       if (!user) return undefined
 

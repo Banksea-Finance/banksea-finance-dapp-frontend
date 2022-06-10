@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSolanaConnectionConfig } from '@/contexts'
 
-export const useCurrentSlotTime = (seconds = 5) => {
+export const useCurrentSlotTime = (seconds = 10) => {
   const [time, setTime] = useState<number>()
   const { connection } = useSolanaConnectionConfig()
 

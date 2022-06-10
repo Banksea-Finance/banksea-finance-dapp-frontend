@@ -7,12 +7,12 @@ import { getTokenDecimals } from '../../helpers/getters'
 import { useStakingProgram } from '../common'
 
 const useUserDepositedQuery = ({ pool, depositToken }: TokenStakingPoolConfig) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
   return useQuery<BigNumber | undefined, any>(
-    ['TOKEN_USER_DEPOSITED', user, pool, depositToken, intermediateRefreshFlag],
+    ['TOKEN_USER_DEPOSITED', user, pool, depositToken, slowRefreshFlag],
     async () => {
       if (!user) return undefined
 
