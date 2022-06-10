@@ -58,10 +58,10 @@ const useRefreshController = () => {
   const { slow, intermediate, fast, quiet, refresh } = useContext(RefreshControllerContext)
 
   return {
-    slowRefreshFlag: slow,
-    intermediateRefreshFlag: intermediate,
-    fastRefreshFlag: fast,
-    quietRefreshFlag: quiet,
+    slowRefreshFlag: `SLOW-${slow}`,
+    intermediateRefreshFlag: `INTERMEDIATE-${intermediate}`,
+    fastRefreshFlag: `FAST-${fast}`,
+    quietRefreshFlag: `QUIET-${quiet}`,
     forceRefresh: refresh
   }
 }
