@@ -4,10 +4,10 @@ import { PublicKey } from '@solana/web3.js'
 import { useStakingProgram } from '../common'
 
 const useTotalDepositedQuery = (pool: PublicKey) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
-  return useQuery<number | undefined>(['NFT_TOTAL_DEPOSITED', pool, intermediateRefreshFlag], async () => {
+  return useQuery<number | undefined>(['NFT_TOTAL_DEPOSITED', pool, slowRefreshFlag], async () => {
     const account = await program.account.pool.fetchNullable(pool)
 
     return account?.totalDepositAmount.toNumber()

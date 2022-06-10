@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useSolanaConnectionConfig } from '@/contexts'
 
-export const useCurrentSlotTime = (seconds = 10) => {
+export const useCurrentSlotTime = () => {
   const [time, setTime] = useState<number>()
   const { connection } = useSolanaConnectionConfig()
 
   useEffect(() => {
-    const callback = () => {
+    const getTimeFromBlockchain = () => {
       connection
         .getSlot('confirmed')
         .then(slot => {
@@ -14,15 +14,20 @@ export const useCurrentSlotTime = (seconds = 10) => {
         })
         .then(time => {
           if (time) setTime(time)
+          else getTimeFromBlockchain()
         })
     }
 
-    const interval = setInterval(callback, seconds * 1000)
+    getTimeFromBlockchain()
+  }, [])
 
-    callback()
+  useEffect(() => {
+    const id = setInterval(() => {
+      setTime(prev => (prev ? prev + 1 : undefined))
+    }, 1000)
 
     return () => {
-      clearInterval(interval)
+      clearInterval(id)
     }
   }, [])
 

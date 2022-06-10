@@ -5,11 +5,11 @@ import { getAvailableRewards } from '../../helpers/getters'
 import { useStakingProgram } from './useStakingProgram'
 
 export const useUserAvailableRewardsQuery = (pool: PublicKey) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const { account: user } = useSolanaWeb3()
   const program = useStakingProgram()
 
-  return useQuery(['USER_AVAILABLE_REWARDS', pool, user, intermediateRefreshFlag], () => {
+  return useQuery(['USER_AVAILABLE_REWARDS', pool, user, slowRefreshFlag], () => {
     if (!user) return undefined
 
     return getAvailableRewards({ program, pool, user })
