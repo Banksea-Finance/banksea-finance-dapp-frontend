@@ -52,7 +52,7 @@ export const useTokenStaking = (config: TokenStakingPoolConfig) => {
   const { data: stakingTokenDecimals } = useTokenDecimalsQuery(config.depositToken.tokenMint)
 
   const userAvailableRewards = useUserAvailableRewardsQuery(config.pool)
-  const userDailyRewards = useUserDailyRewardsQuery(config.pool, APR?.data?.rewardsPerDay, stakingTokenDecimals)
+  const userDailyRewards = useUserDailyRewardsQuery(config.pool, started && !ended, APR?.data?.rewardsPerDay, stakingTokenDecimals)
 
   return {
     deposit,

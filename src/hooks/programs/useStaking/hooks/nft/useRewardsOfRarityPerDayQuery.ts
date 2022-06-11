@@ -5,13 +5,13 @@ import { useStakingProgram } from '../common'
 import { getRewardTokenDecimals } from '../../helpers/getters'
 import { useRefreshController } from '@/contexts'
 
-export const useRewardsOfRarityPerDayQuery = (pool: PublicKey, ended: boolean) => {
+export const useRewardsOfRarityPerDayQuery = (pool: PublicKey, show: boolean) => {
   const program = useStakingProgram()
 
   const { slowRefreshFlag } = useRefreshController()
 
-  return useQuery<BigNumber | undefined>(['NFT_REWARDS_OF_RARITY_PER_DAY', pool, slowRefreshFlag, ended], async () => {
-    if (ended) return undefined
+  return useQuery<BigNumber | undefined>(['NFT_REWARDS_OF_RARITY_PER_DAY', pool, slowRefreshFlag, show], async () => {
+    if (!show) return undefined
 
     const poolAccount = await program.account.pool.fetchNullable(pool)
 
