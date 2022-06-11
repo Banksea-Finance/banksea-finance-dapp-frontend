@@ -113,9 +113,10 @@ const TransactionalDialog: React.FC<TransactionalDialogProps> = ({ transactionsB
       console.error(e)
       const { error, message } = e as WalletError
 
+      forceRefresh()
       setOngoing(false)
       setClosable(true)
-      setInnerError(message || error?.message || error?.toString() || 'Unknown Error')
+      setInnerError(message || error?.message || error?.toString() || e?.toString() || 'Unknown Error')
     }
   }, [adapter, onConfirm, signature, connection, transactionsBuilder])
 

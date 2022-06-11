@@ -38,11 +38,11 @@ export const useNFTStaking = (config: NFTStakingPoolConfig) => {
     return !!currentSlotTime && !!startTime && currentSlotTime > startTime
   }, [currentSlotTime, poolAccount])
 
-  const RRPD = useRewardsOfRarityPerDayQuery(pool, ended)
+  const RRPD = useRewardsOfRarityPerDayQuery(pool, started && !ended)
   const totalDeposited = useTotalDepositedQuery(pool)
 
   const userDeposited = useUserDepositedQuery(pool)
-  const userDailyRewards = useUserDailyRewardsQuery(pool, RRPD.data)
+  const userDailyRewards = useUserDailyRewardsQuery(pool, started && !ended, RRPD.data)
   const userAvailableRewards = useUserAvailableRewardsQuery(pool)
 
   return {
