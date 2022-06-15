@@ -8,11 +8,11 @@ const useAPRQuery = (
   { pool }: TokenStakingPoolConfig,
   ended: boolean
 ) => {
-  const { intermediateRefreshFlag } = useRefreshController()
+  const { slowRefreshFlag } = useRefreshController()
   const program = useStakingProgram()
 
-  return useQuery<undefined | { APR: BigNumber; rewardsPerDay: BigNumber }>(
-    ['TOKEN_APR', program.programId, pool, intermediateRefreshFlag, ended],
+  return useQuery<undefined | { APR: BigNumber, rewardsPerDay: BigNumber }>(
+    ['TOKEN_APR', program.programId, pool, slowRefreshFlag, ended],
     async () => {
       if (!pool || ended) return undefined
 
