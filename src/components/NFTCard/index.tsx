@@ -1,7 +1,16 @@
-import React, { useState } from 'react'
-import { Card, Checkbox, CheckboxProps, Skeleton, Text } from '@banksea-finance/ui-kit'
+import React, { useMemo, useState } from 'react'
+import { Card, CardRibbon, Checkbox, CheckboxProps, Skeleton, Text } from '@banksea-finance/ui-kit'
 import styled from 'styled-components'
 import { MetadataResult } from '@/utils/metaplex/metadata'
+
+export type NftCardOperate = {
+  text: string
+  callback: (nft: MetadataResult) => void
+}
+
+export interface NFTCardProps extends MetadataResult, CheckboxProps {
+  operate?: NftCardOperate
+}
 
 const StyledNFTCard = styled(Card)`
   display: flex;
@@ -29,13 +38,10 @@ const NFTImage = styled.img`
   object-fit: cover;
 `
 
-export type NftCardOperate = {
-  text: string
-  callback: (nft: MetadataResult) => void
-}
-
-export interface NFTCardProps extends MetadataResult, CheckboxProps {
-  operate?: NftCardOperate
+const MYTHIC_ATTRS: Record<string, string[]> = {
+  'Body': ['Gold', 'Brown'],
+  'Back': ['E Guitar'],
+  'Body Feature': ['Doctor', 'Worker', 'Cheese']
 }
 
 export const NFTCard: React.FC<NFTCardProps> = props => {
@@ -43,15 +49,22 @@ export const NFTCard: React.FC<NFTCardProps> = props => {
   const [loaded, setLoaded] = useState(false)
   const [hover, setHover] = useState(false)
 
+  const mythicCount = useMemo(() => {
+    return data?.attributes?.reduce((total, next) => {
+      return total + (MYTHIC_ATTRS[next.trait_type]?.includes(next.value) ? 1 : 0)
+    }, 0) || 0
+  }, [data])
+
   return (
     <StyledNFTCard
-      variant={checked ? 'primaryContrary' : 'disabled'}
-      activeVariant={'primaryContrary'}
       activeOnHover
+      width={'100%'}
+      activeVariant={'primaryContrary'}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      width={'100%'}
       onClick={() => onChange?.({} as any)}
+      variant={checked ? 'primaryContrary' : 'disabled'}
+      ribbon={mythicCount > 0 && <CardRibbon position={'topLeft'} variant={'warning'} text={`Mythic x ${mythicCount}`} textStyle={{ bold: true }} />}
     >
       {!loaded && <Skeleton width={'100%'} height={'258px'} />}
       <NFTImage src={data?.image} alt="" onLoad={() => setLoaded(true)} style={{ display: !loaded ? 'none' : '' }} />
