@@ -100,5 +100,5 @@ export async function getAvailableRewards(props: GetRewardsProps): Promise<BigNu
 
   const claimedReward = (await getClaimedRewards(props))!
 
-  return new BigNumber(historyTotalReward.minus(claimedReward).toString())
+  return BigNumber.max(0, new BigNumber(historyTotalReward.minus(claimedReward).toString()))
 }

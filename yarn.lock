@@ -1078,10 +1078,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@banksea-finance/ui-kit@^0.0.1-beta.20":
-  version "0.0.1-beta.20"
-  resolved "https://registry.yarnpkg.com/@banksea-finance/ui-kit/-/ui-kit-0.0.1-beta.20.tgz#f5ab137ac30e4aaa3eedacfa356440feb78fc8fe"
-  integrity sha512-xkU5aeAhIDdwuoyFUSvyZj/saZIfdV+990PTSgjpgJ5Ez+5lgCchClgkJZnhRq83h0JYbrEtg48R3fecvHpp8w==
+"@banksea-finance/ui-kit@^0.0.1-beta.21":
+  version "0.0.1-beta.21"
+  resolved "https://registry.yarnpkg.com/@banksea-finance/ui-kit/-/ui-kit-0.0.1-beta.21.tgz#2309770cfa736d691c4065073051acfd2b257fcd"
+  integrity sha512-M5aSewVW8LyWuAwJFXVEHQXTwz4Bx2UpqG/BD/df/Lk9DU7Zx0TLFxQz5aNN+nxM4MxByozHjxKaL1NjtiN19w==
   dependencies:
     "@mui/base" "^5.0.0-alpha.80"
     "@types/react" "^17.0.5"
