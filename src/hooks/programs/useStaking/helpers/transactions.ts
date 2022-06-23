@@ -18,7 +18,7 @@ export async function buildDepositNFTsTransactions(props: BuildDepositNFTsTransa
 
   if (tokens.length > 2) {
     const tokenChunks = chunk(tokens, 2)
-    return (await Promise.all(tokenChunks.map(tokens => buildDepositNFTsTransactions({ ...props, tokens })))).flat()
+    return (await Promise.all(tokenChunks.map(chunk => buildDepositNFTsTransactions({ ...props, tokens: chunk })))).flat()
   }
 
   const depositInstructionsAndSigners: Array<{

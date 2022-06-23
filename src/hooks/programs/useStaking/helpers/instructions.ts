@@ -141,16 +141,18 @@ export async function buildDepositInstructions(
   return { instructions, signers }
 }
 
-export async function buildWithdrawInstruction(props: BuildWithdrawInstructionProps) {
+export async function buildWithdrawInstruction(props: BuildWithdrawInstructionProps): Promise<TransactionInstruction[]> {
   const { tokenMint, pool, user, program, amount = new BN(1) } = props
+
+  const instructions: TransactionInstruction[] = []
 
   const { address: passbook } = await getPassbook(props)
 
-  const largestTokenAccount = await getLargestTokenAccount(program.provider.connection, user, tokenMint)
+  const { pubkey: withdrawAccount, instruction: createTokenAccountInstruction } = await getOrCreateTokenAccount(program.provider.connection, tokenMint, user, 'largest')
 
-  if (!largestTokenAccount) throw DataLoadFailedError('largestTokenAccount')
-
-  const { pubkey: withdrawAccount } = largestTokenAccount
+  if (createTokenAccountInstruction) {
+    instructions.push(createTokenAccountInstruction)
+  }
 
   const [asset] = await PublicKey.findProgramAddress(
     [Buffer.from('asset'), passbook.toBuffer(), tokenMint.toBuffer()],
@@ -159,19 +161,23 @@ export async function buildWithdrawInstruction(props: BuildWithdrawInstructionPr
 
   const { stakingAccount, stakingSigner } = await program.account.asset.fetch(asset)
 
-  return program.instruction.withdraw(amount, {
-    accounts: {
-      pool,
-      passbook,
-      asset,
-      withdrawAccount,
-      stakingSigner,
-      stakingAccount,
-      user,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      clock: SYSVAR_CLOCK_PUBKEY
-    }
-  })
+  instructions.push(
+    await program.instruction.withdraw(amount, {
+      accounts: {
+        pool,
+        passbook,
+        asset,
+        withdrawAccount,
+        stakingSigner,
+        stakingAccount,
+        user,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        clock: SYSVAR_CLOCK_PUBKEY
+      }
+    })
+  )
+
+  return instructions
 }
 
 export async function buildClaimInstructions(props: BuildClaimInstructionProps): Promise<TransactionInstruction[]> {

@@ -26,7 +26,7 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
   const buildWithdrawTransactions = useCallback(async () => {
     if (!user) throw WalletNotConnectedError
 
-    const instructions = await Promise.all(
+    const instructions = (await Promise.all(
       metadataList.map(meta =>
         buildWithdrawInstruction({
           user: user,
@@ -35,7 +35,7 @@ const NFTWithdrawDialog: React.FC<{ config: NFTStakingPoolConfig; metadataList: 
           program
         })
       )
-    )
+    )).flat()
 
     if (claimAtSameTime) {
       instructions.push(
