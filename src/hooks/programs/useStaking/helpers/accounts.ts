@@ -64,13 +64,13 @@ export async function getLargestTokenAccount(
   const getAmount = (account: {
     pubkey: PublicKey;
     account: AccountInfo<ParsedAccountData>;
-  }) => (account.account.data.parsed.info.tokenAmount as TokenAmount).amount
+  }) => Number((account.account.data.parsed.info.tokenAmount as TokenAmount).amount)
 
   if (!accounts.value.length) {
     return undefined
   }
 
-  accounts.value.sort((a, b) => +getAmount(b) - (+getAmount(a)))
+  accounts.value.sort((a, b) => getAmount(b) - getAmount(a))
 
   return accounts.value[0]
 }

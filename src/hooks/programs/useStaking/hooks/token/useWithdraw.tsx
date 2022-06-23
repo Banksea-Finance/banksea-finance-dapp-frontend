@@ -99,7 +99,7 @@ const WithdrawDialog: React.FC<{ config: TokenStakingPoolConfig }> = ({ config }
     const amount = new BN(new BigNumber(inputValue).shiftedBy(decimals).toString())
 
     instructions.push(
-      await buildWithdrawInstruction({
+      ...await buildWithdrawInstruction({
         amount,
         pool,
         program,
